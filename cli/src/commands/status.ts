@@ -15,7 +15,9 @@ export async function runStatus(): Promise<void> {
     logger.info(`  API key: ${config.apiKey.slice(0, 8)}...`);
     logger.info(`  API URL: ${config.apiUrl || "https://vibecafe.ai"}`);
     if (config.syncInterval) {
-      logger.info(`  Sync interval: ${Math.round(config.syncInterval / 60000)}m`);
+      logger.info(
+        `  Sync interval: ${Math.round(config.syncInterval / 60000)}m`,
+      );
     }
   }
 

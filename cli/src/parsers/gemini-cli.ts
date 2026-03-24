@@ -2,7 +2,11 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import type { IParser, ToolDefinition } from "./types";
-import type { TokenUsageEntry, SessionEvent, ParseResult } from "../domain/types";
+import type {
+  TokenUsageEntry,
+  SessionEvent,
+  ParseResult,
+} from "../domain/types";
 import { aggregateToBuckets } from "../domain/aggregator";
 import { extractSessions } from "../domain/session-extractor";
 import { registerParser } from "./registry";
@@ -129,8 +133,11 @@ class GeminiCliParser implements IParser {
             model: msg.model || data.model || "unknown",
             project: "unknown",
             timestamp: ts,
-            inputTokens: (usage.promptTokenCount || usage.input_tokens || 0) - cached,
-            outputTokens: (usage.candidatesTokenCount || usage.output_tokens || 0) - thoughts,
+            inputTokens:
+              (usage.promptTokenCount || usage.input_tokens || 0) - cached,
+            outputTokens:
+              (usage.candidatesTokenCount || usage.output_tokens || 0) -
+              thoughts,
             cachedInputTokens: cached,
             reasoningOutputTokens: thoughts,
           });

@@ -3,7 +3,11 @@ import { homedir } from "node:os";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import type { IParser, ToolDefinition } from "./types";
-import type { TokenUsageEntry, SessionEvent, ParseResult } from "../domain/types";
+import type {
+  TokenUsageEntry,
+  SessionEvent,
+  ParseResult,
+} from "../domain/types";
 import { aggregateToBuckets } from "../domain/aggregator";
 import { extractSessions } from "../domain/session-extractor";
 import { registerParser } from "./registry";
@@ -57,7 +61,7 @@ class OpenCodeParser implements IParser {
         return this.parseFromSqlite();
       } catch (err) {
         process.stderr.write(
-          `warn: opencode sqlite parse failed (${(err as Error).message}), trying legacy json...\n`
+          `warn: opencode sqlite parse failed (${(err as Error).message}), trying legacy json...\n`,
         );
       }
     }
@@ -85,7 +89,9 @@ class OpenCodeParser implements IParser {
     } catch (err) {
       const nodeErr = err as NodeJS.ErrnoException & { status?: number };
       if (nodeErr.status === 127 || nodeErr.message?.includes("ENOENT")) {
-        throw new Error("sqlite3 CLI not found. Install sqlite3 to sync opencode data.");
+        throw new Error(
+          "sqlite3 CLI not found. Install sqlite3 to sync opencode data.",
+        );
       }
       throw err;
     }
@@ -122,7 +128,8 @@ class OpenCodeParser implements IParser {
 
       let tokens: OpenCodeMessage["tokens"];
       try {
-        tokens = typeof row.tokens === "string" ? JSON.parse(row.tokens) : row.tokens;
+        tokens =
+          typeof row.tokens === "string" ? JSON.parse(row.tokens) : row.tokens;
       } catch {
         continue;
       }
@@ -155,7 +162,7 @@ class OpenCodeParser implements IParser {
     let sessionDirs;
     try {
       sessionDirs = readdirSync(MESSAGES_DIR, { withFileTypes: true }).filter(
-        (d) => d.isDirectory() && d.name.startsWith("ses_")
+        (d) => d.isDirectory() && d.name.startsWith("ses_"),
       );
     } catch {
       return { buckets: [], sessions: [] };

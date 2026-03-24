@@ -1,7 +1,11 @@
 import { join } from "node:path";
 import { homedir } from "node:os";
 import type { IParser, ToolDefinition } from "./types";
-import type { TokenUsageEntry, SessionEvent, ParseResult } from "../domain/types";
+import type {
+  TokenUsageEntry,
+  SessionEvent,
+  ParseResult,
+} from "../domain/types";
 import { aggregateToBuckets } from "../domain/aggregator";
 import { extractSessions } from "../domain/session-extractor";
 import { findJsonlFiles, readFileSafe } from "../infrastructure/fs/utils";
@@ -70,7 +74,9 @@ class CodexParser implements IParser {
               sessionProject = meta.cwd.split("/").pop() || "unknown";
             }
             if (meta.git?.repository_url) {
-              const match = meta.git.repository_url.match(/([^/]+\/[^/]+?)(?:\.git)?$/);
+              const match = meta.git.repository_url.match(
+                /([^/]+\/[^/]+?)(?:\.git)?$/,
+              );
               if (match) sessionProject = match[1];
             }
             break;
@@ -97,7 +103,8 @@ class CodexParser implements IParser {
           if (obj.timestamp) {
             const evTs = new Date(obj.timestamp);
             if (!isNaN(evTs.getTime())) {
-              const isUserTurn = obj.type === "turn_context" || obj.type === "session_meta";
+              const isUserTurn =
+                obj.type === "turn_context" || obj.type === "session_meta";
               sessionEvents.push({
                 sessionId: filePath,
                 source: "codex",
@@ -134,10 +141,16 @@ class CodexParser implements IParser {
             const curr = info.total_token_usage;
             if (prev) {
               usage = {
-                input_tokens: (curr.input_tokens || 0) - (prev.input_tokens || 0),
-                output_tokens: (curr.output_tokens || 0) - (prev.output_tokens || 0),
-                cached_input_tokens: (curr.cached_input_tokens || 0) - (prev.cached_input_tokens || 0),
-                reasoning_output_tokens: (curr.reasoning_output_tokens || 0) - (prev.reasoning_output_tokens || 0),
+                input_tokens:
+                  (curr.input_tokens || 0) - (prev.input_tokens || 0),
+                output_tokens:
+                  (curr.output_tokens || 0) - (prev.output_tokens || 0),
+                cached_input_tokens:
+                  (curr.cached_input_tokens || 0) -
+                  (prev.cached_input_tokens || 0),
+                reasoning_output_tokens:
+                  (curr.reasoning_output_tokens || 0) -
+                  (prev.reasoning_output_tokens || 0),
               };
             } else {
               usage = curr;
@@ -146,7 +159,8 @@ class CodexParser implements IParser {
           }
           if (!usage) continue;
 
-          const model = info.model || payload.model || turnContextModel || sessionModel;
+          const model =
+            info.model || payload.model || turnContextModel || sessionModel;
 
           // OpenAI API: input_tokens INCLUDES cached, output_tokens INCLUDES reasoning.
           // Normalize to Anthropic-style semantics where each field is non-overlapping.

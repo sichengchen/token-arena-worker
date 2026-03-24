@@ -1,4 +1,8 @@
-import type { TokenUsageEntry, SessionEvent, ParseResult } from "../domain/types";
+import type {
+  TokenUsageEntry,
+  SessionEvent,
+  ParseResult,
+} from "../domain/types";
 
 /**
  * Tool definition for parser registration

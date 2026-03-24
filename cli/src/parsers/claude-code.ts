@@ -1,10 +1,18 @@
 import { join, sep } from "node:path";
 import { homedir } from "node:os";
 import type { IParser, ToolDefinition } from "./types";
-import type { TokenUsageEntry, SessionEvent, ParseResult } from "../domain/types";
+import type {
+  TokenUsageEntry,
+  SessionEvent,
+  ParseResult,
+} from "../domain/types";
 import { aggregateToBuckets, roundToHalfHour } from "../domain/aggregator";
 import { extractSessions } from "../domain/session-extractor";
-import { findJsonlFiles, readFileSafe, extractSessionId } from "../infrastructure/fs/utils";
+import {
+  findJsonlFiles,
+  readFileSafe,
+  extractSessionId,
+} from "../infrastructure/fs/utils";
 import { registerParser } from "./registry";
 
 const TOOL: ToolDefinition = {
@@ -78,7 +86,8 @@ class ClaudeCodeParser implements IParser {
           if (!msg || !msg.usage) continue;
 
           const usage = msg.usage;
-          if (usage.input_tokens == null && usage.output_tokens == null) continue;
+          if (usage.input_tokens == null && usage.output_tokens == null)
+            continue;
 
           const uuid = obj.uuid;
           if (uuid) {

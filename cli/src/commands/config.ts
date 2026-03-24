@@ -1,4 +1,8 @@
-import { loadConfig, saveConfig, isValidConfigKey } from "../infrastructure/config/manager";
+import {
+  loadConfig,
+  saveConfig,
+  isValidConfigKey,
+} from "../infrastructure/config/manager";
 import { logger } from "../utils/logger";
 
 const VALID_KEYS = ["apiKey", "apiUrl", "syncInterval", "logLevel"];
@@ -34,7 +38,10 @@ export function handleConfig(args: string[]): void {
         logger.error(`Valid keys: ${VALID_KEYS.join(", ")}`);
         process.exit(1);
       }
-      const config = loadConfig() || { apiKey: "", apiUrl: "https://vibecafe.ai" };
+      const config = loadConfig() || {
+        apiKey: "",
+        apiUrl: "https://vibecafe.ai",
+      };
 
       // Type conversion for numeric values
       if (key === "syncInterval") {

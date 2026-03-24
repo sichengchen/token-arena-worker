@@ -39,9 +39,12 @@ export function createCli(): Command {
     });
 
   // sync command
-  program.command("sync").description("Manually sync usage data to server").action(async () => {
-    await runSyncCommand();
-  });
+  program
+    .command("sync")
+    .description("Manually sync usage data to server")
+    .action(async () => {
+      await runSyncCommand();
+    });
 
   // daemon command
   program
@@ -53,9 +56,12 @@ export function createCli(): Command {
     });
 
   // status command
-  program.command("status").description("Show configuration and detected tools").action(async () => {
-    await runStatus();
-  });
+  program
+    .command("status")
+    .description("Show configuration and detected tools")
+    .action(async () => {
+      await runStatus();
+    });
 
   // config command (with subcommands)
   program

@@ -75,7 +75,7 @@ export function parseJsonl<T>(content: string): T[] {
  */
 export function extractProjectFromPath(
   filePath: string,
-  projectsDir: string
+  projectsDir: string,
 ): string {
   const prefix = projectsDir + sep;
   if (!filePath.startsWith(prefix)) return "unknown";

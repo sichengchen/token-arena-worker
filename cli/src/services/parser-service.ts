@@ -1,4 +1,8 @@
-import type { TokenBucket, SessionMetadata, ParseResult } from "../domain/types";
+import type {
+  TokenBucket,
+  SessionMetadata,
+  ParseResult,
+} from "../domain/types";
 import { getAllParsers, detectInstalledTools } from "../parsers/registry";
 import { logger } from "../utils/logger";
 

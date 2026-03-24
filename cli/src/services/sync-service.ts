@@ -25,11 +25,18 @@ export interface SyncOptions {
   quiet?: boolean;
 }
 
-export async function runSync(config: Config, opts: SyncOptions = {}): Promise<number> {
+export async function runSync(
+  config: Config,
+  opts: SyncOptions = {},
+): Promise<number> {
   const { throws = false, quiet = false } = opts;
 
   // Run all parsers
-  const { buckets: allBuckets, sessions: allSessions, parserResults } = await runAllParsers();
+  const {
+    buckets: allBuckets,
+    sessions: allSessions,
+    parserResults,
+  } = await runAllParsers();
 
   if (allBuckets.length === 0 && allSessions.length === 0) {
     if (!quiet) logger.info("No new usage data found.");
@@ -89,22 +96,34 @@ export async function runSync(config: Config, opts: SyncOptions = {}): Promise<n
   const parts: string[] = [];
   if (allBuckets.length > 0) parts.push(`${allBuckets.length} buckets`);
   if (allSessions.length > 0) parts.push(`${allSessions.length} sessions`);
-  logger.info(`Uploading ${parts.join(" + ")} (${totalBatches} batch${totalBatches > 1 ? "es" : ""})...`);
+  logger.info(
+    `Uploading ${parts.join(" + ")} (${totalBatches} batch${totalBatches > 1 ? "es" : ""})...`,
+  );
 
   try {
     for (let batchIdx = 0; batchIdx < totalBatches; batchIdx++) {
-      const batch = allBuckets.slice(batchIdx * BATCH_SIZE, (batchIdx + 1) * BATCH_SIZE);
+      const batch = allBuckets.slice(
+        batchIdx * BATCH_SIZE,
+        (batchIdx + 1) * BATCH_SIZE,
+      );
       const batchSessions = allSessions.slice(
         batchIdx * SESSION_BATCH_SIZE,
-        (batchIdx + 1) * SESSION_BATCH_SIZE
+        (batchIdx + 1) * SESSION_BATCH_SIZE,
       );
       const batchNum = batchIdx + 1;
-      const prefix = totalBatches > 1 ? `  [${batchNum}/${totalBatches}] ` : "  ";
+      const prefix =
+        totalBatches > 1 ? `  [${batchNum}/${totalBatches}] ` : "  ";
 
-      const result = await apiClient.ingest(batch, batchSessions.length > 0 ? batchSessions : undefined, (sent, total) => {
-        const pct = Math.round((sent / total) * 100);
-        process.stdout.write(`\r${prefix}${formatBytes(sent)}/${formatBytes(total)} (${pct}%)\x1b[K`);
-      });
+      const result = await apiClient.ingest(
+        batch,
+        batchSessions.length > 0 ? batchSessions : undefined,
+        (sent, total) => {
+          const pct = Math.round((sent / total) * 100);
+          process.stdout.write(
+            `\r${prefix}${formatBytes(sent)}/${formatBytes(total)} (${pct}%)\x1b[K`,
+          );
+        },
+      );
 
       totalIngested += result.ingested ?? batch.length;
       totalSessionsSynced += result.sessions ?? 0;
@@ -115,15 +134,19 @@ export async function runSync(config: Config, opts: SyncOptions = {}): Promise<n
     }
 
     const syncParts = [`${totalIngested} buckets`];
-    if (totalSessionsSynced > 0) syncParts.push(`${totalSessionsSynced} sessions`);
+    if (totalSessionsSynced > 0)
+      syncParts.push(`${totalSessionsSynced} sessions`);
     logger.info(`Synced ${syncParts.join(" + ")}.`);
 
     if (!quiet && totalSessionsSynced > 0) {
       const totalActive = allSessions.reduce((s, x) => s + x.activeSeconds, 0);
-      const totalDuration = allSessions.reduce((s, x) => s + x.durationSeconds, 0);
+      const totalDuration = allSessions.reduce(
+        (s, x) => s + x.durationSeconds,
+        0,
+      );
       const totalMsgs = allSessions.reduce((s, x) => s + x.messageCount, 0);
       logger.info(
-        `  active: ${formatTime(totalActive)} / total: ${formatTime(totalDuration)}, ${totalMsgs} messages`
+        `  active: ${formatTime(totalActive)} / total: ${formatTime(totalDuration)}, ${totalMsgs} messages`,
       );
     }
 
@@ -139,7 +162,9 @@ export async function runSync(config: Config, opts: SyncOptions = {}): Promise<n
     }
     // Report partial success
     if (totalIngested > 0) {
-      logger.error(`Sync partially completed (${totalIngested} buckets uploaded). ${httpErr.message}`);
+      logger.error(
+        `Sync partially completed (${totalIngested} buckets uploaded). ${httpErr.message}`,
+      );
     } else {
       logger.error(`Sync failed: ${httpErr.message}`);
     }

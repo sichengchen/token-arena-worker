@@ -24,7 +24,9 @@ export function extractSessions(events: SessionEvent[]): SessionMetadata[] {
 
     const first = sessionEvents[0];
     const last = sessionEvents[sessionEvents.length - 1];
-    const durationSeconds = Math.round((last.timestamp.getTime() - first.timestamp.getTime()) / 1000);
+    const durationSeconds = Math.round(
+      (last.timestamp.getTime() - first.timestamp.getTime()) / 1000,
+    );
 
     let activeSeconds = 0;
     let turnStart: Date | null = null;
@@ -34,7 +36,9 @@ export function extractSessions(events: SessionEvent[]): SessionMetadata[] {
     for (const event of sessionEvents) {
       if (event.role === "user") {
         if (turnStart !== null && turnEnd !== null && turnEnd > turnStart) {
-          activeSeconds += Math.round((turnEnd.getTime() - turnStart.getTime()) / 1000);
+          activeSeconds += Math.round(
+            (turnEnd.getTime() - turnStart.getTime()) / 1000,
+          );
         }
         turnStart = null;
         turnEnd = null;
@@ -48,7 +52,9 @@ export function extractSessions(events: SessionEvent[]): SessionMetadata[] {
       }
     }
     if (turnStart !== null && turnEnd !== null && turnEnd > turnStart) {
-      activeSeconds += Math.round((turnEnd.getTime() - turnStart.getTime()) / 1000);
+      activeSeconds += Math.round(
+        (turnEnd.getTime() - turnStart.getTime()) / 1000,
+      );
     }
 
     const userPromptHours = new Array(24).fill(0);
@@ -60,7 +66,10 @@ export function extractSessions(events: SessionEvent[]): SessionMetadata[] {
       }
     }
 
-    const sessionHash = createHash("sha256").update(sessionId).digest("hex").slice(0, 16);
+    const sessionHash = createHash("sha256")
+      .update(sessionId)
+      .digest("hex")
+      .slice(0, 16);
 
     sessions.push({
       source: first.source,

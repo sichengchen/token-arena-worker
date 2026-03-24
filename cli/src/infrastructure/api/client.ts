@@ -1,7 +1,12 @@
 import http from "node:http";
 import https from "node:https";
 import { URL } from "node:url";
-import type { TokenBucket, SessionMetadata, ApiSettings, IngestResponse } from "../../domain/types";
+import type {
+  TokenBucket,
+  SessionMetadata,
+  ApiSettings,
+  IngestResponse,
+} from "../../domain/types";
 
 const MAX_RETRIES = 3;
 const INITIAL_DELAY = 1000;
@@ -10,7 +15,7 @@ const TIMEOUT_MS = 60_000;
 export class ApiClient {
   constructor(
     private apiUrl: string,
-    private apiKey: string
+    private apiKey: string,
   ) {}
 
   /**
@@ -19,7 +24,7 @@ export class ApiClient {
   async ingest(
     buckets: TokenBucket[],
     sessions?: SessionMetadata[],
-    onProgress?: (sent: number, total: number) => void
+    onProgress?: (sent: number, total: number) => void,
   ): Promise<{ ingested?: number; sessions?: number }> {
     let lastError: Error | undefined;
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
@@ -31,7 +36,9 @@ export class ApiClient {
         // Don't retry auth errors or client errors
         if (
           httpErr.message === "UNAUTHORIZED" ||
-          (httpErr.statusCode && httpErr.statusCode >= 400 && httpErr.statusCode < 500)
+          (httpErr.statusCode &&
+            httpErr.statusCode >= 400 &&
+            httpErr.statusCode < 500)
         ) {
           throw err;
         }
@@ -47,11 +54,12 @@ export class ApiClient {
   private sendIngest(
     buckets: TokenBucket[],
     sessions?: SessionMetadata[],
-    onProgress?: (sent: number, total: number) => void
+    onProgress?: (sent: number, total: number) => void,
   ): Promise<{ ingested?: number; sessions?: number }> {
     return new Promise((resolve, reject) => {
       const url = new URL("/api/usage/ingest", this.apiUrl);
-      const payload: { buckets: TokenBucket[]; sessions?: SessionMetadata[] } = { buckets };
+      const payload: { buckets: TokenBucket[]; sessions?: SessionMetadata[] } =
+        { buckets };
       if (sessions && sessions.length > 0) {
         payload.sessions = sessions;
       }
@@ -80,8 +88,14 @@ export class ApiClient {
               reject(new Error("UNAUTHORIZED"));
               return;
             }
-            if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
-              const err = new Error(`HTTP ${res.statusCode}: ${data}`) as Error & {
+            if (
+              !res.statusCode ||
+              res.statusCode < 200 ||
+              res.statusCode >= 300
+            ) {
+              const err = new Error(
+                `HTTP ${res.statusCode}: ${data}`,
+              ) as Error & {
                 statusCode?: number;
               };
               err.statusCode = res.statusCode;
@@ -94,7 +108,7 @@ export class ApiClient {
               reject(new Error(`Invalid JSON response: ${data}`));
             }
           });
-        }
+        },
       );
 
       req.on("error", (err) => reject(err));
@@ -149,7 +163,11 @@ export class ApiClient {
             data += chunk;
           });
           res.on("end", () => {
-            if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+            if (
+              !res.statusCode ||
+              res.statusCode < 200 ||
+              res.statusCode >= 300
+            ) {
               resolve(null);
               return;
             }
@@ -159,7 +177,7 @@ export class ApiClient {
               resolve(null);
             }
           });
-        }
+        },
       );
 
       req.on("error", () => resolve(null));
@@ -174,7 +192,9 @@ export class ApiClient {
   /**
    * Delete all usage data for the authenticated user
    */
-  async deleteAllData(opts?: { hostname?: string }): Promise<{ deleted: number }> {
+  async deleteAllData(opts?: {
+    hostname?: string;
+  }): Promise<{ deleted: number }> {
     return new Promise((resolve, reject) => {
       const url = new URL("/api/usage/ingest", this.apiUrl);
       if (opts?.hostname) {
@@ -201,8 +221,14 @@ export class ApiClient {
               reject(new Error("UNAUTHORIZED"));
               return;
             }
-            if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
-              const err = new Error(`HTTP ${res.statusCode}: ${data}`) as Error & {
+            if (
+              !res.statusCode ||
+              res.statusCode < 200 ||
+              res.statusCode >= 300
+            ) {
+              const err = new Error(
+                `HTTP ${res.statusCode}: ${data}`,
+              ) as Error & {
                 statusCode?: number;
               };
               err.statusCode = res.statusCode;
@@ -215,7 +241,7 @@ export class ApiClient {
               reject(new Error(`Invalid JSON response: ${data}`));
             }
           });
-        }
+        },
       );
 
       req.on("error", (err) => reject(err));

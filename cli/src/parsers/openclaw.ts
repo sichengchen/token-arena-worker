@@ -2,7 +2,11 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import type { IParser, ToolDefinition } from "./types";
-import type { TokenUsageEntry, SessionEvent, ParseResult } from "../domain/types";
+import type {
+  TokenUsageEntry,
+  SessionEvent,
+  ParseResult,
+} from "../domain/types";
 import { aggregateToBuckets } from "../domain/aggregator";
 import { extractSessions } from "../domain/session-extractor";
 import { registerParser } from "./registry";
@@ -47,7 +51,10 @@ interface OpenClawMessage {
 }
 
 /** Normalize usage fields — OpenClaw supports multiple naming conventions */
-function getTokens(usage: NonNullable<OpenClawMessage["message"]>["usage"], ...keys: string[]): number {
+function getTokens(
+  usage: NonNullable<OpenClawMessage["message"]>["usage"],
+  ...keys: string[]
+): number {
   for (const key of keys) {
     const value = (usage as Record<string, unknown>)[key];
     if (typeof value === "number" && value > 0) return value;
@@ -68,7 +75,9 @@ class OpenClawParser implements IParser {
 
       let agentDirs;
       try {
-        agentDirs = readdirSync(agentsDir, { withFileTypes: true }).filter((d) => d.isDirectory());
+        agentDirs = readdirSync(agentsDir, { withFileTypes: true }).filter(
+          (d) => d.isDirectory(),
+        );
       } catch {
         continue;
       }
@@ -106,7 +115,9 @@ class OpenClawParser implements IParser {
 
               const timestamp = obj.timestamp || msg.timestamp;
               if (!timestamp) continue;
-              const ts = new Date(typeof timestamp === "number" ? timestamp : timestamp);
+              const ts = new Date(
+                typeof timestamp === "number" ? timestamp : timestamp,
+              );
               if (isNaN(ts.getTime())) continue;
 
               sessionEvents.push({
@@ -126,9 +137,28 @@ class OpenClawParser implements IParser {
                 model: msg.model || obj.model || "unknown",
                 project,
                 timestamp: ts,
-                inputTokens: getTokens(usage, "input", "inputTokens", "input_tokens", "promptTokens", "prompt_tokens"),
-                outputTokens: getTokens(usage, "output", "outputTokens", "output_tokens", "completionTokens", "completion_tokens"),
-                cachedInputTokens: getTokens(usage, "cacheRead", "cache_read", "cache_read_input_tokens"),
+                inputTokens: getTokens(
+                  usage,
+                  "input",
+                  "inputTokens",
+                  "input_tokens",
+                  "promptTokens",
+                  "prompt_tokens",
+                ),
+                outputTokens: getTokens(
+                  usage,
+                  "output",
+                  "outputTokens",
+                  "output_tokens",
+                  "completionTokens",
+                  "completion_tokens",
+                ),
+                cachedInputTokens: getTokens(
+                  usage,
+                  "cacheRead",
+                  "cache_read",
+                  "cache_read_input_tokens",
+                ),
                 reasoningOutputTokens: 0,
               });
             } catch {

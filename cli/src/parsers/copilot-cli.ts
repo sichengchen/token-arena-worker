@@ -2,7 +2,11 @@ import { join, basename } from "node:path";
 import { homedir } from "node:os";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import type { IParser, ToolDefinition } from "./types";
-import type { TokenUsageEntry, SessionEvent, ParseResult } from "../domain/types";
+import type {
+  TokenUsageEntry,
+  SessionEvent,
+  ParseResult,
+} from "../domain/types";
 import { aggregateToBuckets } from "../domain/aggregator";
 import { extractSessions } from "../domain/session-extractor";
 import { registerParser } from "./registry";
@@ -35,7 +39,9 @@ interface CopilotEvent {
   };
 }
 
-function findEventFiles(baseDir: string): { filePath: string; sessionId: string }[] {
+function findEventFiles(
+  baseDir: string,
+): { filePath: string; sessionId: string }[] {
   const results: { filePath: string; sessionId: string }[] = [];
   if (!existsSync(baseDir)) return results;
 
@@ -55,7 +61,9 @@ function findEventFiles(baseDir: string): { filePath: string; sessionId: string 
   return results;
 }
 
-function getProjectFromContext(context: { gitRoot?: string; cwd?: string } | undefined): string {
+function getProjectFromContext(
+  context: { gitRoot?: string; cwd?: string } | undefined,
+): string {
   const projectPath = context?.gitRoot || context?.cwd;
   if (!projectPath) return "unknown";
   return basename(projectPath) || "unknown";
