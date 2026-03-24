@@ -1,3 +1,7 @@
+packages:
+  - "cli"
+  - "web"
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver

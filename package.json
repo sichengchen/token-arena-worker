@@ -1,0 +1,17 @@
+{
+  "name": "tokens-burned",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev:cli": "pnpm --filter tokens-burned dev",
+    "dev:web": "pnpm --filter @tokens-burned/web dev",
+    "build:cli": "pnpm --filter tokens-burned build",
+    "build:web": "pnpm --filter @tokens-burned/web build",
+    "build": "pnpm run build:cli && pnpm run build:web",
+    "lint": "pnpm --filter @tokens-burned/web lint"
+  }
+}
