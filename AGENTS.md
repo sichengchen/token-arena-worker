@@ -2,33 +2,30 @@
 
 ## Project Structure & Module Organization
 
-- `cli/` is a TypeScript Commander CLI. Keep user-facing commands in `cli/src/commands`, pure aggregation logic in `cli/src/domain`, formatting helpers in `cli/src/lib`, and sample fixture data in `cli/src/data`.
-- `web/` is a Next.js App Router app. Route files live in `web/app`, global styles live in `web/app/globals.css`, and static assets live in `web/public`.
-- Read `web/AGENTS.md` before changing the web workspace.
+`tokens-burned` is a pnpm monorepo with two active workspaces. `cli/` contains the TypeScript Commander CLI: keep command entry points in `cli/src/commands`, sync and aggregation logic in `cli/src/services` and `cli/src/domain`, tool-specific ingestion in `cli/src/parsers`, and config/API/filesystem code in `cli/src/infrastructure`. Built files land in `cli/dist/`. `web/` is a Next.js App Router app: routes live in `web/app`, shared UI in `web/components/ui`, hooks in `web/hooks`, helpers in `web/lib`, and static assets in `web/public`. Do not edit generated output such as `.next/` or `dist/`.
 
 ## Build, Test, and Development Commands
 
-- `pnpm install` — install workspace dependencies from the repository root. Use Node 20+.
-- `pnpm --filter ./cli dev -- daily --json` — run the CLI against the sample usage dataset.
-- `pnpm --filter ./cli build` — bundle the CLI with `tsup` into `cli/dist/`.
-- `pnpm --filter ./web dev` — start the Next.js development server.
-- `pnpm --filter ./web build` — create a production build for the web app.
-- `pnpm --filter ./web lint` — run ESLint for the web workspace.
-- Prefer path-based filters (`./cli`, `./web`); package-name filters currently overlap with the root package.
+- `pnpm install` — install all workspace dependencies; use Node 20+.
+- `pnpm dev:cli` — run the CLI via `tsx`; for explicit args, use `pnpm --filter ./cli dev -- --help`.
+- `pnpm dev:web` — start the Next.js dev server.
+- `pnpm build` — build both workspaces.
+- `pnpm lint:cli` / `pnpm lint:web` — run Biome checks.
+- `pnpm format:cli` / `pnpm format:web` — apply Biome formatting.
+- `pnpm check` — run the same lint + format steps enforced by the Husky pre-commit hook.
 
 ## Coding Style & Naming Conventions
 
-- Use TypeScript + ESM in active workspaces.
-- Match the existing style: 2-space indentation, double quotes, semicolons, and trailing commas in multiline objects and calls.
-- Keep CLI module filenames in kebab-case (for example, `summarize-daily-usage.ts`); use PascalCase only for React components.
-- Put pure transforms in `domain/`; keep console output and UI rendering in `lib/`, command handlers, or React files.
+Use TypeScript + ESM throughout. Biome enforces 2-space indentation, double quotes, semicolons, and import organization. Keep CLI filenames kebab-case (`session-extractor.ts`, `claude-code.ts`); export React components in PascalCase. In `web/`, prefer the `@/` path alias for local imports. Keep parsing and business logic in `domain/`, `services/`, or `parsers/`; keep terminal/UI rendering in command handlers or React components.
 
 ## Testing Guidelines
 
-- There is no committed test runner yet. When adding non-trivial logic, introduce focused `*.test.ts` or `*.test.tsx` files alongside the code you change.
-- Until a shared test setup exists, include manual verification in every PR: run `pnpm --filter ./web lint` and exercise CLI commands such as `daily`, `agents`, and `ingest`.
+There is no committed test runner yet. Until one is added, treat `pnpm check` and `pnpm build` as required gates. For CLI changes, include a manual smoke test such as `pnpm --filter ./cli dev -- status` or `pnpm --filter ./cli dev -- --help`. When adding automated tests, place `*.test.ts` or `*.test.tsx` beside the code they cover and add the matching workspace script in the same PR.
 
 ## Commit & Pull Request Guidelines
 
-- Follow the Conventional Commit style already used in history: `feat: ...`, `fix: ...`, with optional scopes like `feat(cli): ...`.
-- PRs should name the affected workspace, summarize the change, list verification commands, link related issues, and include screenshots or recordings for UI updates.
+Follow the Conventional Commit style used in history: `feat: ...`, `feat(cli): ...`, `chore(web): ...`. Keep scopes tied to the workspace you changed. PRs should include a short summary, touched areas (`cli`, `web`, or both), validation commands, linked issues, and screenshots for UI updates.
+
+## Security & Configuration Tips
+
+Never commit API keys, `.env*`, or user config. The CLI stores local config in `~/.tokens-burned/`; set `TOKENS_BURNED_DEV=1` when you need a separate dev config file. Read `web/AGENTS.md` before making significant Next.js changes.
