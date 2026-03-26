@@ -13,15 +13,15 @@ const passwordSchema = z
 
 export const loginSchema = z.object({
   email: emailSchema,
-  password: passwordSchema,
+  password: passwordSchema.min(8, "Password must be at least 8 characters."),
 });
 
 export const registerSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "Name is required.")
-    .max(100, "Name is too long."),
+    .min(2, "Name must be at least 2 characters.")
+    .max(50, "Name is too long."),
   email: emailSchema,
   password: passwordSchema.min(8, "Password must be at least 8 characters."),
 });

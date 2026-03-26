@@ -38,6 +38,20 @@ describe("loginSchema", () => {
       );
     }
   });
+
+  it("rejects short passwords", () => {
+    const result = loginSchema.safeParse({
+      email: "user@example.com",
+      password: "short",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.password).toContain(
+        "Password must be at least 8 characters.",
+      );
+    }
+  });
 });
 
 describe("registerSchema", () => {
@@ -61,9 +75,29 @@ describe("registerSchema", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.flatten().fieldErrors.name).toContain(
-        "Name is required.",
+        "Name must be at least 2 characters.",
       );
     }
+  });
+
+  it("rejects one-character names", () => {
+    const result = registerSchema.safeParse({
+      name: "Q",
+      email: "user@example.com",
+      password: "password123",
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects names longer than 50 characters", () => {
+    const result = registerSchema.safeParse({
+      name: "a".repeat(51),
+      email: "user@example.com",
+      password: "password123",
+    });
+
+    expect(result.success).toBe(false);
   });
 
   it("rejects short password", () => {
