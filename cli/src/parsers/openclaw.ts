@@ -154,6 +154,7 @@ class OpenClawParser implements IParser {
                   "completionTokens",
                   "completion_tokens",
                 ),
+                reasoningTokens: 0,
                 cachedTokens: getTokens(
                   usage,
                   "cacheRead",

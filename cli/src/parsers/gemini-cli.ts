@@ -122,6 +122,7 @@ class GeminiCliParser implements IParser {
             timestamp: ts,
             inputTokens: (tokens.input || 0) - cached,
             outputTokens: (tokens.output || 0) + thoughts,
+            reasoningTokens: thoughts,
             cachedTokens: cached,
           });
         } else if (usage) {
@@ -137,6 +138,7 @@ class GeminiCliParser implements IParser {
             outputTokens:
               (usage.candidatesTokenCount || usage.output_tokens || 0) +
               thoughts,
+            reasoningTokens: thoughts,
             cachedTokens: cached,
           });
         }

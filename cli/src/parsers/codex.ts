@@ -169,6 +169,7 @@ class CodexParser implements IParser {
             info.model || payload.model || turnContextModel || sessionModel;
 
           const cachedInput = usage.cached_input_tokens || 0;
+          const reasoningTokens = usage.reasoning_output_tokens || 0;
 
           entries.push({
             source: "codex",
@@ -177,6 +178,7 @@ class CodexParser implements IParser {
             timestamp,
             inputTokens: (usage.input_tokens || 0) - cachedInput,
             outputTokens: usage.output_tokens || 0,
+            reasoningTokens,
             cachedTokens: cachedInput,
           });
         } catch {}

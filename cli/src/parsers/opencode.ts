@@ -143,6 +143,7 @@ class OpenCodeParser implements IParser {
         timestamp,
         inputTokens: tokens.input || 0,
         outputTokens: (tokens.output || 0) + (tokens.reasoning || 0),
+        reasoningTokens: tokens.reasoning || 0,
         cachedTokens: tokens.cache?.read || 0,
       });
     }
@@ -213,6 +214,7 @@ class OpenCodeParser implements IParser {
           timestamp,
           inputTokens: tokens.input || 0,
           outputTokens: (tokens.output || 0) + (tokens.reasoning || 0),
+          reasoningTokens: tokens.reasoning || 0,
           cachedTokens: tokens.cache?.read || 0,
         });
       }

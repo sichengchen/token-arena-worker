@@ -30,6 +30,7 @@ export function aggregateToBuckets(entries: TokenUsageEntry[]): TokenBucket[] {
         hostname: host,
         inputTokens: 0,
         outputTokens: 0,
+        reasoningTokens: 0,
         cachedTokens: 0,
         totalTokens: 0,
       });
@@ -39,6 +40,7 @@ export function aggregateToBuckets(entries: TokenUsageEntry[]): TokenBucket[] {
     if (!b) continue;
     b.inputTokens += e.inputTokens || 0;
     b.outputTokens += e.outputTokens || 0;
+    b.reasoningTokens += e.reasoningTokens || 0;
     b.cachedTokens += e.cachedTokens || 0;
     b.totalTokens +=
       (e.inputTokens || 0) + (e.outputTokens || 0) + (e.cachedTokens || 0);

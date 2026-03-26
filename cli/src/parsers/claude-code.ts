@@ -97,6 +97,7 @@ class ClaudeCodeParser implements IParser {
             timestamp: ts,
             inputTokens: usage.input_tokens || 0,
             outputTokens: usage.output_tokens || 0,
+            reasoningTokens: 0,
             cachedTokens: usage.cache_read_input_tokens || 0,
           });
         } catch {}

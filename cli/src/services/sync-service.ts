@@ -69,6 +69,7 @@ function toUploadBuckets(
     if (existing) {
       existing.inputTokens += bucket.inputTokens;
       existing.outputTokens += bucket.outputTokens;
+      existing.reasoningTokens += bucket.reasoningTokens || 0;
       existing.cachedTokens += bucket.cachedTokens || 0;
       existing.totalTokens += bucket.totalTokens;
       continue;
@@ -84,6 +85,7 @@ function toUploadBuckets(
       hostname: device.hostname,
       inputTokens: bucket.inputTokens,
       outputTokens: bucket.outputTokens,
+      reasoningTokens: bucket.reasoningTokens || 0,
       cachedTokens: bucket.cachedTokens || 0,
       totalTokens: bucket.totalTokens,
     });

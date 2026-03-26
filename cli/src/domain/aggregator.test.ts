@@ -11,11 +11,14 @@ describe("aggregateToBuckets", () => {
         project: "tokens-burned",
         timestamp: new Date("2026-03-26T10:00:00.000Z"),
         inputTokens: 100,
-        outputTokens: 50,
+        outputTokens: 60,
         cachedTokens: 25,
+        reasoningTokens: 10,
       },
     ]);
 
-    expect(bucket.totalTokens).toBe(175);
+    expect(bucket.outputTokens).toBe(60);
+    expect(bucket.reasoningTokens).toBe(10);
+    expect(bucket.totalTokens).toBe(185);
   });
 });

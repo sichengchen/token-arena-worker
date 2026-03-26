@@ -8,6 +8,7 @@ export interface TokenUsageEntry {
   timestamp: Date;
   inputTokens: number;
   outputTokens: number;
+  reasoningTokens: number;
   cachedTokens: number;
 }
 
@@ -22,6 +23,7 @@ export interface TokenBucket {
   hostname: string;
   inputTokens: number;
   outputTokens: number;
+  reasoningTokens: number;
   cachedTokens: number;
   totalTokens: number;
 }
@@ -39,6 +41,7 @@ export interface UploadTokenBucket {
   hostname: string;
   inputTokens: number;
   outputTokens: number;
+  reasoningTokens: number;
   cachedTokens: number;
   totalTokens: number;
 }
