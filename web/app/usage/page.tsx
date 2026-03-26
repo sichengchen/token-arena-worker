@@ -1,15 +1,19 @@
 import { redirect } from "next/navigation";
 
+import { AccountMenu } from "@/components/usage/account-menu";
 import { ActivityTrendCard } from "@/components/usage/activity-trend-card";
 import { BreakdownTabs } from "@/components/usage/breakdown-tabs";
 import { EmptyState } from "@/components/usage/empty-state";
 import { FiltersBar } from "@/components/usage/filters-bar";
 import { KpiGrid } from "@/components/usage/kpi-grid";
 import { UsagePageShell } from "@/components/usage/page-shell";
+import { SettingsDialog } from "@/components/usage/settings-dialog";
 import { TokenTrendCard } from "@/components/usage/token-trend-card";
 import { getSessionOrRedirect } from "@/lib/session";
+import { listUsageApiKeys } from "@/lib/usage/api-keys";
 import { dashboardQuerySchema } from "@/lib/usage/contracts";
 import { resolveDashboardRange } from "@/lib/usage/date-range";
+import { formatDateTime } from "@/lib/usage/format";
 import { getUsagePreference } from "@/lib/usage/preferences";
 import {
   getActivityTrend,
@@ -76,6 +80,7 @@ export default async function UsagePage({ searchParams }: UsagePageProps) {
     breakdowns,
     filterOptions,
     lastSyncedAt,
+    keys,
   ] = await Promise.all([
     getOverviewMetrics({ userId: session.user.id, range, filters }),
     getTokenTrend({ userId: session.user.id, range, filters }),
@@ -83,18 +88,36 @@ export default async function UsagePage({ searchParams }: UsagePageProps) {
     getBreakdowns({ userId: session.user.id, range, filters }),
     getFilterOptions(session.user.id),
     getLastSyncedAt(session.user.id),
+    listUsageApiKeys(session.user.id),
   ]);
 
   const hasData =
     overview.totalTokens.current > 0 || overview.sessions.current > 0;
+  const lastSyncedLabel = lastSyncedAt
+    ? formatDateTime(lastSyncedAt, preference.timezone)
+    : "No sync yet";
 
   return (
     <UsagePageShell
-      activePath="/usage"
       title="Overview"
-      description="Track token burn, session activity, and usage breakdowns by device, tool, model, and hashed project."
-      email={session.user.email}
-      timezone={preference.timezone}
+      lastSyncedLabel={lastSyncedLabel}
+      headerActions={
+        <>
+          <SettingsDialog
+            initialTimezone={preference.timezone}
+            initialProjectMode={preference.projectMode}
+            initialKeys={keys.map((key) => ({
+              id: key.id,
+              name: key.name,
+              prefix: key.prefix,
+              status: key.status,
+              lastUsedAt: key.lastUsedAt?.toISOString() ?? null,
+              createdAt: key.createdAt.toISOString(),
+            }))}
+          />
+          <AccountMenu email={session.user.email} />
+        </>
+      }
     >
       <div className="space-y-4">
         <FiltersBar
@@ -106,7 +129,6 @@ export default async function UsagePage({ searchParams }: UsagePageProps) {
           }}
           filters={filters}
           options={filterOptions}
-          lastSyncedAt={lastSyncedAt?.toISOString() ?? null}
         />
 
         {hasData ? (

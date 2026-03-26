@@ -53,19 +53,22 @@ function normalizeDate(value: Date | string) {
 }
 
 export function formatTokenCount(value: number): string {
-  if (value < 1000) {
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? "-" : "";
+
+  if (absValue < 1000) {
     return String(value);
   }
 
-  if (value < 1_000_000) {
-    return `${(value / 1000).toFixed(1)}K`;
+  if (absValue < 1_000_000) {
+    return `${sign}${(absValue / 1000).toFixed(1)}K`;
   }
 
-  if (value < 1_000_000_000) {
-    return `${(value / 1_000_000).toFixed(1)}M`;
+  if (absValue < 1_000_000_000) {
+    return `${sign}${(absValue / 1_000_000).toFixed(1)}M`;
   }
 
-  return `${(value / 1_000_000_000).toFixed(1)}B`;
+  return `${sign}${(absValue / 1_000_000_000).toFixed(1)}B`;
 }
 
 export function formatDuration(seconds: number) {

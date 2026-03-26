@@ -1,15 +1,26 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { type ReactNode, useState } from "react";
+import { type ComponentProps, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+
+type ButtonProps = ComponentProps<typeof Button>;
 
 type LogoutButtonProps = {
   children?: ReactNode;
+  variant?: ButtonProps["variant"];
+  size?: ButtonProps["size"];
+  className?: string;
 };
 
-export function LogoutButton({ children }: LogoutButtonProps) {
+export function LogoutButton({
+  children,
+  variant = "outline",
+  size = "default",
+  className,
+}: LogoutButtonProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 
@@ -28,7 +39,9 @@ export function LogoutButton({ children }: LogoutButtonProps) {
   return (
     <Button
       type="button"
-      variant="outline"
+      variant={variant}
+      size={size}
+      className={cn(className)}
       onClick={handleClick}
       disabled={isPending}
     >

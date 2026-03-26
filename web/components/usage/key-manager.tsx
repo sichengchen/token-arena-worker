@@ -33,11 +33,14 @@ type UsageKeyRecord = {
   createdAt: string;
 };
 
+export type { UsageKeyRecord };
+
 type KeyManagerProps = {
   initialKeys: UsageKeyRecord[];
+  variant?: "page" | "dialog";
 };
 
-export function KeyManager({ initialKeys }: KeyManagerProps) {
+export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
   const [keys, setKeys] = useState(initialKeys);
   const [error, setError] = useState<string | null>(null);
   const [rawKey, setRawKey] = useState<string | null>(null);
@@ -50,6 +53,7 @@ export function KeyManager({ initialKeys }: KeyManagerProps) {
     const active = keys.filter((key) => key.status === "active").length;
     return { total: keys.length, active };
   }, [keys]);
+  const isDialog = variant === "dialog";
 
   const request = async <T,>(
     input: RequestInfo,
@@ -202,7 +206,7 @@ export function KeyManager({ initialKeys }: KeyManagerProps) {
       <Card>
         <CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <CardTitle>CLI API Keys</CardTitle>
+            <CardTitle>{isDialog ? "API Keys" : "CLI API Keys"}</CardTitle>
             <CardDescription>
               Create one key per device or workflow, then disable or delete it
               without affecting the rest.
@@ -211,7 +215,11 @@ export function KeyManager({ initialKeys }: KeyManagerProps) {
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <Badge variant="outline">{summary.total} total</Badge>
             <Badge variant="secondary">{summary.active} active</Badge>
-            <Button type="button" onClick={() => setIsCreateOpen(true)}>
+            <Button
+              type="button"
+              size={isDialog ? "sm" : "default"}
+              onClick={() => setIsCreateOpen(true)}
+            >
               <Plus />
               Create key
             </Button>
@@ -241,7 +249,7 @@ export function KeyManager({ initialKeys }: KeyManagerProps) {
             </Alert>
           ) : null}
 
-          <Table>
+          <Table className={isDialog ? "min-w-[760px]" : undefined}>
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
