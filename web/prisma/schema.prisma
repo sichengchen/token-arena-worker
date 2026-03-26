@@ -144,6 +144,7 @@ model UsageBucket {
   bucketStart  DateTime
   inputTokens  Int
   outputTokens Int
+  reasoningTokens Int @default(0)
   cachedTokens Int
   totalTokens  Int
   createdAt    DateTime @default(now())

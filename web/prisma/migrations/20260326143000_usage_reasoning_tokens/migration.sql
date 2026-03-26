@@ -1,0 +1,2 @@
+ALTER TABLE "UsageBucket"
+ADD COLUMN "reasoningTokens" INTEGER NOT NULL DEFAULT 0;

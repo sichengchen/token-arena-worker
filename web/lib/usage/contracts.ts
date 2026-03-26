@@ -10,6 +10,19 @@ export const projectModeSchema = z.enum(projectModes);
 export const usageApiKeyStatusSchema = z.enum(usageApiKeyStatuses);
 export const dashboardPresetSchema = z.enum(dashboardPresets);
 
+const dashboardDateParamSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .refine(
+    (value) =>
+      /^\d{4}-\d{2}-\d{2}$/.test(value) ||
+      !Number.isNaN(new Date(value).getTime()),
+    {
+      message: "Invalid date value.",
+    },
+  );
+
 export const usageSettingsSchema = z.object({
   schemaVersion: z.literal(schemaVersion),
   projectMode: projectModeSchema,
@@ -25,6 +38,7 @@ export const ingestBucketSchema = z.object({
   bucketStart: z.string().datetime(),
   inputTokens: z.number().int().nonnegative(),
   outputTokens: z.number().int().nonnegative(),
+  reasoningTokens: z.number().int().nonnegative(),
   cachedTokens: z.number().int().nonnegative(),
   totalTokens: z.number().int().nonnegative(),
 });
@@ -55,8 +69,8 @@ export const ingestRequestSchema = z.object({
 export const dashboardQuerySchema = z
   .object({
     preset: dashboardPresetSchema.optional(),
-    from: z.string().datetime().optional(),
-    to: z.string().datetime().optional(),
+    from: dashboardDateParamSchema.optional(),
+    to: dashboardDateParamSchema.optional(),
     apiKeyId: z.string().trim().min(1).optional(),
     deviceId: z.string().trim().min(1).optional(),
     source: z.string().trim().min(1).optional(),
