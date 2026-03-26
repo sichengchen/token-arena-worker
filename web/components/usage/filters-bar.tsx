@@ -98,9 +98,9 @@ function FilterSelectField({
   children,
 }: FilterSelectFieldProps) {
   return (
-    <div className="rounded-xl border bg-muted/20 p-3">
-      <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
-        <FilterIcon type={icon} className="size-3.5" />
+    <div className="grid gap-1.5 py-2 sm:grid-cols-[104px_minmax(0,1fr)] sm:items-center sm:gap-3">
+      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+        <FilterIcon type={icon} className="size-4" />
         <span>{label}</span>
       </div>
       <Select value={value} onValueChange={onValueChange}>
@@ -285,7 +285,7 @@ export function FiltersBar({
             </PopoverTrigger>
             <PopoverContent
               align="start"
-              className="w-[min(92vw,560px)] p-4"
+              className="w-[min(92vw,440px)] p-3.5"
               onInteractOutside={(event) => {
                 const target = event.target;
 
@@ -297,10 +297,10 @@ export function FiltersBar({
                 }
               }}
             >
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div className="font-medium">Filters</div>
 
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="space-y-0.5">
                   <FilterSelectField
                     label="Keys"
                     icon="key"
@@ -317,7 +317,6 @@ export function FiltersBar({
                       ))}
                     </SelectContent>
                   </FilterSelectField>
-
                   <FilterSelectField
                     label="Devices"
                     icon="device"
@@ -334,7 +333,6 @@ export function FiltersBar({
                       ))}
                     </SelectContent>
                   </FilterSelectField>
-
                   <FilterSelectField
                     label="Tools"
                     icon="tool"
@@ -351,7 +349,6 @@ export function FiltersBar({
                       ))}
                     </SelectContent>
                   </FilterSelectField>
-
                   <FilterSelectField
                     label="Models"
                     icon="model"
@@ -368,7 +365,6 @@ export function FiltersBar({
                       ))}
                     </SelectContent>
                   </FilterSelectField>
-
                   <FilterSelectField
                     label="Projects"
                     icon="project"
