@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDuration, formatTokenCount } from "@/lib/usage/format";
 import type { UsageOverviewMetrics } from "@/lib/usage/types";
+import { cn } from "@/lib/utils";
 
 type KpiGridProps = {
   overview: UsageOverviewMetrics;
@@ -26,9 +27,15 @@ const kpis: KpiConfig[] = [
   { key: "userMessages", labelKey: "userMessages", kind: "count" },
 ];
 
-function formatMetricValue(value: number, kind: KpiConfig["kind"]) {
+type DeltaTone = "positive" | "negative" | "neutral";
+
+function formatMetricValue(
+  value: number,
+  kind: KpiConfig["kind"],
+  options?: { compact?: boolean },
+) {
   if (kind === "duration") {
-    return formatDuration(value);
+    return formatDuration(value, options);
   }
 
   return formatTokenCount(value);
@@ -36,7 +43,30 @@ function formatMetricValue(value: number, kind: KpiConfig["kind"]) {
 
 function formatDelta(value: number, kind: KpiConfig["kind"]) {
   const prefix = value > 0 ? "+" : "";
-  return `${prefix}${formatMetricValue(value, kind)}`;
+  return `${prefix}${formatMetricValue(value, kind, { compact: true })}`;
+}
+
+function getDeltaTone(value: number): DeltaTone {
+  if (value > 0) {
+    return "positive";
+  }
+
+  if (value < 0) {
+    return "negative";
+  }
+
+  return "neutral";
+}
+
+function getDeltaToneClasses(tone: DeltaTone) {
+  switch (tone) {
+    case "positive":
+      return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
+    case "negative":
+      return "bg-rose-500/10 text-rose-700 dark:text-rose-400";
+    default:
+      return "bg-muted text-muted-foreground";
+  }
 }
 
 export async function KpiGrid({ overview }: KpiGridProps) {
@@ -46,21 +76,36 @@ export async function KpiGrid({ overview }: KpiGridProps) {
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
       {kpis.map((kpi) => {
         const metric = overview[kpi.key];
+        const currentValue = formatMetricValue(metric.current, kpi.kind);
+        const previousValue = formatMetricValue(metric.previous, kpi.kind);
+        const deltaValue = formatDelta(metric.delta, kpi.kind);
+        const deltaDescription = t("deltaVsPrevious", {
+          delta: deltaValue,
+          previous: previousValue,
+        });
+        const deltaTone = getDeltaTone(metric.delta);
 
         return (
           <Card key={kpi.key} size="sm">
             <CardHeader>
-              <CardTitle>{t(kpi.labelKey)}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="text-2xl font-semibold tracking-tight">
-                {formatMetricValue(metric.current, kpi.kind)}
+              <div className="flex items-center justify-between gap-2">
+                <CardTitle>{t(kpi.labelKey)}</CardTitle>
+                <span className="sr-only">{deltaDescription}</span>
+                <span
+                  data-delta-tone={deltaTone}
+                  title={deltaDescription}
+                  className={cn(
+                    "inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[0.65rem] leading-none font-medium",
+                    getDeltaToneClasses(deltaTone),
+                  )}
+                >
+                  {deltaValue}
+                </span>
               </div>
-              <div className="text-xs text-muted-foreground">
-                {t("deltaVsPrevious", {
-                  delta: formatDelta(metric.delta, kpi.kind),
-                  previous: formatMetricValue(metric.previous, kpi.kind),
-                })}
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-semibold tracking-tight">
+                {currentValue}
               </div>
             </CardContent>
           </Card>

@@ -85,7 +85,10 @@ export function formatTokenCount(value: number): string {
   return `${sign}${(absValue / 1_000_000_000).toFixed(1)}B`;
 }
 
-export function formatDuration(seconds: number) {
+export function formatDuration(
+  seconds: number,
+  options?: { compact?: boolean },
+) {
   if (seconds <= 0) {
     return "0s";
   }
@@ -101,7 +104,11 @@ export function formatDuration(seconds: number) {
     return `${minutes}m`;
   }
 
-  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  if (minutes === 0) {
+    return `${hours}h`;
+  }
+
+  return options?.compact ? `${hours}h${minutes}m` : `${hours}h ${minutes}m`;
 }
 
 export function formatPercentage(value: number, locale = "en") {

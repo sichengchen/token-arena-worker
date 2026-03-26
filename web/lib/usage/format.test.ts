@@ -22,6 +22,12 @@ describe("usage format helpers", () => {
     expect(formatDuration(42)).toBe("42s");
   });
 
+  it("formats compact durations for dense delta badges", () => {
+    expect(formatDuration(24300, { compact: true })).toBe("6h45m");
+    expect(formatDuration(3665, { compact: true })).toBe("1h1m");
+    expect(formatDuration(42, { compact: true })).toBe("42s");
+  });
+
   it("formats percentages for shares", () => {
     expect(formatPercentage(0.256)).toBe("25.6%");
   });
