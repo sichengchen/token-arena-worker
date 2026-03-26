@@ -1,8 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ComponentProps, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ export function LogoutButton({
   className,
 }: LogoutButtonProps) {
   const router = useRouter();
+  const t = useTranslations("common");
   const [isPending, setIsPending] = useState(false);
 
   const handleClick = async () => {
@@ -45,7 +47,7 @@ export function LogoutButton({
       onClick={handleClick}
       disabled={isPending}
     >
-      {isPending ? "Signing out..." : (children ?? "Sign out")}
+      {isPending ? t("signingOut") : (children ?? t("signOut"))}
     </Button>
   );
 }

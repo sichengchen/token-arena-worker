@@ -23,6 +23,8 @@ export async function GET() {
   const preference = await getUsagePreference(userId);
 
   return NextResponse.json({
+    locale: preference.locale,
+    theme: preference.theme,
     timezone: preference.timezone,
     projectMode: preference.projectMode,
   });
@@ -39,6 +41,8 @@ export async function PATCH(request: Request) {
   const preference = await updateUsagePreference(userId, body);
 
   return NextResponse.json({
+    locale: preference.locale,
+    theme: preference.theme,
     timezone: preference.timezone,
     projectMode: preference.projectMode,
   });

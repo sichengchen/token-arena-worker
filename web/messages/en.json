@@ -1,0 +1,214 @@
+{
+  "common": {
+    "appName": "Tokens Burned",
+    "language": "Language",
+    "theme": "Theme",
+    "settings": "Settings",
+    "account": "Account",
+    "signOut": "Sign out",
+    "signingOut": "Signing out...",
+    "languages": {
+      "en": "English",
+      "zh": "中文"
+    },
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "auth": {
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password"
+    },
+    "login": {
+      "title": "Welcome back",
+      "description": "Sign in with your email and password.",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "invalidSession": "Your session is invalid or expired. Please sign in again.",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register",
+      "errors": {
+        "default": "Unable to sign in. Please try again.",
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Please enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordTooLong": "Password is too long.",
+        "passwordTooShort": "Password must be at least 8 characters."
+      }
+    },
+    "register": {
+      "title": "Create your account",
+      "description": "Use your email and password to get started.",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "errors": {
+        "default": "Unable to create account. Please try again.",
+        "nameTooShort": "Name must be at least 2 characters.",
+        "nameTooLong": "Name is too long.",
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Please enter a valid email address.",
+        "passwordRequired": "Password is required.",
+        "passwordTooLong": "Password is too long.",
+        "passwordTooShort": "Password must be at least 8 characters."
+      }
+    }
+  },
+  "usage": {
+    "overviewTitle": "Overview",
+    "lastSynced": "Last synced {value}",
+    "noSyncYet": "No sync yet",
+    "settings": {
+      "button": "Settings",
+      "title": "Settings",
+      "description": "Manage preferences and CLI API keys.",
+      "preferencesTitle": "Preferences",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "saveFailed": "Unable to save preferences.",
+      "language": "Language",
+      "theme": "Theme",
+      "timezone": "Timezone",
+      "projectMode": "Project mode",
+      "selectTimezone": "Select timezone",
+      "selectProjectMode": "Select project mode",
+      "projectModes": {
+        "hashed": "Hashed",
+        "raw": "Raw",
+        "disabled": "Disabled"
+      }
+    },
+    "emptyState": {
+      "title": "No usage data yet",
+      "description": "Create a CLI key, configure the CLI once, then run a sync to populate your dashboard.",
+      "step1": "Create or copy a usage API key.",
+      "step2": "Run {command} in the CLI.",
+      "step3": "Paste the key and sync your local usage records.",
+      "openSetupGuide": "Open setup guide",
+      "createFirstKey": "Create your first key",
+      "manageKeys": "Manage keys"
+    },
+    "filters": {
+      "custom": "Custom",
+      "filters": "Filters",
+      "customRangeTitle": "Custom range",
+      "customRangeDescription": "Pick a start and end date in {timezone}.",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "keys": "Keys",
+      "devices": "Devices",
+      "tools": "Tools",
+      "models": "Models",
+      "projects": "Projects",
+      "allKeys": "All keys",
+      "allDevices": "All devices",
+      "allTools": "All tools",
+      "allModels": "All models",
+      "allProjects": "All projects",
+      "reset": "Reset"
+    },
+    "kpis": {
+      "totalTokens": "Total Tokens",
+      "inputTokens": "Input Tokens",
+      "outputTokens": "Output Tokens",
+      "reasoningTokens": "Reasoning Tokens",
+      "cachedTokens": "Cached Tokens",
+      "activeTime": "Active Time",
+      "totalTime": "Total Time",
+      "sessions": "Sessions",
+      "messages": "Messages",
+      "userMessages": "User Messages",
+      "deltaVsPrevious": "{delta} vs previous {previous}"
+    },
+    "trend": {
+      "title": "Daily Trend",
+      "total": "Total",
+      "cache": "Cache",
+      "input": "Input",
+      "output": "Output"
+    },
+    "breakdowns": {
+      "title": "Breakdowns",
+      "tabs": {
+        "devices": "Devices",
+        "tools": "Tools",
+        "models": "Models",
+        "projects": "Projects"
+      },
+      "empty": {
+        "devices": "No device data in this range.",
+        "tools": "No tool data in this range.",
+        "models": "No model data in this range.",
+        "projects": "No project data in this range."
+      },
+      "table": {
+        "name": "Name",
+        "totalTokens": "Total Tokens",
+        "input": "Input",
+        "output": "Output",
+        "cache": "Cache",
+        "activeTime": "Active Time",
+        "sessions": "Sessions",
+        "messages": "Messages",
+        "userMessages": "User Messages",
+        "share": "Share",
+        "reasoning": "Reasoning {value}"
+      }
+    },
+    "accountMenu": {
+      "open": "Open account menu"
+    },
+    "keys": {
+      "pageTitle": "CLI API Keys",
+      "dialogTitle": "API Keys",
+      "total": "{count} total",
+      "active": "{count} active",
+      "createKey": "Create key",
+      "newKey": "New key",
+      "copyShownOnce": "Copy it now. It will only be shown once.",
+      "copyKey": "Copy key",
+      "copyFailed": "Unable to copy the key automatically. Please copy it manually.",
+      "requestFailed": "Request failed.",
+      "updateFailed": "Unable to update the key.",
+      "deleteFailed": "Unable to delete the key.",
+      "createFailed": "Unable to create the key.",
+      "renameFailed": "Unable to rename the key.",
+      "status": {
+        "active": "active",
+        "disabled": "disabled"
+      },
+      "table": {
+        "name": "Name",
+        "prefix": "Prefix",
+        "status": "Status",
+        "lastUsed": "Last Used",
+        "created": "Created",
+        "actions": "Actions",
+        "never": "Never"
+      },
+      "actions": {
+        "rename": "Rename key",
+        "disable": "Disable key",
+        "enable": "Enable key",
+        "delete": "Delete key"
+      },
+      "dialog": {
+        "createTitle": "Create CLI key",
+        "renameTitle": "Rename CLI key",
+        "createDescription": "Give this key a name so you can remember which device or workflow uses it.",
+        "renameDescription": "Update the label shown in the dashboard and settings pages.",
+        "name": "Name",
+        "placeholder": "My MacBook / Work",
+        "saving": "Saving...",
+        "createKey": "Create key",
+        "saveChanges": "Save changes"
+      }
+    }
+  }
+}

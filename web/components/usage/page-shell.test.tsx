@@ -8,7 +8,7 @@ describe("UsagePageShell", () => {
     const markup = renderToStaticMarkup(
       <UsagePageShell
         title="Overview"
-        lastSyncedLabel="Mar 26, 2026, 18:10"
+        lastSyncedText="Last synced Mar 26, 2026, 18:10"
         headerActions={<button type="button">Settings</button>}
       >
         <div>Body</div>

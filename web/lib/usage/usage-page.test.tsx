@@ -15,6 +15,15 @@ const mocks = vi.hoisted(() => ({
   getFilterOptions: vi.fn(),
   getLastSyncedAt: vi.fn(),
   resolveDashboardRange: vi.fn(),
+  getTranslations: vi.fn(
+    async () => (key: string, values?: Record<string, string>) => {
+      if (key === "overviewTitle") return "Overview";
+      if (key === "noSyncYet") return "No sync yet";
+      if (key === "lastSynced")
+        return `Last synced ${values?.value ?? ""}`.trim();
+      return key;
+    },
+  ),
   AccountMenu: vi.fn(() =>
     React.createElement("div", { "data-slot": "account-menu" }),
   ),
@@ -34,6 +43,12 @@ const mocks = vi.hoisted(() => ({
   SettingsDialog: vi.fn(() =>
     React.createElement("div", { "data-slot": "settings-dialog" }),
   ),
+  LanguageSwitcher: vi.fn(() =>
+    React.createElement("div", { "data-slot": "language-switcher" }),
+  ),
+  ThemeSwitcher: vi.fn(() =>
+    React.createElement("div", { "data-slot": "theme-switcher" }),
+  ),
   TokenTrendCard: vi.fn(() =>
     React.createElement("div", { "data-slot": "token-trend-card" }),
   ),
@@ -44,6 +59,10 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("next/navigation", () => ({
   redirect: mocks.redirect,
+}));
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: mocks.getTranslations,
 }));
 
 vi.mock("@/components/usage/account-menu", () => ({
@@ -76,6 +95,14 @@ vi.mock("@/components/usage/page-shell", () => ({
 
 vi.mock("@/components/usage/settings-dialog", () => ({
   SettingsDialog: mocks.SettingsDialog,
+}));
+
+vi.mock("@/components/shared/language-switcher", () => ({
+  LanguageSwitcher: mocks.LanguageSwitcher,
+}));
+
+vi.mock("@/components/shared/theme-switcher", () => ({
+  ThemeSwitcher: mocks.ThemeSwitcher,
 }));
 
 vi.mock("@/components/usage/token-trend-card", () => ({
@@ -118,6 +145,8 @@ describe("UsagePage", () => {
       user: { id: "user_123", email: "user@example.com" },
     });
     mocks.getUsagePreference.mockResolvedValue({
+      locale: "en",
+      theme: "system",
       timezone: "Asia/Shanghai",
       projectMode: "hashed",
     });
@@ -183,10 +212,11 @@ describe("UsagePage", () => {
   });
 
   it("renders the token trend without requesting or rendering the activity trend card", async () => {
-    const { default: UsagePage } = await import("@/app/usage/page");
+    const { default: UsagePage } = await import("@/app/[locale]/usage/page");
 
     const markup = renderToStaticMarkup(
       await UsagePage({
+        params: Promise.resolve({ locale: "en" }),
         searchParams: Promise.resolve({ preset: "7d" }),
       }),
     );

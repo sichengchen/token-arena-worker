@@ -1,0 +1,214 @@
+{
+  "common": {
+    "appName": "Tokens Burned",
+    "language": "语言",
+    "theme": "主题",
+    "settings": "设置",
+    "account": "账户",
+    "signOut": "退出登录",
+    "signingOut": "正在退出...",
+    "languages": {
+      "en": "English",
+      "zh": "中文"
+    },
+    "themes": {
+      "light": "浅色",
+      "dark": "深色",
+      "system": "跟随系统"
+    }
+  },
+  "auth": {
+    "fields": {
+      "name": "名称",
+      "email": "邮箱",
+      "password": "密码"
+    },
+    "login": {
+      "title": "欢迎回来",
+      "description": "使用邮箱和密码登录。",
+      "submit": "登录",
+      "submitting": "登录中...",
+      "invalidSession": "当前会话已失效或过期，请重新登录。",
+      "noAccount": "还没有账号？",
+      "registerLink": "注册",
+      "errors": {
+        "default": "无法登录，请稍后再试。",
+        "emailRequired": "请输入邮箱。",
+        "emailInvalid": "请输入有效的邮箱地址。",
+        "passwordRequired": "请输入密码。",
+        "passwordTooLong": "密码过长。",
+        "passwordTooShort": "密码至少需要 8 个字符。"
+      }
+    },
+    "register": {
+      "title": "创建你的账号",
+      "description": "使用邮箱和密码开始使用。",
+      "submit": "创建账号",
+      "submitting": "创建中...",
+      "haveAccount": "已经有账号？",
+      "signInLink": "登录",
+      "errors": {
+        "default": "无法创建账号，请稍后再试。",
+        "nameTooShort": "名称至少需要 2 个字符。",
+        "nameTooLong": "名称过长。",
+        "emailRequired": "请输入邮箱。",
+        "emailInvalid": "请输入有效的邮箱地址。",
+        "passwordRequired": "请输入密码。",
+        "passwordTooLong": "密码过长。",
+        "passwordTooShort": "密码至少需要 8 个字符。"
+      }
+    }
+  },
+  "usage": {
+    "overviewTitle": "概览",
+    "lastSynced": "上次同步：{value}",
+    "noSyncYet": "还没有同步记录",
+    "settings": {
+      "button": "设置",
+      "title": "设置",
+      "description": "管理偏好设置和 CLI API Key。",
+      "preferencesTitle": "偏好设置",
+      "saving": "保存中...",
+      "saved": "已保存",
+      "saveFailed": "无法保存偏好设置。",
+      "language": "语言",
+      "theme": "主题",
+      "timezone": "时区",
+      "projectMode": "项目模式",
+      "selectTimezone": "选择时区",
+      "selectProjectMode": "选择项目模式",
+      "projectModes": {
+        "hashed": "哈希",
+        "raw": "原始值",
+        "disabled": "禁用"
+      }
+    },
+    "emptyState": {
+      "title": "还没有使用数据",
+      "description": "先创建 CLI Key、完成一次 CLI 配置，然后执行同步来填充仪表盘。",
+      "step1": "创建或复制一个 Usage API Key。",
+      "step2": "在 CLI 中运行 {command}。",
+      "step3": "粘贴密钥并同步本地使用记录。",
+      "openSetupGuide": "打开配置指南",
+      "createFirstKey": "创建第一个 Key",
+      "manageKeys": "管理 Keys"
+    },
+    "filters": {
+      "custom": "自定义",
+      "filters": "筛选",
+      "customRangeTitle": "自定义时间范围",
+      "customRangeDescription": "选择 {timezone} 时区下的开始和结束日期。",
+      "from": "开始",
+      "to": "结束",
+      "apply": "应用",
+      "keys": "Keys",
+      "devices": "设备",
+      "tools": "工具",
+      "models": "模型",
+      "projects": "项目",
+      "allKeys": "全部 Keys",
+      "allDevices": "全部设备",
+      "allTools": "全部工具",
+      "allModels": "全部模型",
+      "allProjects": "全部项目",
+      "reset": "重置"
+    },
+    "kpis": {
+      "totalTokens": "总 Tokens",
+      "inputTokens": "输入 Tokens",
+      "outputTokens": "输出 Tokens",
+      "reasoningTokens": "推理 Tokens",
+      "cachedTokens": "缓存 Tokens",
+      "activeTime": "活跃时长",
+      "totalTime": "总时长",
+      "sessions": "会话数",
+      "messages": "消息数",
+      "userMessages": "用户消息数",
+      "deltaVsPrevious": "{delta}，对比上一周期 {previous}"
+    },
+    "trend": {
+      "title": "每日趋势",
+      "total": "总计",
+      "cache": "缓存",
+      "input": "输入",
+      "output": "输出"
+    },
+    "breakdowns": {
+      "title": "分类明细",
+      "tabs": {
+        "devices": "设备",
+        "tools": "工具",
+        "models": "模型",
+        "projects": "项目"
+      },
+      "empty": {
+        "devices": "这个时间范围内没有设备数据。",
+        "tools": "这个时间范围内没有工具数据。",
+        "models": "这个时间范围内没有模型数据。",
+        "projects": "这个时间范围内没有项目数据。"
+      },
+      "table": {
+        "name": "名称",
+        "totalTokens": "总 Tokens",
+        "input": "输入",
+        "output": "输出",
+        "cache": "缓存",
+        "activeTime": "活跃时长",
+        "sessions": "会话数",
+        "messages": "消息数",
+        "userMessages": "用户消息数",
+        "share": "占比",
+        "reasoning": "推理 {value}"
+      }
+    },
+    "accountMenu": {
+      "open": "打开账户菜单"
+    },
+    "keys": {
+      "pageTitle": "CLI API Keys",
+      "dialogTitle": "API Keys",
+      "total": "共 {count} 个",
+      "active": "启用 {count} 个",
+      "createKey": "创建 Key",
+      "newKey": "新 Key",
+      "copyShownOnce": "请立即复制，这个 Key 只会显示一次。",
+      "copyKey": "复制 Key",
+      "copyFailed": "无法自动复制，请手动复制该 Key。",
+      "requestFailed": "请求失败。",
+      "updateFailed": "无法更新该 Key。",
+      "deleteFailed": "无法删除该 Key。",
+      "createFailed": "无法创建该 Key。",
+      "renameFailed": "无法重命名该 Key。",
+      "status": {
+        "active": "启用",
+        "disabled": "停用"
+      },
+      "table": {
+        "name": "名称",
+        "prefix": "前缀",
+        "status": "状态",
+        "lastUsed": "最后使用",
+        "created": "创建时间",
+        "actions": "操作",
+        "never": "从未"
+      },
+      "actions": {
+        "rename": "重命名 Key",
+        "disable": "停用 Key",
+        "enable": "启用 Key",
+        "delete": "删除 Key"
+      },
+      "dialog": {
+        "createTitle": "创建 CLI Key",
+        "renameTitle": "重命名 CLI Key",
+        "createDescription": "给这个 Key 起个名字，方便记住它对应的设备或工作流。",
+        "renameDescription": "更新它在仪表盘和设置页面中的显示名称。",
+        "name": "名称",
+        "placeholder": "我的 MacBook / 工作",
+        "saving": "保存中...",
+        "createKey": "创建 Key",
+        "saveChanges": "保存修改"
+      }
+    }
+  }
+}

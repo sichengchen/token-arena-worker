@@ -1,5 +1,9 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { AccountMenu } from "@/components/usage/account-menu";
 import { BreakdownTabs } from "@/components/usage/breakdown-tabs";
 import { EmptyState } from "@/components/usage/empty-state";
@@ -24,8 +28,22 @@ import {
 import type { UsageFilters } from "@/lib/usage/types";
 
 type UsagePageProps = {
+  params: Promise<{ locale: string }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "usage" });
+
+  return {
+    title: `${t("overviewTitle")} | Tokens Burned`,
+  };
+}
 
 function firstValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -33,6 +51,7 @@ function firstValue(value: string | string[] | undefined) {
 
 function resolveQueryParams(
   params: Record<string, string | string[] | undefined>,
+  locale: string,
 ) {
   const parsed = dashboardQuerySchema.safeParse({
     preset: firstValue(params.preset),
@@ -46,16 +65,21 @@ function resolveQueryParams(
   });
 
   if (!parsed.success) {
-    redirect("/usage");
+    redirect(`/${locale}/usage`);
   }
 
   return parsed.data;
 }
 
-export default async function UsagePage({ searchParams }: UsagePageProps) {
-  const session = await getSessionOrRedirect();
+export default async function UsagePage({
+  params,
+  searchParams,
+}: UsagePageProps) {
+  const { locale } = await params;
+  const session = await getSessionOrRedirect(locale);
+  const t = await getTranslations({ locale, namespace: "usage" });
   const resolvedSearchParams = (searchParams ? await searchParams : {}) ?? {};
-  const query = resolveQueryParams(resolvedSearchParams);
+  const query = resolveQueryParams(resolvedSearchParams, locale);
   const preference = await getUsagePreference(session.user.id);
   const range = resolveDashboardRange({
     preset: query.preset,
@@ -83,17 +107,23 @@ export default async function UsagePage({ searchParams }: UsagePageProps) {
 
   const hasData =
     overview.totalTokens.current > 0 || overview.sessions.current > 0;
-  const lastSyncedLabel = lastSyncedAt
-    ? formatDateTime(lastSyncedAt, preference.timezone)
-    : "No sync yet";
+  const lastSyncedText = lastSyncedAt
+    ? t("lastSynced", {
+        value: formatDateTime(lastSyncedAt, preference.timezone, locale),
+      })
+    : t("noSyncYet");
 
   return (
     <UsagePageShell
-      title="Overview"
-      lastSyncedLabel={lastSyncedLabel}
+      title={t("overviewTitle")}
+      lastSyncedText={lastSyncedText}
       headerActions={
         <>
+          <LanguageSwitcher authenticated />
+          <ThemeSwitcher authenticated />
           <SettingsDialog
+            initialLocale={preference.locale}
+            initialTheme={preference.theme}
             initialTimezone={preference.timezone}
             initialProjectMode={preference.projectMode}
             initialKeys={keys.map((key) => ({

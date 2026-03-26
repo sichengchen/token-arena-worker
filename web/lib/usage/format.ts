@@ -1,11 +1,6 @@
-const percentageFormatter = new Intl.NumberFormat("en-US", {
-  style: "percent",
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1,
-});
-
 const datePartsFormatterCache = new Map<string, Intl.DateTimeFormat>();
 const dateTimeFormatterCache = new Map<string, Intl.DateTimeFormat>();
+const percentageFormatterCache = new Map<string, Intl.NumberFormat>();
 
 function getDatePartsFormatter(timezone: string) {
   const cached = datePartsFormatterCache.get(timezone);
@@ -26,14 +21,15 @@ function getDatePartsFormatter(timezone: string) {
   return formatter;
 }
 
-function getDateTimeFormatter(timezone: string) {
-  const cached = dateTimeFormatterCache.get(timezone);
+function getDateTimeFormatter(timezone: string, locale = "en") {
+  const cacheKey = `${locale}:${timezone}`;
+  const cached = dateTimeFormatterCache.get(cacheKey);
 
   if (cached) {
     return cached;
   }
 
-  const formatter = new Intl.DateTimeFormat("en-US", {
+  const formatter = new Intl.DateTimeFormat(locale, {
     timeZone: timezone,
     year: "numeric",
     month: "short",
@@ -43,7 +39,25 @@ function getDateTimeFormatter(timezone: string) {
     hourCycle: "h23",
   });
 
-  dateTimeFormatterCache.set(timezone, formatter);
+  dateTimeFormatterCache.set(cacheKey, formatter);
+
+  return formatter;
+}
+
+function getPercentageFormatter(locale = "en") {
+  const cached = percentageFormatterCache.get(locale);
+
+  if (cached) {
+    return cached;
+  }
+
+  const formatter = new Intl.NumberFormat(locale, {
+    style: "percent",
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+
+  percentageFormatterCache.set(locale, formatter);
 
   return formatter;
 }
@@ -90,14 +104,18 @@ export function formatDuration(seconds: number) {
   return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
 }
 
-export function formatPercentage(value: number) {
-  return percentageFormatter.format(value);
+export function formatPercentage(value: number, locale = "en") {
+  return getPercentageFormatter(locale).format(value);
 }
 
 export function formatDateInput(value: Date | string, timezone: string) {
   return getDatePartsFormatter(timezone).format(normalizeDate(value));
 }
 
-export function formatDateTime(value: Date | string, timezone: string) {
-  return getDateTimeFormatter(timezone).format(normalizeDate(value));
+export function formatDateTime(
+  value: Date | string,
+  timezone: string,
+  locale = "en",
+) {
+  return getDateTimeFormatter(timezone, locale).format(normalizeDate(value));
 }

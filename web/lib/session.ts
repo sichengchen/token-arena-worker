@@ -6,11 +6,11 @@ export async function getOptionalSession() {
   return auth.api.getSession({ headers: await headers() });
 }
 
-export async function getSessionOrRedirect() {
+export async function getSessionOrRedirect(locale?: string) {
   const session = await getOptionalSession();
 
   if (!session) {
-    redirect("/login?invalid=1");
+    redirect(locale ? `/${locale}/login?invalid=1` : "/login?invalid=1");
   }
 
   return session;

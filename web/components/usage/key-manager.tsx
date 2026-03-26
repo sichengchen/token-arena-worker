@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, Pencil, Plus, Power, Trash2 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -37,6 +38,8 @@ type KeyManagerProps = {
 };
 
 export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
+  const t = useTranslations("usage.keys");
+  const locale = useLocale();
   const [keys, setKeys] = useState(initialKeys);
   const [error, setError] = useState<string | null>(null);
   const [rawKey, setRawKey] = useState<string | null>(null);
@@ -62,7 +65,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
     const payload = await response.json();
 
     if (!response.ok) {
-      throw new Error(payload.error ?? "Request failed.");
+      throw new Error(payload.error ?? t("requestFailed"));
     }
 
     return payload as T;
@@ -76,9 +79,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
     try {
       await navigator.clipboard.writeText(rawKey);
     } catch {
-      setError(
-        "Unable to copy the key automatically. Please copy it manually.",
-      );
+      setError(t("copyFailed"));
     }
   };
 
@@ -104,7 +105,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Unable to update the key.",
+          : t("updateFailed"),
       );
     } finally {
       setPendingKeyId(null);
@@ -125,7 +126,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Unable to delete the key.",
+          : t("deleteFailed"),
       );
     } finally {
       setPendingKeyId(null);
@@ -152,7 +153,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Unable to create the key.",
+          : t("createFailed"),
       );
     } finally {
       setIsDialogPending(false);
@@ -186,7 +187,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Unable to rename the key.",
+          : t("renameFailed"),
       );
     } finally {
       setIsDialogPending(false);
@@ -194,7 +195,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
   };
 
   const formatTimestamp = (value: string | null) =>
-    value ? new Date(value).toLocaleString() : "Never";
+    value ? new Date(value).toLocaleString(locale) : t("table.never");
 
   return (
     <>
@@ -203,19 +204,19 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
         className="gap-0 bg-background/90 shadow-sm ring-1 ring-border/60"
       >
         <CardHeader className="flex flex-wrap items-center gap-2 border-b border-border/50 pb-2">
-          <CardTitle>{isDialog ? "API Keys" : "CLI API Keys"}</CardTitle>
+          <CardTitle>{isDialog ? t("dialogTitle") : t("pageTitle")}</CardTitle>
           <div className="flex flex-wrap items-center gap-1.5 sm:ml-1.5">
             <Badge
               variant="outline"
               className="border-border/70 bg-background/70 text-muted-foreground"
             >
-              {summary.total} total
+              {t("total", { count: summary.total })}
             </Badge>
             <Badge
               variant="secondary"
               className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
             >
-              {summary.active} active
+              {t("active", { count: summary.active })}
             </Badge>
           </div>
           <Button
@@ -225,7 +226,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
             onClick={() => setIsCreateOpen(true)}
           >
             <Plus />
-            Create key
+            {t("createKey")}
           </Button>
         </CardHeader>
         <CardContent className="space-y-3 pt-3">
@@ -239,15 +240,17 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
             <Alert className="border-amber-500/20 bg-amber-500/5">
               <AlertDescription className="space-y-3">
                 <div className="space-y-1">
-                  <div className="font-medium text-foreground">New key</div>
-                  <div>Copy it now. It will only be shown once.</div>
+                  <div className="font-medium text-foreground">
+                    {t("newKey")}
+                  </div>
+                  <div>{t("copyShownOnce")}</div>
                 </div>
                 <code className="block overflow-x-auto rounded-lg border border-border/60 bg-background/90 px-3 py-2 text-xs text-foreground">
                   {rawKey}
                 </code>
                 <Button type="button" variant="outline" onClick={copyRawKey}>
                   <Copy />
-                  Copy key
+                  {t("copyKey")}
                 </Button>
               </AlertDescription>
             </Alert>
@@ -258,22 +261,22 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
               <TableHeader>
                 <TableRow className="border-border/50">
                   <TableHead className="h-8 px-3 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                    Name
+                    {t("table.name")}
                   </TableHead>
                   <TableHead className="h-8 px-3 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                    Prefix
+                    {t("table.prefix")}
                   </TableHead>
                   <TableHead className="h-8 px-3 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                    Status
+                    {t("table.status")}
                   </TableHead>
                   <TableHead className="h-8 px-3 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                    Last Used
+                    {t("table.lastUsed")}
                   </TableHead>
                   <TableHead className="h-8 px-3 text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                    Created
+                    {t("table.created")}
                   </TableHead>
                   <TableHead className="h-8 px-3 text-right text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                    Actions
+                    {t("table.actions")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -299,7 +302,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                             : "border-border/70 text-muted-foreground"
                         }
                       >
-                        {key.status}
+                        {t(`status.${key.status}`)}
                       </Badge>
                     </TableCell>
                     <TableCell className="px-3 py-2.5 text-muted-foreground">
@@ -314,13 +317,13 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                           type="button"
                           variant="ghost"
                           size="icon-sm"
-                          title="Rename key"
-                          aria-label="Rename key"
+                          title={t("actions.rename")}
+                          aria-label={t("actions.rename")}
                           onClick={() => setRenameTarget(key)}
                           disabled={pendingKeyId === key.id}
                         >
                           <Pencil />
-                          <span className="sr-only">Rename key</span>
+                          <span className="sr-only">{t("actions.rename")}</span>
                         </Button>
                         <Button
                           type="button"
@@ -328,13 +331,13 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                           size="icon-sm"
                           title={
                             key.status === "active"
-                              ? "Disable key"
-                              : "Enable key"
+                              ? t("actions.disable")
+                              : t("actions.enable")
                           }
                           aria-label={
                             key.status === "active"
-                              ? "Disable key"
-                              : "Enable key"
+                              ? t("actions.disable")
+                              : t("actions.enable")
                           }
                           onClick={() => toggleStatus(key)}
                           disabled={pendingKeyId === key.id}
@@ -342,22 +345,22 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                           <Power />
                           <span className="sr-only">
                             {key.status === "active"
-                              ? "Disable key"
-                              : "Enable key"}
+                              ? t("actions.disable")
+                              : t("actions.enable")}
                           </span>
                         </Button>
                         <Button
                           type="button"
                           variant="ghost"
                           size="icon-sm"
-                          title="Delete key"
-                          aria-label="Delete key"
+                          title={t("actions.delete")}
+                          aria-label={t("actions.delete")}
                           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                           onClick={() => deleteKey(key)}
                           disabled={pendingKeyId === key.id}
                         >
                           <Trash2 />
-                          <span className="sr-only">Delete key</span>
+                          <span className="sr-only">{t("actions.delete")}</span>
                         </Button>
                       </div>
                     </TableCell>

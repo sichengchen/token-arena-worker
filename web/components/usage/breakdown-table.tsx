@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import {
   Table,
   TableBody,
@@ -21,6 +22,9 @@ type BreakdownTableProps = {
 };
 
 export function BreakdownTable({ rows, emptyLabel }: BreakdownTableProps) {
+  const locale = useLocale();
+  const t = useTranslations("usage.breakdowns.table");
+
   if (rows.length === 0) {
     return (
       <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
@@ -33,16 +37,16 @@ export function BreakdownTable({ rows, emptyLabel }: BreakdownTableProps) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Total Tokens</TableHead>
-          <TableHead>Input</TableHead>
-          <TableHead>Output</TableHead>
-          <TableHead>Cache</TableHead>
-          <TableHead>Active Time</TableHead>
-          <TableHead>Sessions</TableHead>
-          <TableHead>Messages</TableHead>
-          <TableHead>User Messages</TableHead>
-          <TableHead>Share</TableHead>
+          <TableHead>{t("name")}</TableHead>
+          <TableHead>{t("totalTokens")}</TableHead>
+          <TableHead>{t("input")}</TableHead>
+          <TableHead>{t("output")}</TableHead>
+          <TableHead>{t("cache")}</TableHead>
+          <TableHead>{t("activeTime")}</TableHead>
+          <TableHead>{t("sessions")}</TableHead>
+          <TableHead>{t("messages")}</TableHead>
+          <TableHead>{t("userMessages")}</TableHead>
+          <TableHead>{t("share")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -56,7 +60,9 @@ export function BreakdownTable({ rows, emptyLabel }: BreakdownTableProps) {
             <TableCell>
               <div>{formatTokenCount(row.outputTokens)}</div>
               <div className="text-xs text-muted-foreground">
-                Reasoning {formatTokenCount(row.reasoningTokens)}
+                {t("reasoning", {
+                  value: formatTokenCount(row.reasoningTokens),
+                })}
               </div>
             </TableCell>
             <TableCell>{formatTokenCount(row.cachedTokens)}</TableCell>
@@ -64,7 +70,7 @@ export function BreakdownTable({ rows, emptyLabel }: BreakdownTableProps) {
             <TableCell>{formatTokenCount(row.sessions)}</TableCell>
             <TableCell>{formatTokenCount(row.messages)}</TableCell>
             <TableCell>{formatTokenCount(row.userMessages)}</TableCell>
-            <TableCell>{formatPercentage(row.share)}</TableCell>
+            <TableCell>{formatPercentage(row.share, locale)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -1,9 +1,20 @@
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Area, Bar, Legend } from "recharts";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { TokenTrendCard, TokenTrendTooltipContent } from "./token-trend-card";
+
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) =>
+    ({
+      title: "Daily Trend",
+      total: "Total",
+      cache: "Cache",
+      input: "Input",
+      output: "Output",
+    })[key] ?? key,
+}));
 
 function collectElements(node: ReactNode): Array<{
   type: unknown;

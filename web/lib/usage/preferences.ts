@@ -1,6 +1,8 @@
 import { randomBytes } from "node:crypto";
 
+import type { AppLocale } from "@/lib/i18n";
 import { prisma } from "@/lib/prisma";
+import type { ThemeMode } from "@/lib/theme";
 import type { ProjectMode } from "./types";
 
 type UsagePreferenceClient = Pick<typeof prisma, "usagePreference">;
@@ -59,6 +61,8 @@ export async function getUsagePreference(userId: string) {
 export async function updateUsagePreference(
   userId: string,
   input: {
+    locale?: AppLocale;
+    theme?: ThemeMode;
     timezone?: string;
     projectMode?: ProjectMode;
   },
@@ -68,6 +72,8 @@ export async function updateUsagePreference(
   return prisma.usagePreference.update({
     where: { userId },
     data: {
+      locale: input.locale,
+      theme: input.theme,
       timezone: input.timezone,
       projectMode: input.projectMode,
     },

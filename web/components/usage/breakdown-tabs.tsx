@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { UsageBreakdowns } from "@/lib/usage/types";
@@ -12,34 +13,36 @@ type BreakdownTabsProps = {
 const tabs = [
   {
     value: "devices",
-    label: "Devices",
-    emptyLabel: "No device data in this range.",
+    labelKey: "devices",
+    emptyLabelKey: "devices",
   },
-  { value: "tools", label: "Tools", emptyLabel: "No tool data in this range." },
+  { value: "tools", labelKey: "tools", emptyLabelKey: "tools" },
   {
     value: "models",
-    label: "Models",
-    emptyLabel: "No model data in this range.",
+    labelKey: "models",
+    emptyLabelKey: "models",
   },
   {
     value: "projects",
-    label: "Projects",
-    emptyLabel: "No project data in this range.",
+    labelKey: "projects",
+    emptyLabelKey: "projects",
   },
 ] as const;
 
 export function BreakdownTabs({ breakdowns }: BreakdownTabsProps) {
+  const t = useTranslations("usage.breakdowns");
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Breakdowns</CardTitle>
+        <CardTitle>{t("title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="devices">
           <TabsList variant="line" className="mb-4 flex-wrap">
             {tabs.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value}>
-                {tab.label}
+                {t(`tabs.${tab.labelKey}`)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -48,7 +51,7 @@ export function BreakdownTabs({ breakdowns }: BreakdownTabsProps) {
             <TabsContent key={tab.value} value={tab.value}>
               <BreakdownTable
                 rows={breakdowns[tab.value]}
-                emptyLabel={tab.emptyLabel}
+                emptyLabel={t(`empty.${tab.emptyLabelKey}`)}
               />
             </TabsContent>
           ))}

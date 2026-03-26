@@ -11,7 +11,8 @@ import {
   Wrench,
   X,
 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "@/i18n/navigation";
 import { formatDateInput } from "@/lib/usage/format";
 import type {
   DashboardPreset,
@@ -120,8 +122,11 @@ function buildDateValue(value: string, timezone: string) {
   return formatDateInput(new Date(value), timezone);
 }
 
-function getPresetLabel(value: DashboardPreset) {
-  return value === "custom" ? "Custom" : value.toUpperCase();
+function getPresetLabel(
+  value: DashboardPreset,
+  t: ReturnType<typeof useTranslations<"usage.filters">>,
+) {
+  return value === "custom" ? t("custom") : value.toUpperCase();
 }
 
 export function FiltersBar({
@@ -130,6 +135,7 @@ export function FiltersBar({
   filters,
   options,
 }: FiltersBarProps) {
+  const t = useTranslations("usage.filters");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isCustomOpen, setIsCustomOpen] = useState(false);
@@ -202,9 +208,9 @@ export function FiltersBar({
   }> = [
     {
       key: "apiKeyId",
-      label: "Keys",
+      label: t("keys"),
       icon: "key",
-      placeholder: "All keys",
+      placeholder: t("allKeys"),
       options: options.apiKeys.map((opt) => ({
         value: opt.id,
         label: opt.name,
@@ -212,30 +218,30 @@ export function FiltersBar({
     },
     {
       key: "deviceId",
-      label: "Devices",
+      label: t("devices"),
       icon: "device",
-      placeholder: "All devices",
+      placeholder: t("allDevices"),
       options: options.devices,
     },
     {
       key: "source",
-      label: "Tools",
+      label: t("tools"),
       icon: "tool",
-      placeholder: "All tools",
+      placeholder: t("allTools"),
       options: options.sources,
     },
     {
       key: "model",
-      label: "Models",
+      label: t("models"),
       icon: "model",
-      placeholder: "All models",
+      placeholder: t("allModels"),
       options: options.models,
     },
     {
       key: "projectKey",
-      label: "Projects",
+      label: t("projects"),
       icon: "project",
-      placeholder: "All projects",
+      placeholder: t("allProjects"),
       options: options.projects,
     },
   ];
@@ -264,20 +270,22 @@ export function FiltersBar({
                     size="sm"
                   >
                     <CalendarDays />
-                    {getPresetLabel(item)}
+                    {getPresetLabel(item, t)}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent align="start" className="w-80 p-4">
                   <div className="space-y-4">
                     <div className="space-y-1">
-                      <div className="font-medium">Custom range</div>
+                      <div className="font-medium">{t("customRangeTitle")}</div>
                       <p className="text-sm text-muted-foreground">
-                        Pick a start and end date in {range.timezone}.
+                        {t("customRangeDescription", {
+                          timezone: range.timezone,
+                        })}
                       </p>
                     </div>
                     <div className="grid gap-3">
                       <div className="space-y-2">
-                        <Label htmlFor="custom-from">From</Label>
+                        <Label htmlFor="custom-from">{t("from")}</Label>
                         <Input
                           id="custom-from"
                           type="date"
@@ -288,7 +296,7 @@ export function FiltersBar({
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="custom-to">To</Label>
+                        <Label htmlFor="custom-to">{t("to")}</Label>
                         <Input
                           id="custom-to"
                           type="date"
@@ -297,7 +305,7 @@ export function FiltersBar({
                         />
                       </div>
                       <Button type="button" onClick={applyCustomRange}>
-                        Apply
+                        {t("apply")}
                       </Button>
                     </div>
                   </div>
@@ -311,7 +319,7 @@ export function FiltersBar({
                 size="sm"
                 onClick={() => setPreset(item)}
               >
-                {getPresetLabel(item)}
+                {getPresetLabel(item, t)}
               </Button>
             ),
           )}
@@ -325,7 +333,7 @@ export function FiltersBar({
                 className="gap-2"
               >
                 <SlidersHorizontal className="size-4" />
-                <span>Filters</span>
+                <span>{t("filters")}</span>
                 {activeChips.totalCount > 0 ? (
                   <Badge variant="outline" className="h-5 rounded-full px-1.5">
                     {activeChips.totalCount}
@@ -348,7 +356,7 @@ export function FiltersBar({
               }}
             >
               <div className="space-y-2">
-                <div className="font-medium">Filters</div>
+                <div className="font-medium">{t("filters")}</div>
 
                 <div className="space-y-0.5">
                   {filterFields.map((field) => (
@@ -395,7 +403,7 @@ export function FiltersBar({
           {hasActiveState ? (
             <Button type="button" variant="ghost" size="sm" onClick={resetAll}>
               <RotateCcw />
-              Reset
+              {t("reset")}
             </Button>
           ) : null}
         </div>

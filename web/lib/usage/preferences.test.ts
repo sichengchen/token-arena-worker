@@ -7,6 +7,8 @@ describe("ensureUsagePreferenceWithDb", () => {
     const existingPreference = {
       id: "pref_123",
       userId: "user_123",
+      locale: "en",
+      theme: "system",
       timezone: "UTC",
       projectMode: "hashed",
       projectHashSalt: "salt123",

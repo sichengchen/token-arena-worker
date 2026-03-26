@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { supportedLocales } from "@/lib/i18n";
+import { themeModes } from "@/lib/theme";
 import {
   dashboardPresets,
   projectModes,
@@ -9,6 +11,8 @@ import {
 export const projectModeSchema = z.enum(projectModes);
 export const usageApiKeyStatusSchema = z.enum(usageApiKeyStatuses);
 export const dashboardPresetSchema = z.enum(dashboardPresets);
+export const localeSchema = z.enum(supportedLocales);
+export const themeModeSchema = z.enum(themeModes);
 
 export function isValidTimezone(timezone: string): boolean {
   try {
@@ -118,11 +122,17 @@ export const usageKeyUpdateSchema = z
 
 export const usagePreferenceUpdateSchema = z
   .object({
+    locale: localeSchema.optional(),
+    theme: themeModeSchema.optional(),
     timezone: timezoneSchema.optional(),
     projectMode: projectModeSchema.optional(),
   })
   .refine(
-    (input) => input.timezone !== undefined || input.projectMode !== undefined,
+    (input) =>
+      input.locale !== undefined ||
+      input.theme !== undefined ||
+      input.timezone !== undefined ||
+      input.projectMode !== undefined,
     {
       message: "At least one field is required.",
     },

@@ -2,14 +2,14 @@ import type { ReactNode } from "react";
 
 type UsagePageShellProps = {
   title: string;
-  lastSyncedLabel: string;
+  lastSyncedText: string;
   headerActions?: ReactNode;
   children: ReactNode;
 };
 
 export function UsagePageShell({
   title,
-  lastSyncedLabel,
+  lastSyncedText,
   headerActions,
   children,
 }: UsagePageShellProps) {
@@ -20,9 +20,7 @@ export function UsagePageShell({
           <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-              <p className="text-sm text-muted-foreground">
-                Last synced {lastSyncedLabel}
-              </p>
+              <p className="text-sm text-muted-foreground">{lastSyncedText}</p>
             </div>
           </div>
 

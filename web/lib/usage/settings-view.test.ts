@@ -11,8 +11,18 @@ describe("hasPreferenceChanges", () => {
   it("returns false when timezone and project mode are unchanged", () => {
     expect(
       hasPreferenceChanges(
-        { timezone: "Asia/Shanghai", projectMode: "raw" },
-        { timezone: "Asia/Shanghai", projectMode: "raw" },
+        {
+          timezone: "Asia/Shanghai",
+          projectMode: "raw",
+          locale: "en",
+          theme: "system",
+        },
+        {
+          timezone: "Asia/Shanghai",
+          projectMode: "raw",
+          locale: "en",
+          theme: "system",
+        },
       ),
     ).toBe(false);
   });
@@ -20,14 +30,50 @@ describe("hasPreferenceChanges", () => {
   it("returns true when either preference changes", () => {
     expect(
       hasPreferenceChanges(
-        { timezone: "Asia/Shanghai", projectMode: "raw" },
-        { timezone: "UTC", projectMode: "raw" },
+        {
+          timezone: "Asia/Shanghai",
+          projectMode: "raw",
+          locale: "en",
+          theme: "system",
+        },
+        {
+          timezone: "UTC",
+          projectMode: "raw",
+          locale: "en",
+          theme: "system",
+        },
       ),
     ).toBe(true);
     expect(
       hasPreferenceChanges(
-        { timezone: "Asia/Shanghai", projectMode: "raw" },
-        { timezone: "Asia/Shanghai", projectMode: "hashed" },
+        {
+          timezone: "Asia/Shanghai",
+          projectMode: "raw",
+          locale: "en",
+          theme: "system",
+        },
+        {
+          timezone: "Asia/Shanghai",
+          projectMode: "hashed",
+          locale: "en",
+          theme: "system",
+        },
+      ),
+    ).toBe(true);
+    expect(
+      hasPreferenceChanges(
+        {
+          timezone: "Asia/Shanghai",
+          projectMode: "raw",
+          locale: "en",
+          theme: "system",
+        },
+        {
+          timezone: "Asia/Shanghai",
+          projectMode: "raw",
+          locale: "zh",
+          theme: "dark",
+        },
       ),
     ).toBe(true);
   });

@@ -23,6 +23,17 @@ enum ProjectMode {
   disabled
 }
 
+enum AppLocale {
+  en
+  zh
+}
+
+enum ThemeMode {
+  light
+  dark
+  system
+}
+
 model User {
   id              String            @id
   name            String
@@ -94,6 +105,8 @@ model Verification {
 model UsagePreference {
   id              String      @id @default(cuid())
   userId          String      @unique
+  locale          AppLocale   @default(en)
+  theme           ThemeMode   @default(system)
   timezone        String      @default("UTC")
   projectMode     ProjectMode @default(hashed)
   projectHashSalt String

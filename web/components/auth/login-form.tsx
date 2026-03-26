@@ -1,20 +1,19 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link, useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
-import { loginSchema } from "@/lib/validators/auth";
 
 type LoginFormProps = {
   showInvalidSessionMessage?: boolean;
 };
 
-function getAuthErrorMessage(error: unknown) {
+function getAuthErrorMessage(error: unknown, fallbackMessage: string) {
   if (typeof error === "string") {
     return error;
   }
@@ -34,13 +33,14 @@ function getAuthErrorMessage(error: unknown) {
     }
   }
 
-  return "Unable to sign in. Please try again.";
+  return fallbackMessage;
 }
 
 export function LoginForm({
   showInvalidSessionMessage = false,
 }: LoginFormProps) {
   const router = useRouter();
+  const t = useTranslations("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -55,12 +55,29 @@ export function LoginForm({
     setEmailError(null);
     setPasswordError(null);
 
-    const parsed = loginSchema.safeParse({ email, password });
+    const trimmedEmail = email.trim();
+    let hasError = false;
 
-    if (!parsed.success) {
-      const fieldErrors = parsed.error.flatten().fieldErrors;
-      setEmailError(fieldErrors.email?.[0] ?? null);
-      setPasswordError(fieldErrors.password?.[0] ?? null);
+    if (!trimmedEmail) {
+      setEmailError(t("login.errors.emailRequired"));
+      hasError = true;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setEmailError(t("login.errors.emailInvalid"));
+      hasError = true;
+    }
+
+    if (!password) {
+      setPasswordError(t("login.errors.passwordRequired"));
+      hasError = true;
+    } else if (password.length > 128) {
+      setPasswordError(t("login.errors.passwordTooLong"));
+      hasError = true;
+    } else if (password.length < 8) {
+      setPasswordError(t("login.errors.passwordTooShort"));
+      hasError = true;
+    }
+
+    if (hasError) {
       return;
     }
 
@@ -68,19 +85,21 @@ export function LoginForm({
 
     try {
       const result = await authClient.signIn.email({
-        email: parsed.data.email,
-        password: parsed.data.password,
+        email: trimmedEmail,
+        password,
       });
 
       if (result.error) {
-        setFormError(getAuthErrorMessage(result.error));
+        setFormError(
+          getAuthErrorMessage(result.error, t("login.errors.default")),
+        );
         return;
       }
 
       router.push("/usage");
       router.refresh();
     } catch (error) {
-      setFormError(getAuthErrorMessage(error));
+      setFormError(getAuthErrorMessage(error, t("login.errors.default")));
     } finally {
       setIsSubmitting(false);
     }
@@ -90,9 +109,7 @@ export function LoginForm({
     <form className="space-y-4" onSubmit={handleSubmit}>
       {showInvalidSessionMessage ? (
         <Alert variant="destructive">
-          <AlertDescription>
-            Your session is invalid or expired. Please sign in again.
-          </AlertDescription>
+          <AlertDescription>{t("login.invalidSession")}</AlertDescription>
         </Alert>
       ) : null}
 
@@ -103,7 +120,7 @@ export function LoginForm({
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="login-email">Email</Label>
+        <Label htmlFor="login-email">{t("fields.email")}</Label>
         <Input
           id="login-email"
           type="email"
@@ -118,7 +135,7 @@ export function LoginForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="login-password">Password</Label>
+        <Label htmlFor="login-password">{t("fields.password")}</Label>
         <Input
           id="login-password"
           type="password"
@@ -133,16 +150,16 @@ export function LoginForm({
       </div>
 
       <Button className="w-full" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : "Sign in"}
+        {isSubmitting ? t("login.submitting") : t("login.submit")}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
+        {t("login.noAccount")}{" "}
         <Link
           href="/register"
           className="text-foreground underline underline-offset-4"
         >
-          Register
+          {t("login.registerLink")}
         </Link>
       </p>
     </form>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   Bar,
   BarChart,
@@ -28,10 +29,10 @@ type TokenTrendTooltipContentProps = {
 
 function getTooltipRows(point: TokenTrendPoint) {
   return [
-    { label: "Total", value: point.totalTokens },
-    { label: "Cache", value: point.cachedTokens },
-    { label: "Input", value: point.inputTokens },
-    { label: "Output", value: point.outputTokens },
+    { labelKey: "total", value: point.totalTokens },
+    { labelKey: "cache", value: point.cachedTokens },
+    { labelKey: "input", value: point.inputTokens },
+    { labelKey: "output", value: point.outputTokens },
   ];
 }
 
@@ -40,6 +41,7 @@ export function TokenTrendTooltipContent({
   label,
   payload,
 }: TokenTrendTooltipContentProps) {
+  const t = useTranslations("usage.trend");
   const point = payload?.[0]?.payload;
 
   if (!active || !point) {
@@ -54,10 +56,10 @@ export function TokenTrendTooltipContent({
       <div className="space-y-1.5">
         {getTooltipRows(point).map((row) => (
           <div
-            key={row.label}
+            key={row.labelKey}
             className="flex items-center justify-between gap-6 text-sm"
           >
-            <span className="text-muted-foreground">{row.label}</span>
+            <span className="text-muted-foreground">{t(row.labelKey)}</span>
             <span className="font-medium text-foreground">
               {formatTokenCount(row.value)}
             </span>
@@ -69,31 +71,33 @@ export function TokenTrendTooltipContent({
 }
 
 export function TokenTrendCard({ data }: TokenTrendCardProps) {
+  const t = useTranslations("usage.trend");
+
   return (
     <Card>
       <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <CardTitle>Daily Trend</CardTitle>
+        <CardTitle>{t("title")}</CardTitle>
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <span
               className="size-3 rounded-sm"
               style={{ backgroundColor: "var(--chart-2)" }}
             />
-            <span>Cache</span>
+            <span>{t("cache")}</span>
           </div>
           <div className="flex items-center gap-2">
             <span
               className="size-3 rounded-sm"
               style={{ backgroundColor: "var(--chart-3)" }}
             />
-            <span>Input</span>
+            <span>{t("input")}</span>
           </div>
           <div className="flex items-center gap-2">
             <span
               className="size-3 rounded-sm"
               style={{ backgroundColor: "var(--chart-1)" }}
             />
-            <span>Output</span>
+            <span>{t("output")}</span>
           </div>
         </div>
       </CardHeader>
@@ -114,21 +118,21 @@ export function TokenTrendCard({ data }: TokenTrendCardProps) {
               />
               <Bar
                 dataKey="cachedTokens"
-                name="Cache"
+                name={t("cache")}
                 stackId="tokens"
                 fill="var(--chart-2)"
                 radius={[0, 0, 0, 0]}
               />
               <Bar
                 dataKey="inputTokens"
-                name="Input"
+                name={t("input")}
                 stackId="tokens"
                 fill="var(--chart-3)"
                 radius={[0, 0, 0, 0]}
               />
               <Bar
                 dataKey="outputTokens"
-                name="Output"
+                name={t("output")}
                 stackId="tokens"
                 fill="var(--chart-1)"
                 radius={[6, 6, 0, 0]}

@@ -1,7 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
-
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -13,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  getPreferenceStatusText,
   hasPreferenceChanges,
   type PreferenceSaveState,
   projectModeOptions,
@@ -46,14 +47,19 @@ const timezoneOptions = [
 ];
 
 type SettingsPreferencesProps = {
+  initialLocale: string;
+  initialTheme: string;
   initialTimezone: string;
   initialProjectMode: ProjectMode;
 };
 
 export function SettingsPreferences({
+  initialLocale,
+  initialTheme,
   initialTimezone,
   initialProjectMode,
 }: SettingsPreferencesProps) {
+  const t = useTranslations("usage.settings");
   const [timezone, setTimezone] = useState(initialTimezone);
   const [projectMode, setProjectMode] =
     useState<ProjectMode>(initialProjectMode);
@@ -66,7 +72,12 @@ export function SettingsPreferences({
     { timezone: savedTimezone, projectMode: savedProjectMode },
     { timezone, projectMode },
   );
-  const statusText = getPreferenceStatusText(saveState);
+  const statusText =
+    saveState === "saving"
+      ? t("saving")
+      : saveState === "saved"
+        ? t("saved")
+        : null;
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedIndicatorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -110,12 +121,12 @@ export function SettingsPreferences({
         setError(
           requestError instanceof Error
             ? requestError.message
-            : "Unable to save preferences.",
+            : t("saveFailed"),
         );
         setSaveState("idle");
       }
     },
-    [],
+    [t],
   );
 
   useEffect(() => {
@@ -166,7 +177,7 @@ export function SettingsPreferences({
       className="gap-0 bg-background/90 shadow-sm ring-1 ring-border/60"
     >
       <CardHeader className="gap-2 border-b border-border/50 pb-2 sm:flex-row sm:items-center sm:justify-between">
-        <CardTitle>Preferences</CardTitle>
+        <CardTitle>{t("preferencesTitle")}</CardTitle>
         {statusText ? (
           <p className="text-sm text-muted-foreground">{statusText}</p>
         ) : null}
@@ -180,10 +191,24 @@ export function SettingsPreferences({
 
         <div className="grid gap-3 lg:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="timezone">Timezone</Label>
+            <Label htmlFor="preference-language">{t("language")}</Label>
+            <div id="preference-language">
+              <LanguageSwitcher authenticated={Boolean(initialLocale)} />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="preference-theme">{t("theme")}</Label>
+            <div id="preference-theme">
+              <ThemeSwitcher authenticated={Boolean(initialTheme)} />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="timezone">{t("timezone")}</Label>
             <Select value={timezone} onValueChange={setTimezone}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select timezone" />
+                <SelectValue placeholder={t("selectTimezone")} />
               </SelectTrigger>
               <SelectContent>
                 {timezoneOptions.map((option) => (
@@ -196,18 +221,18 @@ export function SettingsPreferences({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="project-mode">Project mode</Label>
+            <Label htmlFor="project-mode">{t("projectMode")}</Label>
             <Select
               value={projectMode}
               onValueChange={(value) => setProjectMode(value as ProjectMode)}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select project mode" />
+                <SelectValue placeholder={t("selectProjectMode")} />
               </SelectTrigger>
               <SelectContent>
                 {projectModeOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
-                    {option.label}
+                    {t(`projectModes.${option.value}`)}
                   </SelectItem>
                 ))}
               </SelectContent>

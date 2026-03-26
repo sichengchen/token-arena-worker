@@ -1,11 +1,27 @@
 import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+import {
+  getPreferredLocale,
+  localeCookieName,
+  stripLocalePrefix,
+} from "./lib/i18n";
 
-const PROTECTED_PREFIXES = ["/usage", "/settings"];
-const AUTH_PAGES = ["/login"];
+const PROTECTED_PREFIXES = ["/usage", "/settings", "/settings/keys"];
+const AUTH_PAGES = ["/login", "/register"];
+const handleI18nRouting = createMiddleware(routing);
+
+function detectLocale(request: NextRequest) {
+  return getPreferredLocale({
+    cookieLocale: request.cookies.get(localeCookieName)?.value,
+    acceptLanguage: request.headers.get("accept-language"),
+  });
+}
 
 export function proxy(request: NextRequest) {
-  const { pathname, searchParams } = request.nextUrl;
+  const { searchParams } = request.nextUrl;
+  const pathname = stripLocalePrefix(request.nextUrl.pathname);
   const hasSessionCookie = Boolean(getSessionCookie(request));
   const isProtectedPath = PROTECTED_PREFIXES.some((prefix) =>
     pathname.startsWith(prefix),
@@ -14,16 +30,20 @@ export function proxy(request: NextRequest) {
   const isInvalidSessionBounce = searchParams.get("invalid") === "1";
 
   if (isProtectedPath && !hasSessionCookie) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const locale = detectLocale(request);
+    const loginUrl = new URL(`/${locale}/login`, request.url);
+    loginUrl.searchParams.set("invalid", "1");
+    return NextResponse.redirect(loginUrl);
   }
 
   if (isAuthPage && hasSessionCookie && !isInvalidSessionBounce) {
-    return NextResponse.redirect(new URL("/usage", request.url));
+    const locale = detectLocale(request);
+    return NextResponse.redirect(new URL(`/${locale}/usage`, request.url));
   }
 
-  return NextResponse.next();
+  return handleI18nRouting(request);
 }
 
 export const config = {
-  matcher: ["/usage/:path*", "/settings/:path*", "/login"],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

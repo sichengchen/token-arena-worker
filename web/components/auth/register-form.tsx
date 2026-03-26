@@ -1,16 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link, useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
-import { registerSchema } from "@/lib/validators/auth";
 
-function getAuthErrorMessage(error: unknown) {
+function getAuthErrorMessage(error: unknown, fallbackMessage: string) {
   if (typeof error === "string") {
     return error;
   }
@@ -30,11 +29,12 @@ function getAuthErrorMessage(error: unknown) {
     }
   }
 
-  return "Unable to create account. Please try again.";
+  return fallbackMessage;
 }
 
 export function RegisterForm() {
   const router = useRouter();
+  const t = useTranslations("auth");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,13 +53,38 @@ export function RegisterForm() {
     setEmailError(null);
     setPasswordError(null);
 
-    const parsed = registerSchema.safeParse({ name, email, password });
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    let hasError = false;
 
-    if (!parsed.success) {
-      const fieldErrors = parsed.error.flatten().fieldErrors;
-      setNameError(fieldErrors.name?.[0] ?? null);
-      setEmailError(fieldErrors.email?.[0] ?? null);
-      setPasswordError(fieldErrors.password?.[0] ?? null);
+    if (trimmedName.length < 2) {
+      setNameError(t("register.errors.nameTooShort"));
+      hasError = true;
+    } else if (trimmedName.length > 50) {
+      setNameError(t("register.errors.nameTooLong"));
+      hasError = true;
+    }
+
+    if (!trimmedEmail) {
+      setEmailError(t("register.errors.emailRequired"));
+      hasError = true;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setEmailError(t("register.errors.emailInvalid"));
+      hasError = true;
+    }
+
+    if (!password) {
+      setPasswordError(t("register.errors.passwordRequired"));
+      hasError = true;
+    } else if (password.length > 128) {
+      setPasswordError(t("register.errors.passwordTooLong"));
+      hasError = true;
+    } else if (password.length < 8) {
+      setPasswordError(t("register.errors.passwordTooShort"));
+      hasError = true;
+    }
+
+    if (hasError) {
       return;
     }
 
@@ -67,20 +92,22 @@ export function RegisterForm() {
 
     try {
       const result = await authClient.signUp.email({
-        name: parsed.data.name,
-        email: parsed.data.email,
-        password: parsed.data.password,
+        name: trimmedName,
+        email: trimmedEmail,
+        password,
       });
 
       if (result.error) {
-        setFormError(getAuthErrorMessage(result.error));
+        setFormError(
+          getAuthErrorMessage(result.error, t("register.errors.default")),
+        );
         return;
       }
 
       router.push("/usage");
       router.refresh();
     } catch (error) {
-      setFormError(getAuthErrorMessage(error));
+      setFormError(getAuthErrorMessage(error, t("register.errors.default")));
     } finally {
       setIsSubmitting(false);
     }
@@ -95,7 +122,7 @@ export function RegisterForm() {
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="register-name">Name</Label>
+        <Label htmlFor="register-name">{t("fields.name")}</Label>
         <Input
           id="register-name"
           type="text"
@@ -110,7 +137,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="register-email">Email</Label>
+        <Label htmlFor="register-email">{t("fields.email")}</Label>
         <Input
           id="register-email"
           type="email"
@@ -125,7 +152,7 @@ export function RegisterForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="register-password">Password</Label>
+        <Label htmlFor="register-password">{t("fields.password")}</Label>
         <Input
           id="register-password"
           type="password"
@@ -140,16 +167,16 @@ export function RegisterForm() {
       </div>
 
       <Button className="w-full" type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Creating account..." : "Create account"}
+        {isSubmitting ? t("register.submitting") : t("register.submit")}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
+        {t("register.haveAccount")}{" "}
         <Link
           href="/login"
           className="text-foreground underline underline-offset-4"
         >
-          Sign in
+          {t("register.signInLink")}
         </Link>
       </p>
     </form>

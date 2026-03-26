@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ export function KeyDialog({
   pending = false,
   onSubmit,
 }: KeyDialogProps) {
+  const t = useTranslations("usage.keys.dialog");
   const [name, setName] = useState(initialName ?? "");
 
   useEffect(() => {
@@ -44,12 +46,12 @@ export function KeyDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Create CLI key" : "Rename CLI key"}
+            {mode === "create" ? t("createTitle") : t("renameTitle")}
           </DialogTitle>
           <DialogDescription>
             {mode === "create"
-              ? "Give this key a name so you can remember which device or workflow uses it."
-              : "Update the label shown in the dashboard and settings pages."}
+              ? t("createDescription")
+              : t("renameDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -61,12 +63,12 @@ export function KeyDialog({
           }}
         >
           <div className="space-y-2">
-            <Label htmlFor="key-name">Name</Label>
+            <Label htmlFor="key-name">{t("name")}</Label>
             <Input
               id="key-name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="My MacBook / Work"
+              placeholder={t("placeholder")}
             />
           </div>
 
@@ -76,10 +78,10 @@ export function KeyDialog({
               disabled={pending || name.trim().length === 0}
             >
               {pending
-                ? "Saving..."
+                ? t("saving")
                 : mode === "create"
-                  ? "Create key"
-                  : "Save changes"}
+                  ? t("createKey")
+                  : t("saveChanges")}
             </Button>
           </DialogFooter>
         </form>

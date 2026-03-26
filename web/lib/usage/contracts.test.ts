@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { dashboardQuerySchema, ingestRequestSchema } from "./contracts";
+import {
+  dashboardQuerySchema,
+  ingestRequestSchema,
+  usagePreferenceUpdateSchema,
+} from "./contracts";
 
 describe("ingestRequestSchema", () => {
   it("requires schemaVersion and device metadata", () => {
@@ -60,5 +64,14 @@ describe("ingestRequestSchema", () => {
     if (result.success) {
       expect(result.data.buckets[0]?.reasoningTokens).toBe(10);
     }
+  });
+
+  it("accepts locale and theme updates in usage preferences", () => {
+    const result = usagePreferenceUpdateSchema.safeParse({
+      locale: "zh",
+      theme: "dark",
+    });
+
+    expect(result.success).toBe(true);
   });
 });
