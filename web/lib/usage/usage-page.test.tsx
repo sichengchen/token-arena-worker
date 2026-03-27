@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   getTokenTrend: vi.fn(),
   getActivityTrend: vi.fn(),
   getBreakdowns: vi.fn(),
+  getSessionRows: vi.fn(),
   getFilterOptions: vi.fn(),
   getLastSyncedAt: vi.fn(),
   resolveDashboardRange: vi.fn(),
@@ -30,8 +31,8 @@ const mocks = vi.hoisted(() => ({
   AccountMenu: vi.fn(() =>
     React.createElement("div", { "data-slot": "account-menu" }),
   ),
-  BreakdownTabs: vi.fn(() =>
-    React.createElement("div", { "data-slot": "breakdown-tabs" }),
+  BreakdownGrid: vi.fn(() =>
+    React.createElement("div", { "data-slot": "breakdown-grid" }),
   ),
   EmptyState: vi.fn(() =>
     React.createElement("div", { "data-slot": "empty-state" }),
@@ -42,6 +43,9 @@ const mocks = vi.hoisted(() => ({
   KpiGrid: vi.fn(() => React.createElement("div", { "data-slot": "kpi-grid" })),
   UsagePageShell: vi.fn(({ children }: { children: React.ReactNode }) =>
     React.createElement("div", { "data-slot": "page-shell" }, children),
+  ),
+  SessionsSection: vi.fn(() =>
+    React.createElement("div", { "data-slot": "sessions-section" }),
   ),
   SettingsDialog: vi.fn(() =>
     React.createElement("div", { "data-slot": "settings-dialog" }),
@@ -80,8 +84,8 @@ vi.mock("@/components/usage/activity-trend-card", () => ({
   ActivityTrendCard: mocks.ActivityTrendCard,
 }));
 
-vi.mock("@/components/usage/breakdown-tabs", () => ({
-  BreakdownTabs: mocks.BreakdownTabs,
+vi.mock("@/components/usage/breakdown-grid", () => ({
+  BreakdownGrid: mocks.BreakdownGrid,
 }));
 
 vi.mock("@/components/usage/empty-state", () => ({
@@ -98,6 +102,10 @@ vi.mock("@/components/usage/kpi-grid", () => ({
 
 vi.mock("@/components/usage/page-shell", () => ({
   UsagePageShell: mocks.UsagePageShell,
+}));
+
+vi.mock("@/components/usage/sessions-section", () => ({
+  SessionsSection: mocks.SessionsSection,
 }));
 
 vi.mock("@/components/usage/settings-dialog", () => ({
@@ -141,6 +149,7 @@ vi.mock("@/lib/usage/queries", () => ({
   getTokenTrend: mocks.getTokenTrend,
   getActivityTrend: mocks.getActivityTrend,
   getBreakdowns: mocks.getBreakdowns,
+  getSessionRows: mocks.getSessionRows,
   getFilterOptions: mocks.getFilterOptions,
   getLastSyncedAt: mocks.getLastSyncedAt,
 }));
@@ -208,6 +217,7 @@ describe("UsagePage", () => {
       models: [],
       projects: [],
     });
+    mocks.getSessionRows.mockResolvedValue([]);
     mocks.getFilterOptions.mockResolvedValue({
       apiKeys: [],
       devices: [],
@@ -234,8 +244,11 @@ describe("UsagePage", () => {
 
     expect(mocks.getActivityTrend).not.toHaveBeenCalled();
     expect(mocks.TokenTrendCard).toHaveBeenCalledOnce();
+    expect(mocks.SessionsSection).toHaveBeenCalledOnce();
+    expect(mocks.getSessionRows).toHaveBeenCalledOnce();
     expect(mocks.ActivityTrendCard).not.toHaveBeenCalled();
     expect(markup).toContain('data-slot="token-trend-card"');
+    expect(markup).toContain('data-slot="sessions-section"');
     expect(markup).not.toContain('data-slot="activity-trend-card"');
   });
 });

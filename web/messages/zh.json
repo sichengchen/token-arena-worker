@@ -83,6 +83,8 @@
       "saving": "保存中...",
       "saved": "已保存",
       "saveFailed": "无法保存偏好设置。",
+      "saveAlertTitle": "偏好已保存",
+      "dismissSaveAlert": "关闭保存提示",
       "language": "语言",
       "theme": "主题",
       "timezone": "时区",
@@ -155,11 +157,18 @@
     },
     "breakdowns": {
       "title": "分类明细",
+      "description": "按设备、工具、模型和项目查看使用情况。",
       "tabs": {
         "devices": "设备",
         "tools": "工具",
         "models": "模型",
         "projects": "项目"
+      },
+      "others": "其他",
+      "rankedBy": {
+        "totalTokens": "按总 Tokens 排序",
+        "sessions": "按会话数排序",
+        "messages": "按消息数排序"
       },
       "empty": {
         "devices": "这个时间范围内没有设备数据。",
@@ -179,6 +188,23 @@
         "userMessages": "用户消息数",
         "share": "占比",
         "reasoning": "推理 {value}"
+      }
+    },
+    "sessions": {
+      "title": "会话明细",
+      "description": "按会话逐条查看，默认按最近时间排序。",
+      "count": "{count} 个会话",
+      "empty": "这个时间范围内没有会话数据。",
+      "table": {
+        "startedAt": "开始时间",
+        "tool": "工具",
+        "project": "项目",
+        "device": "设备",
+        "duration": "时长",
+        "messages": "消息数",
+        "endedAt": "结束于 {value}",
+        "totalDuration": "总时长 {value}",
+        "userMessages": "其中你发了 {value} 条"
       }
     },
     "accountMenu": {

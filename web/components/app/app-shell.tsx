@@ -7,6 +7,7 @@ import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { AccountMenu } from "@/components/usage/account-menu";
 import { Link } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 type AppShellProps = {
   locale: string;
@@ -16,6 +17,7 @@ type AppShellProps = {
     username?: string | null;
   } | null;
   settingsDialog?: ReactNode;
+  mainClassName?: string;
   children: ReactNode;
 };
 
@@ -23,6 +25,7 @@ export async function AppShell({
   locale,
   viewer,
   settingsDialog,
+  mainClassName,
   children,
 }: AppShellProps) {
   const t = await getTranslations({ locale, namespace: "social.nav" });
@@ -34,7 +37,7 @@ export async function AppShell({
     : [{ href: "/people", label: t("people") }];
 
   return (
-    <main className="min-h-screen bg-muted/30">
+    <main className={cn("min-h-screen bg-muted/30", mainClassName)}>
       <header className="border-b border-border/60 bg-background/95 supports-[backdrop-filter]:bg-background/85">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2">

@@ -92,7 +92,7 @@ export type PublicProfilePageData = {
   heatmap: ProfileHeatmapDay[];
   topTools: Array<{
     name: string;
-    count: number;
+    totalTokens: number;
     share: number;
   }>;
   topModels: Array<{
@@ -265,14 +265,18 @@ function buildHeatmap(
 }
 
 function buildTopTools(
-  sessions: Array<{
+  buckets: Array<{
     source: string;
+    totalTokens: number;
   }>,
 ) {
   const rows = new Map<string, number>();
 
-  for (const session of sessions) {
-    rows.set(session.source, (rows.get(session.source) ?? 0) + 1);
+  for (const bucket of buckets) {
+    rows.set(
+      bucket.source,
+      (rows.get(bucket.source) ?? 0) + bucket.totalTokens,
+    );
   }
 
   const total = Array.from(rows.values()).reduce(
@@ -281,12 +285,12 @@ function buildTopTools(
   );
 
   return Array.from(rows.entries())
-    .map(([name, count]) => ({
+    .map(([name, totalTokens]) => ({
       name,
-      count,
-      share: total === 0 ? 0 : count / total,
+      totalTokens,
+      share: total === 0 ? 0 : totalTokens / total,
     }))
-    .sort((left, right) => right.count - left.count)
+    .sort((left, right) => right.totalTokens - left.totalTokens)
     .slice(0, 5);
 }
 
@@ -384,7 +388,6 @@ export async function getPublicProfilePageData(input: {
           },
         },
         select: {
-          source: true,
           activeSeconds: true,
         },
       }),
@@ -397,6 +400,7 @@ export async function getPublicProfilePageData(input: {
           },
         },
         select: {
+          source: true,
           model: true,
           totalTokens: true,
         },
@@ -435,7 +439,7 @@ export async function getPublicProfilePageData(input: {
       activeDays,
     },
     heatmap,
-    topTools: buildTopTools(sessions30),
+    topTools: buildTopTools(buckets30),
     topModels: buildTopModels(buckets30),
   };
 }

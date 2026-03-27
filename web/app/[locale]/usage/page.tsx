@@ -3,11 +3,12 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { AppShell } from "@/components/app/app-shell";
-import { BreakdownTabs } from "@/components/usage/breakdown-tabs";
+import { BreakdownGrid } from "@/components/usage/breakdown-grid";
 import { EmptyState } from "@/components/usage/empty-state";
 import { FiltersBar } from "@/components/usage/filters-bar";
 import { KpiGrid } from "@/components/usage/kpi-grid";
 import { UsagePageShell } from "@/components/usage/page-shell";
+import { SessionsSection } from "@/components/usage/sessions-section";
 import { SettingsDialog } from "@/components/usage/settings-dialog";
 import { TokenTrendCard } from "@/components/usage/token-trend-card";
 import { getSessionOrRedirect } from "@/lib/session";
@@ -21,6 +22,7 @@ import {
   getFilterOptions,
   getLastSyncedAt,
   getOverviewMetrics,
+  getSessionRows,
   getTokenTrend,
 } from "@/lib/usage/queries";
 import type { UsageFilters } from "@/lib/usage/types";
@@ -93,15 +95,23 @@ export default async function UsagePage({
     projectKey: query.projectKey,
   };
 
-  const [overview, tokenTrend, breakdowns, filterOptions, lastSyncedAt, keys] =
-    await Promise.all([
-      getOverviewMetrics({ userId: session.user.id, range, filters }),
-      getTokenTrend({ userId: session.user.id, range, filters }),
-      getBreakdowns({ userId: session.user.id, range, filters }),
-      getFilterOptions(session.user.id),
-      getLastSyncedAt(session.user.id),
-      listUsageApiKeys(session.user.id),
-    ]);
+  const [
+    overview,
+    tokenTrend,
+    breakdowns,
+    sessions,
+    filterOptions,
+    lastSyncedAt,
+    keys,
+  ] = await Promise.all([
+    getOverviewMetrics({ userId: session.user.id, range, filters }),
+    getTokenTrend({ userId: session.user.id, range, filters }),
+    getBreakdowns({ userId: session.user.id, range, filters }),
+    getSessionRows({ userId: session.user.id, range, filters }),
+    getFilterOptions(session.user.id),
+    getLastSyncedAt(session.user.id),
+    listUsageApiKeys(session.user.id),
+  ]);
 
   const hasData =
     overview.totalTokens.current > 0 || overview.sessions.current > 0;
@@ -156,7 +166,11 @@ export default async function UsagePage({
             <>
               <KpiGrid overview={overview} />
               <TokenTrendCard data={tokenTrend} />
-              <BreakdownTabs breakdowns={breakdowns} />
+              <BreakdownGrid breakdowns={breakdowns} />
+              <SessionsSection
+                sessions={sessions}
+                timezone={preference.timezone}
+              />
             </>
           ) : (
             <EmptyState

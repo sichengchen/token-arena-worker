@@ -115,20 +115,13 @@ export default async function PeoplePage({
       : []),
   ];
 
-  const summaryText = query
-    ? t("results", { count: profiles.length })
-    : tab === "following"
-      ? tNetwork("followingDescription")
-      : tab === "followers"
-        ? tNetwork("followersDescription")
-        : t("allPublic");
-
   const emptyText =
     tab === "following"
       ? tNetwork("emptyFollowing")
       : tab === "followers"
         ? tNetwork("emptyFollowers")
         : t("empty");
+  const isNetworkEmptyState = tab === "following" || tab === "followers";
 
   return (
     <SocialShell
@@ -190,10 +183,6 @@ export default async function PeoplePage({
           </form>
         </div>
 
-        <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
-          <div>{summaryText}</div>
-        </div>
-
         {profiles.length > 0 ? (
           <div className="space-y-3">
             {profiles.map((profile) => (
@@ -214,10 +203,19 @@ export default async function PeoplePage({
             ))}
           </div>
         ) : (
-          <Card className="bg-background/90 shadow-sm ring-1 ring-border/60">
-            <CardContent className="py-6 text-sm text-muted-foreground">
-              {emptyText}
-            </CardContent>
+          <Card
+            size={isNetworkEmptyState ? "sm" : "default"}
+            className="shadow-sm ring-1 ring-border/60"
+          >
+            {isNetworkEmptyState ? (
+              <CardContent className="flex min-h-12 items-center py-1 text-sm text-muted-foreground">
+                {emptyText}
+              </CardContent>
+            ) : (
+              <CardContent className="py-6 text-sm text-muted-foreground">
+                {emptyText}
+              </CardContent>
+            )}
           </Card>
         )}
       </div>

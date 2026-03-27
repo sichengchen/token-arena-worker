@@ -83,6 +83,8 @@
       "saving": "Saving...",
       "saved": "Saved",
       "saveFailed": "Unable to save preferences.",
+      "saveAlertTitle": "Preferences saved",
+      "dismissSaveAlert": "Dismiss saved alert",
       "language": "Language",
       "theme": "Theme",
       "timezone": "Timezone",
@@ -155,11 +157,18 @@
     },
     "breakdowns": {
       "title": "Breakdowns",
+      "description": "Break down usage by device, tool, model, and project.",
       "tabs": {
         "devices": "Devices",
         "tools": "Tools",
         "models": "Models",
         "projects": "Projects"
+      },
+      "others": "Others",
+      "rankedBy": {
+        "totalTokens": "Ranked by total tokens",
+        "sessions": "Ranked by sessions",
+        "messages": "Ranked by messages"
       },
       "empty": {
         "devices": "No device data in this range.",
@@ -179,6 +188,23 @@
         "userMessages": "User Messages",
         "share": "Share",
         "reasoning": "Reasoning {value}"
+      }
+    },
+    "sessions": {
+      "title": "Sessions",
+      "description": "Browse usage one session at a time, newest first.",
+      "count": "{count, plural, =0 {0 sessions} one {# session} other {# sessions}}",
+      "empty": "No session data in this range.",
+      "table": {
+        "startedAt": "Started",
+        "tool": "Tool",
+        "project": "Project",
+        "device": "Device",
+        "duration": "Duration",
+        "messages": "Messages",
+        "endedAt": "Ended {value}",
+        "totalDuration": "Total {value}",
+        "userMessages": "{value} from you"
       }
     },
     "accountMenu": {
