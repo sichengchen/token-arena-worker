@@ -175,7 +175,11 @@ export function RegisterForm() {
         />
         {nameError ? (
           <p className="text-sm text-destructive">{nameError}</p>
-        ) : null}
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            {t("register.nameHint")}
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -190,7 +194,11 @@ export function RegisterForm() {
         />
         {usernameError ? (
           <p className="text-sm text-destructive">{usernameError}</p>
-        ) : null}
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            {t("register.usernameHint")}
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
