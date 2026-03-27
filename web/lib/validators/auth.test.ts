@@ -58,6 +58,7 @@ describe("registerSchema", () => {
   it("accepts a valid name, email, and password", () => {
     const result = registerSchema.safeParse({
       name: "Test User",
+      username: "test_user",
       email: "user@example.com",
       password: "password123",
     });
@@ -68,6 +69,7 @@ describe("registerSchema", () => {
   it("rejects empty name", () => {
     const result = registerSchema.safeParse({
       name: "",
+      username: "test_user",
       email: "user@example.com",
       password: "password123",
     });
@@ -83,6 +85,7 @@ describe("registerSchema", () => {
   it("rejects one-character names", () => {
     const result = registerSchema.safeParse({
       name: "Q",
+      username: "test_user",
       email: "user@example.com",
       password: "password123",
     });
@@ -93,6 +96,7 @@ describe("registerSchema", () => {
   it("rejects names longer than 50 characters", () => {
     const result = registerSchema.safeParse({
       name: "a".repeat(51),
+      username: "test_user",
       email: "user@example.com",
       password: "password123",
     });
@@ -103,6 +107,7 @@ describe("registerSchema", () => {
   it("rejects short password", () => {
     const result = registerSchema.safeParse({
       name: "Test User",
+      username: "test_user",
       email: "user@example.com",
       password: "short",
     });
@@ -111,6 +116,38 @@ describe("registerSchema", () => {
     if (!result.success) {
       expect(result.error.flatten().fieldErrors.password).toContain(
         "Password must be at least 8 characters.",
+      );
+    }
+  });
+
+  it("rejects missing username", () => {
+    const result = registerSchema.safeParse({
+      name: "Test User",
+      username: "",
+      email: "user@example.com",
+      password: "password123",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.username).toContain(
+        "Username is required.",
+      );
+    }
+  });
+
+  it("rejects invalid username characters", () => {
+    const result = registerSchema.safeParse({
+      name: "Test User",
+      username: "test-user",
+      email: "user@example.com",
+      password: "password123",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.username).toContain(
+        "Username may only contain letters, numbers, underscores, and periods.",
       );
     }
   });

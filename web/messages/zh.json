@@ -20,6 +20,7 @@
   "auth": {
     "fields": {
       "name": "名称",
+      "username": "用户名",
       "email": "邮箱",
       "password": "密码"
     },
@@ -42,7 +43,7 @@
     },
     "register": {
       "title": "创建你的账号",
-      "description": "使用邮箱和密码开始使用。",
+      "description": "先设置一个唯一用户名，再使用邮箱和密码开始使用。",
       "submit": "创建账号",
       "submitting": "创建中...",
       "haveAccount": "已经有账号？",
@@ -51,6 +52,11 @@
         "default": "无法创建账号，请稍后再试。",
         "nameTooShort": "名称至少需要 2 个字符。",
         "nameTooLong": "名称过长。",
+        "usernameRequired": "请输入用户名。",
+        "usernameTooShort": "用户名至少需要 3 个字符。",
+        "usernameTooLong": "用户名最多只能有 30 个字符。",
+        "usernameInvalid": "用户名只能包含字母、数字、下划线和英文句点。",
+        "usernameTaken": "该用户名已被占用。",
         "emailRequired": "请输入邮箱。",
         "emailInvalid": "请输入有效的邮箱地址。",
         "passwordRequired": "请输入密码。",

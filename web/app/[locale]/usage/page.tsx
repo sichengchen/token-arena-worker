@@ -135,7 +135,10 @@ export default async function UsagePage({
               createdAt: key.createdAt.toISOString(),
             }))}
           />
-          <AccountMenu email={session.user.email} />
+          <AccountMenu
+            email={session.user.email}
+            username={session.user.username}
+          />
         </>
       }
     >

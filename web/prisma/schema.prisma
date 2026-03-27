@@ -37,6 +37,7 @@ enum ThemeMode {
 model User {
   id              String            @id
   name            String
+  username        String            @unique
   email           String
   emailVerified   Boolean           @default(false)
   image           String?

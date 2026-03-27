@@ -20,6 +20,7 @@
   "auth": {
     "fields": {
       "name": "Name",
+      "username": "Username",
       "email": "Email",
       "password": "Password"
     },
@@ -42,7 +43,7 @@
     },
     "register": {
       "title": "Create your account",
-      "description": "Use your email and password to get started.",
+      "description": "Choose a unique username, then use your email and password to get started.",
       "submit": "Create account",
       "submitting": "Creating account...",
       "haveAccount": "Already have an account?",
@@ -51,6 +52,11 @@
         "default": "Unable to create account. Please try again.",
         "nameTooShort": "Name must be at least 2 characters.",
         "nameTooLong": "Name is too long.",
+        "usernameRequired": "Username is required.",
+        "usernameTooShort": "Username must be at least 3 characters.",
+        "usernameTooLong": "Username must be at most 30 characters.",
+        "usernameInvalid": "Username may only contain letters, numbers, underscores, and periods.",
+        "usernameTaken": "This username is already taken.",
         "emailRequired": "Email is required.",
         "emailInvalid": "Please enter a valid email address.",
         "passwordRequired": "Password is required.",

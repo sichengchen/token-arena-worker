@@ -12,15 +12,17 @@ import {
 
 type AccountMenuProps = {
   email: string;
+  username?: string | null;
 };
 
-function getInitial(email: string) {
-  return email.trim().charAt(0).toUpperCase() || "?";
+function getInitial(value: string) {
+  return value.trim().charAt(0).toUpperCase() || "?";
 }
 
-export function AccountMenu({ email }: AccountMenuProps) {
+export function AccountMenu({ email, username }: AccountMenuProps) {
   const t = useTranslations("common");
   const tUsage = useTranslations("usage.accountMenu");
+  const identity = username ?? email;
 
   return (
     <Popover>
@@ -31,7 +33,7 @@ export function AccountMenu({ email }: AccountMenuProps) {
           aria-label={tUsage("open")}
         >
           <span className="inline-flex size-5 items-center justify-center rounded-full bg-foreground text-[0.7rem] font-semibold text-background">
-            {getInitial(email)}
+            {getInitial(identity)}
           </span>
           <ChevronDown className="size-3.5 text-muted-foreground" />
         </button>
@@ -42,6 +44,9 @@ export function AccountMenu({ email }: AccountMenuProps) {
             <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {t("account")}
             </div>
+            {username ? (
+              <div className="mt-1 text-sm font-semibold">@{username}</div>
+            ) : null}
             <div className="mt-1 break-all text-sm font-medium">{email}</div>
           </div>
           <LogoutButton variant="ghost" className="w-full justify-start">

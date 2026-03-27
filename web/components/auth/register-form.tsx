@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useRouter } from "@/i18n/navigation";
 import { authClient } from "@/lib/auth-client";
+import {
+  isValidUsername,
+  normalizeUsername,
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+  USERNAME_TAKEN_ERROR_MESSAGE,
+} from "@/lib/auth-username";
 
 function getAuthErrorMessage(error: unknown, fallbackMessage: string) {
   if (typeof error === "string") {
@@ -36,10 +43,12 @@ export function RegisterForm() {
   const router = useRouter();
   const t = useTranslations("auth");
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [nameError, setNameError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -50,10 +59,12 @@ export function RegisterForm() {
 
     setFormError(null);
     setNameError(null);
+    setUsernameError(null);
     setEmailError(null);
     setPasswordError(null);
 
     const trimmedName = name.trim();
+    const normalizedUsername = normalizeUsername(username);
     const trimmedEmail = email.trim();
     let hasError = false;
 
@@ -62,6 +73,20 @@ export function RegisterForm() {
       hasError = true;
     } else if (trimmedName.length > 50) {
       setNameError(t("register.errors.nameTooLong"));
+      hasError = true;
+    }
+
+    if (!normalizedUsername) {
+      setUsernameError(t("register.errors.usernameRequired"));
+      hasError = true;
+    } else if (normalizedUsername.length < USERNAME_MIN_LENGTH) {
+      setUsernameError(t("register.errors.usernameTooShort"));
+      hasError = true;
+    } else if (normalizedUsername.length > USERNAME_MAX_LENGTH) {
+      setUsernameError(t("register.errors.usernameTooLong"));
+      hasError = true;
+    } else if (!isValidUsername(normalizedUsername)) {
+      setUsernameError(t("register.errors.usernameInvalid"));
       hasError = true;
     }
 
@@ -93,13 +118,21 @@ export function RegisterForm() {
     try {
       const result = await authClient.signUp.email({
         name: trimmedName,
+        username: normalizedUsername,
         email: trimmedEmail,
         password,
       });
 
       if (result.error) {
+        const errorMessage = getAuthErrorMessage(
+          result.error,
+          t("register.errors.default"),
+        );
+
         setFormError(
-          getAuthErrorMessage(result.error, t("register.errors.default")),
+          errorMessage === USERNAME_TAKEN_ERROR_MESSAGE
+            ? t("register.errors.usernameTaken")
+            : errorMessage,
         );
         return;
       }
@@ -107,7 +140,16 @@ export function RegisterForm() {
       router.push("/usage");
       router.refresh();
     } catch (error) {
-      setFormError(getAuthErrorMessage(error, t("register.errors.default")));
+      const errorMessage = getAuthErrorMessage(
+        error,
+        t("register.errors.default"),
+      );
+
+      setFormError(
+        errorMessage === USERNAME_TAKEN_ERROR_MESSAGE
+          ? t("register.errors.usernameTaken")
+          : errorMessage,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -133,6 +175,21 @@ export function RegisterForm() {
         />
         {nameError ? (
           <p className="text-sm text-destructive">{nameError}</p>
+        ) : null}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="register-username">{t("fields.username")}</Label>
+        <Input
+          id="register-username"
+          type="text"
+          autoComplete="username"
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          aria-invalid={Boolean(usernameError)}
+        />
+        {usernameError ? (
+          <p className="text-sm text-destructive">{usernameError}</p>
         ) : null}
       </div>
 

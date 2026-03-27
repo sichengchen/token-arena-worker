@@ -142,7 +142,11 @@ describe("UsagePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getSessionOrRedirect.mockResolvedValue({
-      user: { id: "user_123", email: "user@example.com" },
+      user: {
+        id: "user_123",
+        email: "user@example.com",
+        username: "test_user",
+      },
     });
     mocks.getUsagePreference.mockResolvedValue({
       locale: "en",
