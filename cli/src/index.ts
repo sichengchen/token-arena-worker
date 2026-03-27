@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Import parsers to register them before CLI setup
 import { pathToFileURL } from "node:url";
 import "./parsers/claude-code.js";
