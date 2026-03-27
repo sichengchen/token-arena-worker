@@ -115,31 +115,31 @@ export default async function UsagePage({
     <AppShell
       locale={locale}
       viewer={{
+        id: session.user.id,
         email: session.user.email,
         username: session.user.username,
       }}
+      settingsDialog={
+        <SettingsDialog
+          initialLocale={preference.locale}
+          initialTheme={preference.theme}
+          initialTimezone={preference.timezone}
+          initialProjectMode={preference.projectMode}
+          initialPublicProfileEnabled={preference.publicProfileEnabled}
+          initialBio={preference.bio}
+          initialKeys={keys.map((key) => ({
+            id: key.id,
+            name: key.name,
+            prefix: key.prefix,
+            status: key.status,
+            lastUsedAt: key.lastUsedAt?.toISOString() ?? null,
+            createdAt: key.createdAt.toISOString(),
+          }))}
+          triggerVariant="icon"
+        />
+      }
     >
-      <UsagePageShell
-        lastSyncedText={lastSyncedText}
-        headerActions={
-          <SettingsDialog
-            initialLocale={preference.locale}
-            initialTheme={preference.theme}
-            initialTimezone={preference.timezone}
-            initialProjectMode={preference.projectMode}
-            initialPublicProfileEnabled={preference.publicProfileEnabled}
-            initialBio={preference.bio}
-            initialKeys={keys.map((key) => ({
-              id: key.id,
-              name: key.name,
-              prefix: key.prefix,
-              status: key.status,
-              lastUsedAt: key.lastUsedAt?.toISOString() ?? null,
-              createdAt: key.createdAt.toISOString(),
-            }))}
-          />
-        }
-      >
+      <UsagePageShell lastSyncedText={lastSyncedText}>
         <div className="space-y-4">
           <FiltersBar
             preset={range.preset}

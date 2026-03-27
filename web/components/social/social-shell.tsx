@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app/app-shell";
 type SocialShellProps = {
   locale: string;
   viewer: {
+    id: string;
     email: string;
     username?: string | null;
   } | null;

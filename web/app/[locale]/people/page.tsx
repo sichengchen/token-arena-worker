@@ -136,6 +136,7 @@ export default async function PeoplePage({
       viewer={
         viewer
           ? {
+              id: viewer.user.id,
               email: viewer.user.email,
               username: viewer.user.username,
             }

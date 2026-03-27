@@ -1,5 +1,6 @@
 "use client";
 
+import { Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,7 @@ type SettingsDialogProps = {
   initialPublicProfileEnabled: boolean;
   initialBio: string | null;
   initialKeys: UsageKeyRecord[];
+  triggerVariant?: "button" | "icon";
 };
 
 export function SettingsDialog({
@@ -32,20 +34,33 @@ export function SettingsDialog({
   initialPublicProfileEnabled,
   initialBio,
   initialKeys,
+  triggerVariant = "button",
 }: SettingsDialogProps) {
   const t = useTranslations("usage.settings");
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="border-border/60 bg-background/80 shadow-xs"
-        >
-          {t("button")}
-        </Button>
+        {triggerVariant === "icon" ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={t("button")}
+            title={t("button")}
+          >
+            <Settings2 className="size-3.5" />
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="border-border/60 bg-background/80 shadow-xs"
+          >
+            {t("button")}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-[calc(100vw-2rem)] gap-0 overflow-hidden bg-background p-0 shadow-2xl sm:max-w-4xl">
         <DialogHeader className="border-b border-border/60 bg-muted/20 px-6 py-5">

@@ -64,6 +64,7 @@ export default async function PublicProfilePage({
       viewer={
         viewer
           ? {
+              id: viewer.user.id,
               email: viewer.user.email,
               username: viewer.user.username,
             }

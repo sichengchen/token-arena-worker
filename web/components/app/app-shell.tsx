@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { AppHeaderNav } from "@/components/app/header-nav";
+import { AppHeaderSettings } from "@/components/app/header-settings";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { Button } from "@/components/ui/button";
@@ -10,13 +11,20 @@ import { Link } from "@/i18n/navigation";
 type AppShellProps = {
   locale: string;
   viewer: {
+    id: string;
     email: string;
     username?: string | null;
   } | null;
+  settingsDialog?: ReactNode;
   children: ReactNode;
 };
 
-export async function AppShell({ locale, viewer, children }: AppShellProps) {
+export async function AppShell({
+  locale,
+  viewer,
+  settingsDialog,
+  children,
+}: AppShellProps) {
   const t = await getTranslations({ locale, namespace: "social.nav" });
   const navItems = viewer
     ? [
@@ -45,6 +53,9 @@ export async function AppShell({ locale, viewer, children }: AppShellProps) {
               variant="compact"
             />
             <ThemeSwitcher authenticated={Boolean(viewer)} variant="compact" />
+            {viewer
+              ? (settingsDialog ?? <AppHeaderSettings userId={viewer.id} />)
+              : null}
 
             {viewer ? (
               <AccountMenu email={viewer.email} username={viewer.username} />
