@@ -29,6 +29,9 @@ COPY web ./web
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Build-time placeholders (overridden at runtime)
+ENV BETTER_AUTH_URL=http://localhost:3000
+ENV BETTER_AUTH_SECRET=build-time-placeholder-secret-key
 
 # Build the application
 WORKDIR /app/web
