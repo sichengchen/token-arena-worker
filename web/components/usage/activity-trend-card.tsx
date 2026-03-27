@@ -25,6 +25,11 @@ type ActivityTrendCardProps = {
   data: ActivityTrendPoint[];
 };
 
+const ACTIVITY_TREND_INITIAL_DIMENSION = {
+  width: 720,
+  height: 320,
+} as const;
+
 export function ActivityTrendCard({ data }: ActivityTrendCardProps) {
   return (
     <Card>
@@ -35,8 +40,12 @@ export function ActivityTrendCard({ data }: ActivityTrendCardProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="h-80 w-full min-w-0">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            initialDimension={ACTIVITY_TREND_INITIAL_DIMENSION}
+          >
             <LineChart
               data={data}
               margin={{ left: 8, right: 8, top: 8, bottom: 8 }}

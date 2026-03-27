@@ -43,6 +43,8 @@ type ProfileTopTooltipContentProps = {
   tokenLabel: string;
 };
 
+const PROFILE_TOP_LIST_INITIAL_WIDTH = 720;
+
 function truncateLabel(value: string, maxLength = 14) {
   if (value.length <= maxLength) {
     return value;
@@ -117,8 +119,18 @@ export function ProfileTopList({
   const chartHeight = Math.max(chartData.length * 44 + 24, 220);
 
   return (
-    <div className="h-[220px] w-full" style={{ height: `${chartHeight}px` }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div
+      className="h-[220px] w-full min-w-0"
+      style={{ height: `${chartHeight}px` }}
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        initialDimension={{
+          width: PROFILE_TOP_LIST_INITIAL_WIDTH,
+          height: chartHeight,
+        }}
+      >
         <BarChart
           data={chartData}
           layout="vertical"

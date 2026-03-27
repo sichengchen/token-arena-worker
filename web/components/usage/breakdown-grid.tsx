@@ -63,6 +63,7 @@ const cards = [
   emptyLabelKey: "devices" | "models" | "projects" | "tools";
 }>;
 
+const BREAKDOWN_CHART_INITIAL_WIDTH = 720;
 const maxVisibleRows = 5;
 
 function aggregateRows(rows: BreakdownRow[], name: string): BreakdownRow {
@@ -300,10 +301,17 @@ export function BreakdownGrid({
                 ) : (
                   <div className="flex flex-1 flex-col">
                     <div
-                      className="w-full flex-1"
+                      className="w-full min-w-0 flex-1"
                       style={{ height: `${chartHeight}px` }}
                     >
-                      <ResponsiveContainer width="100%" height="100%">
+                      <ResponsiveContainer
+                        width="100%"
+                        height="100%"
+                        initialDimension={{
+                          width: BREAKDOWN_CHART_INITIAL_WIDTH,
+                          height: chartHeight,
+                        }}
+                      >
                         <BarChart
                           data={chartData}
                           layout="vertical"

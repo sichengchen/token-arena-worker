@@ -27,6 +27,11 @@ type TokenTrendTooltipContentProps = {
   }>;
 };
 
+const TOKEN_TREND_INITIAL_DIMENSION = {
+  width: 720,
+  height: 320,
+} as const;
+
 const TOKEN_TREND_SERIES = [
   {
     dataKey: "cachedTokens",
@@ -148,8 +153,12 @@ export function TokenTrendCard({ data }: TokenTrendCardProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="h-80 w-full min-w-0">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            initialDimension={TOKEN_TREND_INITIAL_DIMENSION}
+          >
             <BarChart
               data={data}
               margin={{ left: 8, right: 8, top: 8, bottom: 8 }}
