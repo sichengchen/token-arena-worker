@@ -13,34 +13,74 @@
 └── tsconfig.base.json
 ```
 
-## 已实现能力
+## 快速部署 (Docker)
 
-### Web
+### 一键启动
 
-- 邮箱 + 密码注册 / 登录（better-auth）
-- `/usage` 总览页
-  - 1 天 / 7 天 / 30 天 / 自定义区间
-  - 总 token、输入、输出、reasoning、缓存
-  - 活跃时长、总时长、会话数、消息数、用户消息数
-  - 设备 / 工具 / 模型 / 项目分组分析
-- `/usage/setup`
-  - 账户统一时区设置
-  - 项目隐私模式设置（`hashed | raw | disabled`）
-  - CLI 初始化说明
-- `/settings/keys`
-  - 多 API key 管理
-  - 创建、重命名、启用 / 停用、删除
+```bash
+# 克隆仓库
+git clone https://github.com/poco-ai/tokens-burned.git
+cd tokens-burned
 
-### CLI
+# 运行启动脚本
+chmod +x start.sh
+./start.sh
+```
 
-- 解析多种本地 AI CLI usage 数据
-- 每个用户可配置多个 Web API key 中的任意一个
-- 上传统一后的 bucket / session 数据
-- 口径统一：
-  - `outputTokens` 包含 reasoning
-  - `reasoningTokens` 仍单独保留
-  - `totalTokens = inputTokens + outputTokens + cachedTokens`
-- 项目默认按 hash 匿名上传
+启动脚本会自动：
+1. 从 `.env.example` 创建 `.env` 文件
+2. 使用 `openssl` 生成安全的 `BETTER_AUTH_SECRET`
+3. 启动 Docker Compose 服务
+
+### 手动配置
+
+1. 复制环境变量文件：
+
+```bash
+cp .env.example .env
+```
+
+2. 编辑 `.env`，生成密钥：
+
+```bash
+# 生成安全密钥
+openssl rand -base64 32
+
+# 编辑 .env 文件，填入生成的密钥
+```
+
+3. 启动服务：
+
+```bash
+docker compose up -d
+```
+
+### Docker 常用命令
+
+```bash
+# 查看日志
+docker compose logs -f
+
+# 停止服务
+docker compose down
+
+# 更新镜像
+docker compose pull && docker compose up -d
+
+# 停止并删除数据卷
+docker compose down -v
+```
+
+### 环境变量说明
+
+| 变量 | 说明 | 示例 |
+|------|------|------|
+| `BETTER_AUTH_SECRET` | 认证密钥，使用 `openssl rand -base64 32` 生成 | - |
+| `BETTER_AUTH_URL` | 应用对外访问的 URL | `http://localhost:3000` |
+| `DATABASE_URL` | PostgreSQL 连接字符串 | `postgresql://postgres:postgres@db:5432/tokens_burned` |
+| `POSTGRES_USER` | PostgreSQL 用户名 (docker-compose) | `postgres` |
+| `POSTGRES_PASSWORD` | PostgreSQL 密码 (docker-compose) | `postgres` |
+| `POSTGRES_DB` | PostgreSQL 数据库名 (docker-compose) | `tokens_burned` |
 
 ## 本地开发
 
@@ -62,9 +102,9 @@ pnpm dev:web
 pnpm dev:cli -- --help
 ```
 
-## Web 环境变量
+## Web 环境变量 (本地开发)
 
-在 `web/.env` 中至少配置：
+在 `web/.env` 中配置：
 
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tokens_burned
@@ -77,8 +117,6 @@ BETTER_AUTH_URL=http://localhost:3000
 ```bash
 SHADOW_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/tokens_burned_shadow
 ```
-
-`SHADOW_DATABASE_URL` 主要用于 Prisma migration diff / shadow database 校验。
 
 ## 使用流程
 
@@ -113,6 +151,35 @@ pnpm --filter ./cli dev -- sync
 ```txt
 http://localhost:3000/usage
 ```
+
+## 已实现能力
+
+### Web
+
+- 邮箱 + 密码注册 / 登录（better-auth）
+- `/usage` 总览页
+  - 1 天 / 7 天 / 30 天 / 自定义区间
+  - 总 token、输入、输出、reasoning、缓存
+  - 活跃时长、总时长、会话数、消息数、用户消息数
+  - 设备 / 工具 / 模型 / 项目分组分析
+- `/usage/setup`
+  - 账户统一时区设置
+  - 项目隐私模式设置（`hashed | raw | disabled`）
+  - CLI 初始化说明
+- `/settings/keys`
+  - 多 API key 管理
+  - 创建、重命名、启用 / 停用、删除
+
+### CLI
+
+- 解析多种本地 AI CLI usage 数据
+- 每个用户可配置多个 Web API key 中的任意一个
+- 上传统一后的 bucket / session 数据
+- 口径统一：
+  - `outputTokens` 包含 reasoning
+  - `reasoningTokens` 仍单独保留
+  - `totalTokens = inputTokens + outputTokens + cachedTokens`
+- 项目默认按 hash 匿名上传
 
 ## 常用命令
 
