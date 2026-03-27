@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import type { ProfileHeatmapDay } from "@/lib/social/queries";
 import { formatDuration, formatTokenCount } from "@/lib/usage/format";
 import { cn } from "@/lib/utils";
@@ -26,12 +29,6 @@ function chunk<T>(values: T[], size: number) {
   return result;
 }
 
-function getMonthLabel(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale, { month: "short" }).format(
-    parseDateKey(value),
-  );
-}
-
 function buildWeeks(days: ProfileHeatmapDay[]) {
   if (days.length === 0) {
     return [] as HeatmapCell[][];
@@ -49,21 +46,57 @@ function buildWeeks(days: ProfileHeatmapDay[]) {
   return chunk(padded, 7);
 }
 
+function formatMonthLabel(value: string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
+    month: "short",
+    timeZone: "UTC",
+  }).format(parseDateKey(value));
+}
+
+function buildMonthLabels(weeks: HeatmapCell[][], locale: string) {
+  return weeks.map((week, index) => {
+    const filledDays = week.filter(
+      (value): value is ProfileHeatmapDay => value !== null,
+    );
+
+    if (filledDays.length === 0) {
+      return {
+        key: `empty-week-${index}`,
+        label: "",
+      };
+    }
+
+    const labelDay =
+      index === 0
+        ? filledDays[0]
+        : filledDays.find((day) => day.date.endsWith("-01"));
+
+    return {
+      key: labelDay?.date ?? filledDays[0].date,
+      label: labelDay ? formatMonthLabel(labelDay.date, locale) : "",
+    };
+  });
+}
+
 function getLevelClassName(level: ProfileHeatmapDay["level"]) {
   switch (level) {
     case 0:
-      return "bg-muted";
+      return "bg-muted dark:bg-foreground/12";
     case 1:
-      return "bg-emerald-200 dark:bg-emerald-950/80";
+      return "bg-emerald-200 dark:bg-emerald-900";
     case 2:
-      return "bg-emerald-400/80 dark:bg-emerald-700/80";
+      return "bg-emerald-400/80 dark:bg-emerald-700";
     case 3:
-      return "bg-emerald-600/90 dark:bg-emerald-500/90";
+      return "bg-emerald-600/90 dark:bg-emerald-500";
     case 4:
       return "bg-emerald-800 dark:bg-emerald-300";
     default:
       return "bg-muted";
   }
+}
+
+function getTooltipLabel(day: ProfileHeatmapDay) {
+  return `${day.date} · ${formatDuration(day.activeSeconds)} · ${day.sessions} sessions · ${formatTokenCount(day.totalTokens)} tokens`;
 }
 
 export function ProfileHeatmap({
@@ -72,55 +105,73 @@ export function ProfileHeatmap({
   lessLabel,
   moreLabel,
 }: ProfileHeatmapProps) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const weeks = buildWeeks(days);
-  const monthLabels = weeks.map((week, index) => {
-    const firstDay = week.find(
-      (value): value is ProfileHeatmapDay => value !== null,
-    );
-    const previous = weeks[index - 1]?.find(
-      (value): value is ProfileHeatmapDay => value !== null,
-    );
+  const monthLabels = buildMonthLabels(weeks, locale);
+  const weeksGridTemplate = `repeat(${weeks.length}, minmax(var(--heatmap-cell-min), 1fr))`;
+  const weekdayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  const cellClassName = cn(
+    styles.cell,
+    "rounded-[3px] ring-1 ring-border/35 transition-colors",
+  );
 
-    if (!firstDay) {
-      return {
-        key: `empty-week`,
-        label: "",
-      };
+  useEffect(() => {
+    const element = scrollerRef.current;
+
+    if (!element) {
+      return;
     }
 
-    const label = getMonthLabel(firstDay.date, locale);
+    let frameA = 0;
+    let frameB = 0;
 
-    return {
-      key: firstDay.date,
-      label:
-        previous && getMonthLabel(previous.date, locale) === label ? "" : label,
+    const scrollToCurrentDate = () => {
+      element.scrollLeft = Math.max(
+        0,
+        element.scrollWidth - element.clientWidth,
+      );
     };
-  });
-  const weekdayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-  const cellClassName =
-    "size-3 rounded-[2px] ring-1 ring-black/5 dark:ring-white/5";
+
+    frameA = requestAnimationFrame(() => {
+      scrollToCurrentDate();
+      frameB = requestAnimationFrame(scrollToCurrentDate);
+    });
+
+    return () => {
+      cancelAnimationFrame(frameA);
+      cancelAnimationFrame(frameB);
+    };
+  }, []);
 
   return (
-    <div className="space-y-3">
-      <div className={cn(styles.scroller, "overflow-x-auto pb-2")}>
-        <div className="min-w-max space-y-3">
+    <div className={styles.root}>
+      <div
+        ref={scrollerRef}
+        className={cn(styles.scroller, "overflow-x-auto pb-2")}
+      >
+        <div className={styles.content}>
           <div
-            className="grid gap-1"
+            className={styles.months}
             style={{
-              gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))`,
+              gridTemplateColumns: weeksGridTemplate,
             }}
           >
-            {monthLabels.map((item, index) => (
+            {monthLabels.map((item) => (
               <div
-                key={item.key || `empty-week-${index}`}
-                className="h-4 text-[11px] text-muted-foreground"
+                key={item.key}
+                className={cn(styles.monthLabel, "text-muted-foreground")}
               >
                 {item.label}
               </div>
             ))}
           </div>
 
-          <div className="flex min-w-max gap-1">
+          <div
+            className={styles.weeks}
+            style={{
+              gridTemplateColumns: weeksGridTemplate,
+            }}
+          >
             {weeks.map((week, weekIndex) => {
               const firstDay = week.find(
                 (value): value is ProfileHeatmapDay => value !== null,
@@ -128,12 +179,14 @@ export function ProfileHeatmap({
               const weekKey = firstDay?.date ?? `empty-week-${weekIndex}`;
 
               return (
-                <div key={weekKey} className="grid grid-rows-7 gap-1">
+                <div key={weekKey} className={styles.week}>
                   {week.map((day, dayIndex) =>
                     day ? (
                       <div
                         key={day.date}
-                        title={`${day.date} · ${formatDuration(day.activeSeconds)} · ${day.sessions} sessions · ${formatTokenCount(day.totalTokens)} tokens`}
+                        role="img"
+                        title={getTooltipLabel(day)}
+                        aria-label={getTooltipLabel(day)}
                         className={cn(
                           cellClassName,
                           getLevelClassName(day.level),
@@ -143,7 +196,7 @@ export function ProfileHeatmap({
                       <div
                         key={`${weekKey}-${weekdayKeys[dayIndex]}`}
                         aria-hidden="true"
-                        className="size-3"
+                        className={styles.spacer}
                       />
                     ),
                   )}
@@ -154,15 +207,21 @@ export function ProfileHeatmap({
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-1 text-[11px] text-muted-foreground">
-        <span>{lessLabel}</span>
-        {[0, 1, 2, 3, 4].map((level) => (
-          <span
-            key={level}
-            className={cn(cellClassName, getLevelClassName(level))}
-          />
-        ))}
-        <span>{moreLabel}</span>
+      <div className={cn(styles.legend, "text-muted-foreground")}>
+        <span className={styles.legendLabel}>{lessLabel}</span>
+        <div className={styles.legendScale}>
+          {([0, 1, 2, 3, 4] as const).map((level) => (
+            <span
+              key={level}
+              className={cn(
+                cellClassName,
+                styles.legendSwatch,
+                getLevelClassName(level),
+              )}
+            />
+          ))}
+        </div>
+        <span className={styles.legendLabel}>{moreLabel}</span>
       </div>
     </div>
   );

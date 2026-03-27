@@ -1,3 +1,12 @@
+.root {
+  --heatmap-cell-min: clamp(0.6rem, 0.58rem + 0.06vw, 0.68rem);
+  --heatmap-gap: clamp(0.16rem, 0.14rem + 0.05vw, 0.24rem);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .scroller {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -31,4 +40,89 @@
 .scroller:hover::-webkit-scrollbar-thumb:hover,
 .scroller:focus-within::-webkit-scrollbar-thumb:hover {
   background: var(--border);
+}
+
+.content {
+  display: flex;
+  width: max(100%, 68rem);
+  max-width: 72rem;
+  min-width: 0;
+  margin-inline: auto;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.months {
+  display: grid;
+  width: 100%;
+  gap: var(--heatmap-gap);
+}
+
+.monthLabel {
+  min-width: 0;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.weeks {
+  display: grid;
+  width: 100%;
+  align-items: start;
+  gap: var(--heatmap-gap);
+}
+
+.week {
+  display: grid;
+  min-width: 0;
+  gap: var(--heatmap-gap);
+}
+
+.cell,
+.spacer {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.spacer {
+  visibility: hidden;
+}
+
+.legend {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--heatmap-gap);
+}
+
+.legendScale {
+  display: flex;
+  align-items: center;
+  gap: var(--heatmap-gap);
+}
+
+.legendSwatch {
+  display: block;
+  width: max(var(--heatmap-cell-min), 1rem);
+  height: max(var(--heatmap-cell-min), 1rem);
+  flex: none;
+}
+
+.legendLabel {
+  font-size: 11px;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .root {
+    --heatmap-cell-min: 0.52rem;
+    --heatmap-gap: 0.16rem;
+  }
+
+  .content {
+    width: max(100%, 44rem);
+    max-width: none;
+  }
 }

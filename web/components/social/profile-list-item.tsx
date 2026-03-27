@@ -31,11 +31,8 @@ export function ProfileListItem({
   labels,
 }: ProfileListItemProps) {
   return (
-    <Card
-      size="sm"
-      className="bg-background/90 shadow-sm ring-1 ring-border/60"
-    >
-      <CardContent className="flex flex-col gap-4 py-1 sm:flex-row sm:items-start sm:justify-between">
+    <Card size="sm" className="shadow-sm ring-1 ring-border/60">
+      <CardContent className="flex flex-col gap-3 py-1 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 gap-3">
           {profile.image ? (
             /* biome-ignore lint/performance/noImgElement: user avatars may come from arbitrary remote URLs */
@@ -50,9 +47,9 @@ export function ProfileListItem({
             </div>
           )}
 
-          <div className="min-w-0 space-y-2">
-            <div className="space-y-1">
-              <div className="flex flex-wrap items-center gap-2">
+          <div className="min-w-0 space-y-1.5">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <div className="flex min-w-0 items-center gap-2 overflow-hidden">
                 {profile.publicProfileEnabled ? (
                   <Link
                     href={`/u/${profile.username}`}
@@ -65,27 +62,27 @@ export function ProfileListItem({
                     {profile.name}
                   </div>
                 )}
-                {profile.isSelf ? (
-                  <Badge variant="outline">{labels.you}</Badge>
-                ) : null}
-                {!profile.publicProfileEnabled ? (
-                  <Badge variant="outline">{labels.private}</Badge>
-                ) : null}
-                {profile.isFollowing && profile.followsYou ? (
-                  <Badge variant="secondary">{labels.mutual}</Badge>
-                ) : null}
+                <span className="shrink-0 text-sm text-muted-foreground">
+                  @{profile.username}
+                </span>
               </div>
 
-              <div className="text-sm text-muted-foreground">
-                @{profile.username}
-              </div>
-
-              {profile.bio ? (
-                <p className="line-clamp-2 text-sm text-foreground/80">
-                  {profile.bio}
-                </p>
+              {profile.isSelf ? (
+                <Badge variant="outline">{labels.you}</Badge>
+              ) : null}
+              {!profile.publicProfileEnabled ? (
+                <Badge variant="outline">{labels.private}</Badge>
+              ) : null}
+              {profile.isFollowing && profile.followsYou ? (
+                <Badge variant="secondary">{labels.mutual}</Badge>
               ) : null}
             </div>
+
+            {profile.bio ? (
+              <p className="line-clamp-2 text-sm text-foreground/80">
+                {profile.bio}
+              </p>
+            ) : null}
 
             <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
               <span>
