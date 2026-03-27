@@ -69,7 +69,14 @@ const TOKEN_TREND_TOOLTIP_STYLES = {
   },
 } as const;
 
-function getTooltipRows(point: TokenTrendPoint) {
+type TokenTrendTooltipLabelKey = keyof typeof TOKEN_TREND_TOOLTIP_STYLES;
+
+type TokenTrendTooltipRow = {
+  labelKey: TokenTrendTooltipLabelKey;
+  value: number;
+};
+
+function getTooltipRows(point: TokenTrendPoint): TokenTrendTooltipRow[] {
   return [
     { labelKey: "total", value: point.totalTokens },
     { labelKey: "cache", value: point.cachedTokens },
