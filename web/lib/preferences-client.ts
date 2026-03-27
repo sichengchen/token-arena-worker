@@ -14,16 +14,22 @@ type PreferenceUpdate = {
   projectMode?: ProjectMode;
 };
 
-function writeCookie(name: string, value: string) {
-  document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${oneYearInSeconds}; SameSite=Lax`;
+async function writeCookie(name: string, value: string) {
+  await cookieStore.set({
+    name,
+    value,
+    path: "/",
+    maxAge: oneYearInSeconds,
+    sameSite: "lax",
+  });
 }
 
-export function persistClientLocale(locale: AppLocale) {
-  writeCookie(localeCookieName, locale);
+export async function persistClientLocale(locale: AppLocale) {
+  await writeCookie(localeCookieName, locale);
 }
 
-export function persistClientTheme(theme: ThemeMode) {
-  writeCookie(themeCookieName, theme);
+export async function persistClientTheme(theme: ThemeMode) {
+  await writeCookie(themeCookieName, theme);
   window.localStorage.setItem(themeStorageKey, theme);
 }
 

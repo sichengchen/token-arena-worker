@@ -38,7 +38,7 @@ function applyTheme(themeMode: ThemeMode) {
   document.documentElement.dataset.themeMode = themeMode;
   document.documentElement.style.colorScheme = resolvedTheme;
 
-  persistClientTheme(themeMode);
+  void persistClientTheme(themeMode);
 
   return resolvedTheme;
 }

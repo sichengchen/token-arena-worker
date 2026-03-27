@@ -1,7 +1,9 @@
 "use client";
 
+import { Monitor, MoonStar, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@/components/providers/theme-provider";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -11,34 +13,69 @@ import {
 } from "@/components/ui/select";
 import { persistServerPreference } from "@/lib/preferences-client";
 import type { ThemeMode } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 
 type ThemeSwitcherProps = {
   authenticated?: boolean;
+  variant?: "default" | "compact";
 };
 
-export function ThemeSwitcher({ authenticated = false }: ThemeSwitcherProps) {
-  const t = useTranslations("common");
-  const { themeMode, setThemeMode } = useTheme();
+const themeIcons = {
+  light: Sun,
+  dark: MoonStar,
+  system: Monitor,
+} satisfies Record<ThemeMode, typeof Sun>;
 
-  const handleChange = (nextThemeMode: string) => {
-    setThemeMode(nextThemeMode as ThemeMode);
+export function ThemeSwitcher({
+  authenticated = false,
+  variant = "default",
+}: ThemeSwitcherProps) {
+  const t = useTranslations("common");
+  const { resolvedTheme, themeMode, setThemeMode } = useTheme();
+  const compact = variant === "compact";
+  const ThemeIcon = themeIcons[themeMode];
+  const nextThemeMode = resolvedTheme === "dark" ? "light" : "dark";
+  const CompactThemeIcon = nextThemeMode === "dark" ? MoonStar : Sun;
+
+  const handleChange = (nextThemeMode: ThemeMode) => {
+    setThemeMode(nextThemeMode);
 
     if (authenticated) {
-      void persistServerPreference({ theme: nextThemeMode as ThemeMode }).catch(
+      void persistServerPreference({ theme: nextThemeMode }).catch(
         console.error,
       );
     }
   };
 
+  if (compact) {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={`${t("theme")}: ${t(`themes.${nextThemeMode}`)}`}
+        title={t(`themes.${nextThemeMode}`)}
+        onClick={() => handleChange(nextThemeMode)}
+      >
+        <CompactThemeIcon className="size-3.5" />
+      </Button>
+    );
+  }
+
   return (
-    <Select value={themeMode} onValueChange={handleChange}>
+    <Select
+      value={themeMode}
+      onValueChange={(value) => handleChange(value as ThemeMode)}
+    >
       <SelectTrigger
         aria-label={t("theme")}
-        className="h-8 w-[112px] bg-background"
+        size="default"
+        className={cn("h-8 w-[112px] bg-background")}
       >
+        <ThemeIcon className="size-3.5 text-muted-foreground" />
         <SelectValue placeholder={t("theme")} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent align="center">
         <SelectItem value="light">{t("themes.light")}</SelectItem>
         <SelectItem value="dark">{t("themes.dark")}</SelectItem>
         <SelectItem value="system">{t("themes.system")}</SelectItem>
