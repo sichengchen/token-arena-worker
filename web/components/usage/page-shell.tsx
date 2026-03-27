@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PreferenceSaveAlert } from "./preference-save-alert";
 
 type UsagePageShellProps = {
   title?: string;
@@ -17,6 +18,8 @@ export function UsagePageShell({
 
   return (
     <div className="flex flex-col gap-4">
+      <PreferenceSaveAlert />
+
       {hasHeader ? (
         <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 space-y-1">

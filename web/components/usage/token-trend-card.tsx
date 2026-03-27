@@ -27,6 +27,48 @@ type TokenTrendTooltipContentProps = {
   }>;
 };
 
+const TOKEN_TREND_SERIES = [
+  {
+    dataKey: "cachedTokens",
+    labelKey: "cache",
+    color: "var(--chart-1)",
+    opacity: 1,
+    radius: [0, 0, 0, 0] as [number, number, number, number],
+  },
+  {
+    dataKey: "inputTokens",
+    labelKey: "input",
+    color: "var(--chart-1)",
+    opacity: 0.72,
+    radius: [0, 0, 0, 0] as [number, number, number, number],
+  },
+  {
+    dataKey: "outputTokens",
+    labelKey: "output",
+    color: "var(--chart-1)",
+    opacity: 0.44,
+    radius: [6, 6, 0, 0] as [number, number, number, number],
+  },
+] as const;
+
+const TOKEN_TREND_TOOLTIP_STYLES = {
+  total: {
+    backgroundColor: "var(--foreground)",
+  },
+  cache: {
+    backgroundColor: TOKEN_TREND_SERIES[0].color,
+    opacity: TOKEN_TREND_SERIES[0].opacity,
+  },
+  input: {
+    backgroundColor: TOKEN_TREND_SERIES[1].color,
+    opacity: TOKEN_TREND_SERIES[1].opacity,
+  },
+  output: {
+    backgroundColor: TOKEN_TREND_SERIES[2].color,
+    opacity: TOKEN_TREND_SERIES[2].opacity,
+  },
+} as const;
+
 function getTooltipRows(point: TokenTrendPoint) {
   return [
     { labelKey: "total", value: point.totalTokens },
@@ -59,7 +101,13 @@ export function TokenTrendTooltipContent({
             key={row.labelKey}
             className="flex items-center justify-between gap-6 text-sm"
           >
-            <span className="text-muted-foreground">{t(row.labelKey)}</span>
+            <div className="flex items-center gap-2">
+              <span
+                className="size-2 rounded-full"
+                style={TOKEN_TREND_TOOLTIP_STYLES[row.labelKey]}
+              />
+              <span className="text-muted-foreground">{t(row.labelKey)}</span>
+            </div>
             <span className="font-medium text-foreground">
               {formatTokenCount(row.value)}
             </span>
@@ -78,27 +126,18 @@ export function TokenTrendCard({ data }: TokenTrendCardProps) {
       <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <CardTitle>{t("title")}</CardTitle>
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <span
-              className="size-3 rounded-sm"
-              style={{ backgroundColor: "var(--chart-2)" }}
-            />
-            <span>{t("cache")}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="size-3 rounded-sm"
-              style={{ backgroundColor: "var(--chart-3)" }}
-            />
-            <span>{t("input")}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="size-3 rounded-sm"
-              style={{ backgroundColor: "var(--chart-1)" }}
-            />
-            <span>{t("output")}</span>
-          </div>
+          {TOKEN_TREND_SERIES.map((series) => (
+            <div key={series.dataKey} className="flex items-center gap-2">
+              <span
+                className="size-3 rounded-sm"
+                style={{
+                  backgroundColor: series.color,
+                  opacity: series.opacity,
+                }}
+              />
+              <span>{t(series.labelKey)}</span>
+            </div>
+          ))}
         </div>
       </CardHeader>
       <CardContent>
@@ -116,27 +155,17 @@ export function TokenTrendCard({ data }: TokenTrendCardProps) {
               <Tooltip
                 content={(props) => <TokenTrendTooltipContent {...props} />}
               />
-              <Bar
-                dataKey="cachedTokens"
-                name={t("cache")}
-                stackId="tokens"
-                fill="var(--chart-2)"
-                radius={[0, 0, 0, 0]}
-              />
-              <Bar
-                dataKey="inputTokens"
-                name={t("input")}
-                stackId="tokens"
-                fill="var(--chart-3)"
-                radius={[0, 0, 0, 0]}
-              />
-              <Bar
-                dataKey="outputTokens"
-                name={t("output")}
-                stackId="tokens"
-                fill="var(--chart-1)"
-                radius={[6, 6, 0, 0]}
-              />
+              {TOKEN_TREND_SERIES.map((series) => (
+                <Bar
+                  key={series.dataKey}
+                  dataKey={series.dataKey}
+                  name={t(series.labelKey)}
+                  stackId="tokens"
+                  fill={series.color}
+                  fillOpacity={series.opacity}
+                  radius={series.radius}
+                />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </div>

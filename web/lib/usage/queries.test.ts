@@ -24,7 +24,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-import { getBreakdowns, getFilterOptions } from "./queries";
+import { getBreakdowns, getFilterOptions, getSessionRows } from "./queries";
 
 const range = {
   from: new Date("2026-03-19T00:00:00.000Z"),
@@ -126,6 +126,69 @@ describe("getFilterOptions", () => {
       {
         value: "22222222-beta",
         label: "Huawei-Matebook-Pro · 22222222",
+      },
+    ]);
+  });
+});
+
+describe("getSessionRows", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.usageBucketFindMany.mockResolvedValue([]);
+    mocks.usageSessionFindMany.mockResolvedValue([]);
+    mocks.deviceFindMany.mockResolvedValue([]);
+    mocks.usageApiKeyFindMany.mockResolvedValue([]);
+  });
+
+  it("returns sessions with disambiguated device labels", async () => {
+    mocks.deviceFindMany.mockResolvedValue([
+      {
+        deviceId: "11111111-alpha",
+        hostname: "Huawei-Matebook-Pro",
+      },
+      {
+        deviceId: "22222222-beta",
+        hostname: "Huawei-Matebook-Pro",
+      },
+    ]);
+    mocks.usageSessionFindMany.mockResolvedValue([
+      {
+        id: "session_2",
+        sessionHash: "hash_2",
+        source: "codex",
+        projectKey: "project-b",
+        projectLabel: "project-b",
+        deviceId: "22222222-beta",
+        firstMessageAt: new Date("2026-03-25T12:00:00.000Z"),
+        lastMessageAt: new Date("2026-03-25T12:20:00.000Z"),
+        durationSeconds: 1200,
+        activeSeconds: 900,
+        messageCount: 10,
+        userMessageCount: 4,
+      },
+    ]);
+
+    const sessions = await getSessionRows({
+      userId: "user_123",
+      range,
+      filters: {},
+    });
+
+    expect(sessions).toEqual([
+      {
+        id: "session_2",
+        sessionHash: "hash_2",
+        source: "codex",
+        projectKey: "project-b",
+        projectLabel: "project-b",
+        deviceId: "22222222-beta",
+        deviceLabel: "Huawei-Matebook-Pro · 22222222",
+        firstMessageAt: "2026-03-25T12:00:00.000Z",
+        lastMessageAt: "2026-03-25T12:20:00.000Z",
+        durationSeconds: 1200,
+        activeSeconds: 900,
+        messageCount: 10,
+        userMessageCount: 4,
       },
     ]);
   });

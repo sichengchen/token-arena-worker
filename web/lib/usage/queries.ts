@@ -15,6 +15,7 @@ import type {
   UsageFilters,
   UsageMetricTotals,
   UsageOverviewMetrics,
+  UsageSessionRow,
 } from "./types";
 
 function applyBucketFilters<T extends Record<string, unknown>>(
@@ -419,6 +420,68 @@ export async function getBreakdowns(input: {
     models: finalizeBreakdownRows(byModel),
     projects: finalizeBreakdownRows(byProject),
   };
+}
+
+export async function getSessionRows(input: {
+  userId: string;
+  range: DashboardRange;
+  filters: UsageFilters;
+}): Promise<UsageSessionRow[]> {
+  const [sessions, devices] = await Promise.all([
+    prisma.usageSession.findMany({
+      where: applySessionFilters(
+        {
+          userId: input.userId,
+          firstMessageAt: {
+            gte: input.range.from,
+            lte: input.range.to,
+          },
+        },
+        input.filters,
+      ),
+      orderBy: [{ firstMessageAt: "desc" }, { lastMessageAt: "desc" }],
+      select: {
+        id: true,
+        sessionHash: true,
+        source: true,
+        projectKey: true,
+        projectLabel: true,
+        deviceId: true,
+        firstMessageAt: true,
+        lastMessageAt: true,
+        durationSeconds: true,
+        activeSeconds: true,
+        messageCount: true,
+        userMessageCount: true,
+      },
+    }),
+    prisma.device.findMany({
+      where: {
+        userId: input.userId,
+      },
+      select: {
+        deviceId: true,
+        hostname: true,
+      },
+    }),
+  ]);
+  const deviceLabels = buildDeviceDisplayLabels(devices);
+
+  return sessions.map((session) => ({
+    id: session.id,
+    sessionHash: session.sessionHash,
+    source: session.source,
+    projectKey: session.projectKey,
+    projectLabel: session.projectLabel,
+    deviceId: session.deviceId,
+    deviceLabel: deviceLabels.get(session.deviceId) ?? session.deviceId,
+    firstMessageAt: session.firstMessageAt.toISOString(),
+    lastMessageAt: session.lastMessageAt.toISOString(),
+    durationSeconds: session.durationSeconds,
+    activeSeconds: session.activeSeconds,
+    messageCount: session.messageCount,
+    userMessageCount: session.userMessageCount,
+  }));
 }
 
 export async function getFilterOptions(

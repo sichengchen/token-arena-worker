@@ -43,7 +43,7 @@ export function KeyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="border border-border/70 bg-card shadow-2xl">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? t("createTitle") : t("renameTitle")}
@@ -69,12 +69,15 @@ export function KeyDialog({
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder={t("placeholder")}
+              className="border-border/60 bg-background hover:bg-muted/40"
             />
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="border-border/60 bg-muted/60">
             <Button
               type="submit"
+              variant="outline"
+              className="border-border/60 bg-background hover:bg-muted/40"
               disabled={pending || name.trim().length === 0}
             >
               {pending

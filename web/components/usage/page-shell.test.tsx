@@ -1,7 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { UsagePageShell } from "./page-shell";
+
+vi.mock("./preference-save-alert", () => ({
+  PreferenceSaveAlert: () => null,
+}));
 
 describe("UsagePageShell", () => {
   it("renders a plain overview header instead of a boxed card", () => {

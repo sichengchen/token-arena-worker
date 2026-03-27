@@ -70,11 +70,13 @@ describe("settings dialog section spacing", () => {
       />,
     );
 
-    expect(markup).toContain("border-b border-border/50 pb-2");
+    expect(markup).toContain("gap-0 bg-card");
+    expect(markup).toContain("border-b border-border/50 bg-card pb-2");
     expect(markup).toContain("space-y-3 pt-3");
     expect(markup).toContain("grid gap-3 md:grid-cols-3");
     expect(markup).toContain("space-y-1.5");
     expect(markup).toContain("md:col-span-3");
+    expect(markup).toContain("w-full border-border/60 bg-background");
     expect(markup).not.toContain("language-switcher");
     expect(markup).not.toContain("theme-switcher");
     expect(markup).not.toContain("space-y-4 pt-4");
@@ -97,8 +99,10 @@ describe("settings dialog section spacing", () => {
       />,
     );
 
-    expect(markup).toContain("gap-2 border-b border-border/50 pb-2");
+    expect(markup).toContain("gap-0 bg-card");
+    expect(markup).toContain("gap-2 border-b border-border/50 bg-card pb-2");
     expect(markup).toContain("space-y-3 pt-3");
+    expect(markup).not.toContain("amber-");
     expect(markup).not.toContain("space-y-4 pt-4");
   });
 });

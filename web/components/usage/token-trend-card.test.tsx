@@ -82,10 +82,11 @@ describe("TokenTrendCard", () => {
       "outputTokens",
     ]);
     expect(bars.map((bar) => bar.props.fill)).toEqual([
-      "var(--chart-2)",
-      "var(--chart-3)",
+      "var(--chart-1)",
+      "var(--chart-1)",
       "var(--chart-1)",
     ]);
+    expect(bars.map((bar) => bar.props.fillOpacity)).toEqual([1, 0.72, 0.44]);
     expect(bars.every((bar) => bar.props.stackId === "tokens")).toBeTruthy();
     expect(elements.some((element) => element.type === Area)).toBeFalsy();
     expect(elements.some((element) => element.type === Legend)).toBeFalsy();
@@ -112,9 +113,9 @@ describe("TokenTrendCard", () => {
     expect(markup).toContain("Cache");
     expect(markup).toContain("Input");
     expect(markup).toContain("Output");
-    expect(markup).toContain("background-color:var(--chart-2)");
-    expect(markup).toContain("background-color:var(--chart-3)");
     expect(markup).toContain("background-color:var(--chart-1)");
+    expect(markup).toContain("opacity:0.72");
+    expect(markup).toContain("opacity:0.44");
     expect(markup).not.toContain(
       "Stacked cached, input, and output tokens by day.",
     );
@@ -152,5 +153,9 @@ describe("TokenTrendCard", () => {
     expect(markup).toContain("300.0K");
     expect(markup).toContain("700.0K");
     expect(markup).toContain("500.0K");
+    expect(markup).toContain("background-color:var(--foreground)");
+    expect(markup).toContain("background-color:var(--chart-1)");
+    expect(markup).toContain("opacity:0.72");
+    expect(markup).toContain("opacity:0.44");
   });
 });

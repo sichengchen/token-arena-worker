@@ -37,6 +37,18 @@ type KeyManagerProps = {
   variant?: "page" | "dialog";
 };
 
+const settingsPanelElevatedClassName =
+  "gap-0 bg-card shadow-sm ring-1 ring-border/60";
+
+const mutedControlClassName =
+  "border-border/60 bg-background hover:bg-muted/40";
+
+const summaryBadgeClassName =
+  "border-border/60 bg-background text-muted-foreground";
+
+const activeBadgeClassName =
+  "border-emerald-500/25 bg-emerald-500/12 text-emerald-700 dark:border-emerald-400/20 dark:text-emerald-300";
+
 export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
   const t = useTranslations("usage.keys");
   const locale = useLocale();
@@ -199,30 +211,22 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
 
   return (
     <>
-      <Card
-        size="sm"
-        className="gap-0 bg-background/90 shadow-sm ring-1 ring-border/60"
-      >
-        <CardHeader className="flex flex-wrap items-center gap-2 border-b border-border/50 pb-2">
+      <Card size="sm" className={settingsPanelElevatedClassName}>
+        <CardHeader className="flex flex-wrap items-center gap-2 border-b border-border/50 bg-card pb-2">
           <CardTitle>{isDialog ? t("dialogTitle") : t("pageTitle")}</CardTitle>
           <div className="flex flex-wrap items-center gap-1.5 sm:ml-1.5">
-            <Badge
-              variant="outline"
-              className="border-border/70 bg-background/70 text-muted-foreground"
-            >
+            <Badge variant="outline" className={summaryBadgeClassName}>
               {t("total", { count: summary.total })}
             </Badge>
-            <Badge
-              variant="secondary"
-              className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-            >
+            <Badge variant="outline" className={activeBadgeClassName}>
               {t("active", { count: summary.active })}
             </Badge>
           </div>
           <Button
             type="button"
+            variant="outline"
             size={isDialog ? "sm" : "default"}
-            className="ml-auto"
+            className={cn("ml-auto", mutedControlClassName)}
             onClick={() => setIsCreateOpen(true)}
           >
             <Plus />
@@ -237,7 +241,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
           ) : null}
 
           {rawKey ? (
-            <Alert className="border-amber-500/20 bg-amber-500/5">
+            <Alert className="border-border/60 bg-background">
               <AlertDescription className="space-y-3">
                 <div className="space-y-1">
                   <div className="font-medium text-foreground">
@@ -245,10 +249,15 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                   </div>
                   <div>{t("copyShownOnce")}</div>
                 </div>
-                <code className="block overflow-x-auto rounded-lg border border-border/60 bg-background/90 px-3 py-2 text-xs text-foreground">
+                <code className="block overflow-x-auto rounded-lg border border-border/60 bg-background px-3 py-2 text-xs text-foreground">
                   {rawKey}
                 </code>
-                <Button type="button" variant="outline" onClick={copyRawKey}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={mutedControlClassName}
+                  onClick={copyRawKey}
+                >
                   <Copy />
                   {t("copyKey")}
                 </Button>
@@ -256,7 +265,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
             </Alert>
           ) : null}
 
-          <div className="overflow-hidden rounded-xl border border-border/60 bg-background/70">
+          <div className="overflow-hidden rounded-xl border border-border/60 bg-background">
             <Table className={cn(isDialog ? "min-w-[760px]" : undefined)}>
               <TableHeader>
                 <TableRow className="border-border/50">
@@ -287,19 +296,17 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                       {key.name}
                     </TableCell>
                     <TableCell className="px-3 py-2.5">
-                      <code className="rounded-md border border-border/50 bg-muted/35 px-2 py-1 text-[12px] text-foreground/80">
+                      <code className="rounded-md border border-border/60 bg-muted/40 px-2 py-1 text-[12px] text-foreground/80">
                         {key.prefix}
                       </code>
                     </TableCell>
                     <TableCell className="px-3 py-2.5">
                       <Badge
-                        variant={
-                          key.status === "active" ? "secondary" : "outline"
-                        }
+                        variant="outline"
                         className={
                           key.status === "active"
-                            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                            : "border-border/70 text-muted-foreground"
+                            ? activeBadgeClassName
+                            : summaryBadgeClassName
                         }
                       >
                         {t(`status.${key.status}`)}
@@ -317,6 +324,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                           type="button"
                           variant="ghost"
                           size="icon-sm"
+                          className="text-muted-foreground hover:bg-muted hover:text-foreground"
                           title={t("actions.rename")}
                           aria-label={t("actions.rename")}
                           onClick={() => setRenameTarget(key)}
@@ -329,6 +337,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                           type="button"
                           variant="ghost"
                           size="icon-sm"
+                          className="text-muted-foreground hover:bg-muted hover:text-foreground"
                           title={
                             key.status === "active"
                               ? t("actions.disable")
@@ -355,7 +364,7 @@ export function KeyManager({ initialKeys, variant = "page" }: KeyManagerProps) {
                           size="icon-sm"
                           title={t("actions.delete")}
                           aria-label={t("actions.delete")}
-                          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                          className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                           onClick={() => deleteKey(key)}
                           disabled={pendingKeyId === key.id}
                         >

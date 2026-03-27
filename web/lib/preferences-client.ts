@@ -19,7 +19,7 @@ async function writeCookie(name: string, value: string) {
     name,
     value,
     path: "/",
-    maxAge: oneYearInSeconds,
+    expires: Date.now() + oneYearInSeconds * 1000,
     sameSite: "lax",
   });
 }

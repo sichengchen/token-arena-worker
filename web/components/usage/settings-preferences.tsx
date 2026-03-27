@@ -12,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { emitPreferenceSavedNotice } from "@/lib/usage/preference-notice";
 import {
   hasPreferenceChanges,
-  type PreferenceSaveState,
   projectModeOptions,
 } from "@/lib/usage/settings-view";
 import type { ProjectMode } from "@/lib/usage/types";
@@ -44,6 +44,11 @@ const timezoneOptions = [
   { value: "Pacific/Auckland", label: "Pacific/Auckland (UTC+12/+13)" },
 ];
 
+const settingsControlClassName =
+  "w-full border-border/60 bg-background hover:bg-muted/40";
+
+const settingsSelectContentClassName = "border-border/60 bg-popover";
+
 type SettingsPreferencesProps = {
   initialTimezone: string;
   initialProjectMode: ProjectMode;
@@ -72,7 +77,6 @@ export function SettingsPreferences({
     initialPublicProfileEnabled,
   );
   const [savedBio, setSavedBio] = useState(initialBio ?? "");
-  const [saveState, setSaveState] = useState<PreferenceSaveState>("idle");
   const [error, setError] = useState<string | null>(null);
   const hasChanges = hasPreferenceChanges(
     {
@@ -83,16 +87,7 @@ export function SettingsPreferences({
     },
     { timezone, projectMode, publicProfileEnabled, bio },
   );
-  const statusText =
-    saveState === "saving"
-      ? t("saving")
-      : saveState === "saved"
-        ? t("saved")
-        : null;
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const savedIndicatorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
 
   const savePreferences = useCallback(
     async (
@@ -101,13 +96,7 @@ export function SettingsPreferences({
       nextPublicProfileEnabled: boolean,
       nextBio: string,
     ) => {
-      setSaveState("saving");
       setError(null);
-
-      if (savedIndicatorTimeoutRef.current) {
-        clearTimeout(savedIndicatorTimeoutRef.current);
-        savedIndicatorTimeoutRef.current = null;
-      }
 
       try {
         const response = await fetch("/api/usage/preferences", {
@@ -132,18 +121,18 @@ export function SettingsPreferences({
         setSavedProjectMode(payload.projectMode);
         setSavedPublicProfileEnabled(payload.publicProfileEnabled);
         setSavedBio(payload.bio ?? "");
-        setSaveState("saved");
-        savedIndicatorTimeoutRef.current = setTimeout(() => {
-          setSaveState("idle");
-          savedIndicatorTimeoutRef.current = null;
-        }, 1500);
+        emitPreferenceSavedNotice({
+          timezone: payload.timezone,
+          projectMode: payload.projectMode,
+          publicProfileEnabled: payload.publicProfileEnabled,
+          bio: payload.bio,
+        });
       } catch (requestError) {
         setError(
           requestError instanceof Error
             ? requestError.message
             : t("saveFailed"),
         );
-        setSaveState("idle");
       }
     },
     [t],
@@ -159,7 +148,6 @@ export function SettingsPreferences({
       return;
     }
 
-    setSaveState("idle");
     setError(null);
 
     if (saveTimeoutRef.current) {
@@ -191,23 +179,13 @@ export function SettingsPreferences({
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
-
-      if (savedIndicatorTimeoutRef.current) {
-        clearTimeout(savedIndicatorTimeoutRef.current);
-      }
     };
   }, []);
 
   return (
-    <Card
-      size="sm"
-      className="gap-0 bg-background/90 shadow-sm ring-1 ring-border/60"
-    >
-      <CardHeader className="gap-2 border-b border-border/50 pb-2 sm:flex-row sm:items-center sm:justify-between">
+    <Card size="sm" className="gap-0 bg-card shadow-sm ring-1 ring-border/60">
+      <CardHeader className="border-b border-border/50 bg-card pb-2">
         <CardTitle>{t("preferencesTitle")}</CardTitle>
-        {statusText ? (
-          <p className="text-sm text-muted-foreground">{statusText}</p>
-        ) : null}
       </CardHeader>
       <CardContent className="space-y-3 pt-3">
         {error ? (
@@ -220,10 +198,10 @@ export function SettingsPreferences({
           <div className="space-y-1.5">
             <Label htmlFor="timezone">{t("timezone")}</Label>
             <Select value={timezone} onValueChange={setTimezone}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className={settingsControlClassName}>
                 <SelectValue placeholder={t("selectTimezone")} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={settingsSelectContentClassName}>
                 {timezoneOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
@@ -239,10 +217,10 @@ export function SettingsPreferences({
               value={projectMode}
               onValueChange={(value) => setProjectMode(value as ProjectMode)}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className={settingsControlClassName}>
                 <SelectValue placeholder={t("selectProjectMode")} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={settingsSelectContentClassName}>
                 {projectModeOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {t(`projectModes.${option.value}`)}
@@ -260,10 +238,10 @@ export function SettingsPreferences({
                 setPublicProfileEnabled(value === "enabled")
               }
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className={settingsControlClassName}>
                 <SelectValue placeholder={t("selectPublicProfile")} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={settingsSelectContentClassName}>
                 <SelectItem value="disabled">
                   {t("publicProfileOptions.disabled")}
                 </SelectItem>
@@ -283,7 +261,7 @@ export function SettingsPreferences({
               placeholder={t("bioPlaceholder")}
               maxLength={160}
               rows={3}
-              className="w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 dark:bg-input/30"
+              className="w-full rounded-lg border border-border/60 bg-background px-2.5 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground hover:bg-muted/40 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50"
             />
             <div className="text-xs text-muted-foreground">
               {bio.length}/160

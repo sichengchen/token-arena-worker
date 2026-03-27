@@ -106,6 +106,22 @@ export type UsageBreakdowns = {
   projects: BreakdownRow[];
 };
 
+export type UsageSessionRow = {
+  id: string;
+  sessionHash: string;
+  source: string;
+  projectKey: string;
+  projectLabel: string;
+  deviceId: string;
+  deviceLabel: string;
+  firstMessageAt: string;
+  lastMessageAt: string;
+  durationSeconds: number;
+  activeSeconds: number;
+  messageCount: number;
+  userMessageCount: number;
+};
+
 export type UsageFilterOptions = {
   apiKeys: Array<{
     id: string;

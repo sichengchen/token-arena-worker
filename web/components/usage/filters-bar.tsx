@@ -249,7 +249,7 @@ export function FiltersBar({
   ];
 
   return (
-    <div className="rounded-2xl bg-background px-4 py-4 ring-1 ring-foreground/10 sm:px-6">
+    <div className="rounded-2xl bg-card px-4 py-4 text-card-foreground ring-1 ring-foreground/10 sm:px-6">
       <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           {presets.map((item) =>
