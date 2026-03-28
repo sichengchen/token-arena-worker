@@ -1,12 +1,26 @@
-# Publishes the CLI package (@poco-ai/tokens-burned) to npm when a version tag is pushed.
-# Create a release tag from the cli version, e.g. git tag v0.1.0 && git push origin v0.1.0
+# CLI package (@poco-ai/tokens-burned): test + build on cli changes, PRs, and manual runs.
+# Publishes to npm when a v* tag is pushed, or when workflow_dispatch has publish_to_npm enabled.
 
 name: Publish CLI to npm
 
 on:
   push:
+    branches:
+      - "**"
     tags:
       - "v*"
+    paths:
+      - "cli/**"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/npm-publish.yml"
+  pull_request:
+    paths:
+      - "cli/**"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/npm-publish.yml"
+  workflow_dispatch:
 
 jobs:
   publish-npm:
