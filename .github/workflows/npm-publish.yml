@@ -1,0 +1,39 @@
+# Publishes the CLI package (@poco-ai/tokens-burned) to npm when a version tag is pushed.
+# Create a release tag from the cli version, e.g. git tag v0.1.0 && git push origin v0.1.0
+
+name: Publish CLI to npm
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test CLI
+        run: pnpm --filter ./cli test
+
+      - name: Build CLI
+        run: pnpm --filter ./cli build
+
+      - name: Publish to npm
+        run: pnpm --filter ./cli publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
