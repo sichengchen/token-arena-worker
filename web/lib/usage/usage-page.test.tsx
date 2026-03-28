@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   redirect: vi.fn(),
   getSessionOrRedirect: vi.fn(),
-  listUsageApiKeys: vi.fn(),
   getUsagePreference: vi.fn(),
   formatDateTime: vi.fn(),
   getOverviewMetrics: vi.fn(),
@@ -47,9 +46,6 @@ const mocks = vi.hoisted(() => ({
   SessionsSection: vi.fn(() =>
     React.createElement("div", { "data-slot": "sessions-section" }),
   ),
-  SettingsDialog: vi.fn(() =>
-    React.createElement("div", { "data-slot": "settings-dialog" }),
-  ),
   LanguageSwitcher: vi.fn(() =>
     React.createElement("div", { "data-slot": "language-switcher" }),
   ),
@@ -66,6 +62,11 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("next/navigation", () => ({
   redirect: mocks.redirect,
+}));
+
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ children, href }: { children: React.ReactNode; href: string }) =>
+    React.createElement("a", { href }, children),
 }));
 
 vi.mock("next-intl/server", () => ({
@@ -108,10 +109,6 @@ vi.mock("@/components/usage/sessions-section", () => ({
   SessionsSection: mocks.SessionsSection,
 }));
 
-vi.mock("@/components/usage/settings-dialog", () => ({
-  SettingsDialog: mocks.SettingsDialog,
-}));
-
 vi.mock("@/components/shared/language-switcher", () => ({
   LanguageSwitcher: mocks.LanguageSwitcher,
 }));
@@ -126,10 +123,6 @@ vi.mock("@/components/usage/token-trend-card", () => ({
 
 vi.mock("@/lib/session", () => ({
   getSessionOrRedirect: mocks.getSessionOrRedirect,
-}));
-
-vi.mock("@/lib/usage/api-keys", () => ({
-  listUsageApiKeys: mocks.listUsageApiKeys,
 }));
 
 vi.mock("@/lib/usage/date-range", () => ({
@@ -228,7 +221,6 @@ describe("UsagePage", () => {
     mocks.getLastSyncedAt.mockResolvedValue(
       new Date("2026-03-25T16:00:00.000Z"),
     );
-    mocks.listUsageApiKeys.mockResolvedValue([]);
     mocks.formatDateTime.mockReturnValue("2026-03-26 00:00");
   });
 
