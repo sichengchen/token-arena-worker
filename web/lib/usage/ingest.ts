@@ -1,10 +1,21 @@
+import {
+  collectAffectedLeaderboardDates,
+  findExistingSessionStartDates,
+  invalidateLeaderboardSnapshots,
+  recomputeLeaderboardUserDays,
+} from "@/lib/leaderboard/aggregates";
 import { prisma } from "@/lib/prisma";
 import type { ingestRequestSchema } from "./contracts";
 
 type IngestPayload = ReturnType<typeof ingestRequestSchema.parse>;
 type UsageWriteClient = Pick<
   typeof prisma,
-  "device" | "usageApiKey" | "usageBucket" | "usageSession"
+  | "device"
+  | "usageApiKey"
+  | "usageBucket"
+  | "usageSession"
+  | "leaderboardUserDay"
+  | "leaderboardSnapshot"
 >;
 
 type UpsertDeviceInput = {
@@ -156,8 +167,33 @@ export async function ingestUsagePayload(input: IngestUsagePayloadInput) {
       });
     }
 
+    const existingSessionStarts = await findExistingSessionStartDates(tx, {
+      userId: input.userId,
+      deviceId: input.payload.device.deviceId,
+      sessions: input.payload.sessions.map((session) => ({
+        source: session.source,
+        sessionHash: session.sessionHash,
+      })),
+    });
+
     await upsertBuckets(tx, input);
     await upsertSessions(tx, input);
+
+    const affectedDates = collectAffectedLeaderboardDates({
+      bucketStarts: input.payload.buckets.map((bucket) => bucket.bucketStart),
+      sessionStarts: input.payload.sessions.map(
+        (session) => session.firstMessageAt,
+      ),
+      existingSessionStarts,
+    });
+
+    if (affectedDates.length > 0) {
+      await recomputeLeaderboardUserDays(tx, {
+        userId: input.userId,
+        dates: affectedDates,
+      });
+      await invalidateLeaderboardSnapshots(tx);
+    }
 
     return {
       ok: true,

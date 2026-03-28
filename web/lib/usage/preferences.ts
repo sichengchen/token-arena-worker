@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 
 import type { AppLocale } from "@/lib/i18n";
+import { invalidateLeaderboardSnapshots } from "@/lib/leaderboard/aggregates";
 import { prisma } from "@/lib/prisma";
 import type { ThemeMode } from "@/lib/theme";
 import type { ProjectMode } from "./types";
@@ -69,17 +70,27 @@ export async function updateUsagePreference(
     bio?: string | null;
   },
 ) {
-  await ensureUsagePreference(userId);
+  return prisma.$transaction(async (tx) => {
+    const existing = await ensureUsagePreferenceWithDb(tx, userId);
+    const preference = await tx.usagePreference.update({
+      where: { userId },
+      data: {
+        locale: input.locale,
+        theme: input.theme,
+        timezone: input.timezone,
+        projectMode: input.projectMode,
+        publicProfileEnabled: input.publicProfileEnabled,
+        bio: input.bio,
+      },
+    });
 
-  return prisma.usagePreference.update({
-    where: { userId },
-    data: {
-      locale: input.locale,
-      theme: input.theme,
-      timezone: input.timezone,
-      projectMode: input.projectMode,
-      publicProfileEnabled: input.publicProfileEnabled,
-      bio: input.bio,
-    },
+    if (
+      input.publicProfileEnabled !== undefined &&
+      input.publicProfileEnabled !== existing.publicProfileEnabled
+    ) {
+      await invalidateLeaderboardSnapshots(tx);
+    }
+
+    return preference;
   });
 }
