@@ -4,23 +4,14 @@
 name: Publish CLI to npm
 
 on:
-  push:
-    branches:
-      - "**"
-    tags:
-      - "v*"
-    paths:
-      - "cli/**"
-      - "pnpm-lock.yaml"
-      - "pnpm-workspace.yaml"
-      - ".github/workflows/npm-publish.yml"
-  pull_request:
-    paths:
-      - "cli/**"
-      - "pnpm-lock.yaml"
-      - "pnpm-workspace.yaml"
-      - ".github/workflows/npm-publish.yml"
-  workflow_dispatch:
+    workflow_dispatch:
+    push:
+      tags:
+        - "v*"
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   publish-npm:
