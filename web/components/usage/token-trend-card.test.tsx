@@ -1,11 +1,10 @@
-import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { Area, Bar, Legend } from "recharts";
 import { describe, expect, it, vi } from "vitest";
 
 import { TokenTrendCard, TokenTrendTooltipContent } from "./token-trend-card";
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string) =>
     ({
       title: "Daily Trend",
@@ -13,89 +12,59 @@ vi.mock("next-intl", () => ({
       cache: "Cache",
       input: "Input",
       output: "Output",
+      reasoning: "Reasoning",
+      cost: "Est. Cost",
+      totalTime: "Total Time",
+      emptyCost: "No priced usage in this range.",
+      "views.tokens": "Tokens",
+      "views.cost": "Cost",
+      "views.totalTime": "Time",
+      "summary.tokens": "Tokens",
+      "summary.cost": "Cost",
+      "summary.totalTime": "Time",
     })[key] ?? key,
 }));
 
-function collectElements(node: ReactNode): Array<{
-  type: unknown;
-  props: Record<string, unknown>;
-}> {
-  const elements: Array<{ type: unknown; props: Record<string, unknown> }> = [];
-
-  function visit(value: ReactNode) {
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        visit(item);
-      }
-
-      return;
-    }
-
-    if (
-      value &&
-      typeof value === "object" &&
-      "type" in value &&
-      "props" in value &&
-      value.props &&
-      typeof value.props === "object"
-    ) {
-      const element = value as {
-        type: unknown;
-        props: Record<string, unknown> & { children?: ReactNode };
-      };
-
-      elements.push({
-        type: element.type,
-        props: element.props,
-      });
-      visit(element.props.children);
-    }
-  }
-
-  visit(node);
-
-  return elements;
-}
-
 describe("TokenTrendCard", () => {
-  it("renders stacked bars for cached, input, and output tokens only", () => {
-    const tree = TokenTrendCard({
-      data: [
-        {
-          label: "2026-03-24",
-          start: "2026-03-24T00:00:00.000Z",
-          totalTokens: 150,
-          inputTokens: 70,
-          outputTokens: 50,
-          reasoningTokens: 20,
-          cachedTokens: 10,
-        },
-      ],
-    });
+  it("renders token view with the inline legend and view controls", () => {
+    const markup = renderToStaticMarkup(
+      <TokenTrendCard
+        data={[
+          {
+            label: "2026-03-24",
+            start: "2026-03-24T00:00:00.000Z",
+            totalTokens: 1500000,
+            inputTokens: 700000,
+            outputTokens: 500000,
+            reasoningTokens: 200000,
+            cachedTokens: 100000,
+            estimatedCostUsd: 12.5,
+            totalSeconds: 3600,
+          },
+        ]}
+      />,
+    );
 
-    const elements = collectElements(tree);
-    const bars = elements.filter((element) => element.type === Bar);
-
-    expect(bars.map((bar) => bar.props.dataKey)).toEqual([
-      "cachedTokens",
-      "inputTokens",
-      "outputTokens",
-    ]);
-    expect(bars.map((bar) => bar.props.fill)).toEqual([
-      "var(--chart-1)",
-      "var(--chart-1)",
-      "var(--chart-1)",
-    ]);
-    expect(bars.map((bar) => bar.props.fillOpacity)).toEqual([1, 0.72, 0.44]);
-    expect(bars.every((bar) => bar.props.stackId === "tokens")).toBeTruthy();
-    expect(elements.some((element) => element.type === Area)).toBeFalsy();
-    expect(elements.some((element) => element.type === Legend)).toBeFalsy();
+    expect(markup).toContain("Daily Trend");
+    expect(markup).toContain("Tokens");
+    expect(markup).toContain("Cost");
+    expect(markup).toContain("Time");
+    expect(markup).toContain("Cache");
+    expect(markup).toContain("Input");
+    expect(markup).toContain("Output");
+    expect(markup).toContain("Reasoning");
+    expect(markup).not.toContain("$12.50");
+    expect(markup).toContain("background-color:var(--chart-1)");
+    expect(markup).toContain("opacity:0.72");
+    expect(markup).toContain("opacity:0.44");
+    expect(markup).toContain("opacity:0.28");
   });
 
-  it("does not render the redundant chart description copy", () => {
+  it("renders a cost chart when switched to cost view", () => {
     const markup = renderToStaticMarkup(
-      TokenTrendCard({
-        data: [
+      <TokenTrendCard
+        defaultMetricView="cost"
+        data={[
           {
             label: "2026-03-24",
             start: "2026-03-24T00:00:00.000Z",
@@ -104,31 +73,72 @@ describe("TokenTrendCard", () => {
             outputTokens: 50,
             reasoningTokens: 20,
             cachedTokens: 10,
+            estimatedCostUsd: 1.25,
+            totalSeconds: 1800,
           },
-        ],
-      }),
+        ]}
+      />,
     );
 
-    expect(markup).toContain("Daily Trend");
-    expect(markup).toContain("Cache");
-    expect(markup).toContain("Input");
-    expect(markup).toContain("Output");
-    expect(markup).toContain("background-color:var(--chart-1)");
-    expect(markup).toContain("opacity:0.72");
-    expect(markup).toContain("opacity:0.44");
-    expect(markup).not.toContain(
-      "Stacked cached, input, and output tokens by day.",
-    );
-    expect(markup).not.toContain(
-      "Hover for total, cache, input, and output values.",
-    );
+    expect(markup).toContain("Est. Cost");
+    expect(markup).toContain("background-color:var(--chart-2)");
+    expect(markup).not.toContain("No priced usage in this range.");
   });
 
-  it("renders plain-text tooltip rows for total, cache, input, and output", () => {
+  it("renders a total-time chart when switched to time view", () => {
+    const markup = renderToStaticMarkup(
+      <TokenTrendCard
+        defaultMetricView="totalTime"
+        data={[
+          {
+            label: "2026-03-24",
+            start: "2026-03-24T00:00:00.000Z",
+            totalTokens: 150,
+            inputTokens: 70,
+            outputTokens: 50,
+            reasoningTokens: 20,
+            cachedTokens: 10,
+            estimatedCostUsd: 1.25,
+            totalSeconds: 3660,
+          },
+        ]}
+      />,
+    );
+
+    expect(markup).toContain("Time");
+    expect(markup).toContain("background-color:var(--chart-3)");
+  });
+
+  it("shows an empty state for cost view when there is no priced data", () => {
+    const markup = renderToStaticMarkup(
+      <TokenTrendCard
+        defaultMetricView="cost"
+        data={[
+          {
+            label: "2026-03-24",
+            start: "2026-03-24T00:00:00.000Z",
+            totalTokens: 150,
+            inputTokens: 70,
+            outputTokens: 50,
+            reasoningTokens: 20,
+            cachedTokens: 10,
+            estimatedCostUsd: 0,
+            totalSeconds: 1800,
+          },
+        ]}
+      />,
+    );
+
+    expect(markup).toContain("No priced usage in this range.");
+  });
+
+  it("renders plain-text tooltip rows for total, cache, input, output, reasoning, cost, and time", () => {
     const markup = renderToStaticMarkup(
       <TokenTrendTooltipContent
         active
         label="2026-03-24"
+        locale="en"
+        view="tokens"
         payload={[
           {
             payload: {
@@ -139,6 +149,8 @@ describe("TokenTrendCard", () => {
               outputTokens: 500000,
               cachedTokens: 300000,
               reasoningTokens: 0,
+              estimatedCostUsd: 1.25,
+              totalSeconds: 3600,
             },
           },
         ]}
@@ -149,13 +161,55 @@ describe("TokenTrendCard", () => {
     expect(markup).toContain("Cache");
     expect(markup).toContain("Input");
     expect(markup).toContain("Output");
+    expect(markup).toContain("Reasoning");
+    expect(markup).toContain("Est. Cost");
+    expect(markup).toContain("Total Time");
     expect(markup).toContain("1.5M");
     expect(markup).toContain("300.0K");
     expect(markup).toContain("700.0K");
     expect(markup).toContain("500.0K");
+    expect(markup).toContain("0");
+    expect(markup).toContain("$1.25");
+    expect(markup).toContain("1h");
     expect(markup).toContain("background-color:var(--foreground)");
     expect(markup).toContain("background-color:var(--chart-1)");
+    expect(markup).toContain("background-color:var(--chart-2)");
     expect(markup).toContain("opacity:0.72");
     expect(markup).toContain("opacity:0.44");
+    expect(markup).toContain("opacity:0.28");
+  });
+
+  it("renders plain-text tooltip rows for time view", () => {
+    const markup = renderToStaticMarkup(
+      <TokenTrendTooltipContent
+        active
+        label="2026-03-24"
+        locale="en"
+        view="totalTime"
+        payload={[
+          {
+            payload: {
+              label: "2026-03-24",
+              start: "2026-03-24T00:00:00.000Z",
+              totalTokens: 150,
+              inputTokens: 70,
+              outputTokens: 50,
+              cachedTokens: 10,
+              reasoningTokens: 20,
+              estimatedCostUsd: 1.25,
+              totalSeconds: 3660,
+            },
+          },
+        ]}
+      />,
+    );
+
+    expect(markup).toContain("Total Time");
+    expect(markup).toContain("1h 1m");
+    expect(markup).toContain("Total");
+    expect(markup).toContain("150");
+    expect(markup).toContain("Est. Cost");
+    expect(markup).toContain("$1.25");
+    expect(markup).toContain("background-color:var(--chart-3)");
   });
 });

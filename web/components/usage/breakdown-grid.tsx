@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
 import {
   Bar,
   BarChart,
@@ -12,17 +13,25 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatPercentage, formatTokenCount } from "@/lib/usage/format";
+import {
+  formatDuration,
+  formatPercentage,
+  formatTokenCount,
+  formatUsdAmount,
+} from "@/lib/usage/format";
 import type { BreakdownRow, UsageBreakdowns } from "@/lib/usage/types";
 import { CollapsibleSection } from "./collapsible-section";
 
 type BreakdownGridProps = {
   breakdowns: UsageBreakdowns;
   defaultOpen?: boolean;
+  defaultMetricView?: BreakdownMetricView;
 };
 
-type BreakdownMetric = "messages" | "sessions" | "totalTokens";
+type BreakdownMetricView = "tokens" | "cost";
+type BreakdownMetric = "estimatedCostUsd" | "totalTokens";
 type BreakdownKey = keyof UsageBreakdowns;
 type BreakdownChartDatum = {
   key: string;
@@ -32,9 +41,13 @@ type BreakdownChartDatum = {
   valueLabel: string;
   share: number;
   totalTokens: number;
+  estimatedCostUsd: number;
+  totalSeconds: number;
   sessions: number;
   messages: number;
 };
+
+type BreakdownMetricViews = Record<BreakdownKey, BreakdownMetricView>;
 
 const cards = [
   {
@@ -66,6 +79,14 @@ const cards = [
 const BREAKDOWN_CHART_INITIAL_WIDTH = 720;
 const maxVisibleRows = 5;
 
+const BREAKDOWN_VIEW_OPTIONS = [
+  { value: "tokens", labelKey: "views.tokens" },
+  { value: "cost", labelKey: "views.cost" },
+] as const satisfies Array<{
+  value: BreakdownMetricView;
+  labelKey: "views.tokens" | "views.cost";
+}>;
+
 function aggregateRows(rows: BreakdownRow[], name: string): BreakdownRow {
   return rows.reduce<BreakdownRow>(
     (result, row) => {
@@ -74,7 +95,9 @@ function aggregateRows(rows: BreakdownRow[], name: string): BreakdownRow {
       result.outputTokens += row.outputTokens;
       result.reasoningTokens += row.reasoningTokens;
       result.cachedTokens += row.cachedTokens;
+      result.estimatedCostUsd += row.estimatedCostUsd;
       result.activeSeconds += row.activeSeconds;
+      result.totalSeconds += row.totalSeconds;
       result.sessions += row.sessions;
       result.messages += row.messages;
       result.userMessages += row.userMessages;
@@ -90,7 +113,9 @@ function aggregateRows(rows: BreakdownRow[], name: string): BreakdownRow {
       outputTokens: 0,
       reasoningTokens: 0,
       cachedTokens: 0,
+      estimatedCostUsd: 0,
       activeSeconds: 0,
+      totalSeconds: 0,
       sessions: 0,
       messages: 0,
       userMessages: 0,
@@ -112,25 +137,11 @@ function getDisplayRows(rows: BreakdownRow[], otherLabel: string) {
 
 function getMetricValue(row: BreakdownRow, metric: BreakdownMetric) {
   switch (metric) {
-    case "messages":
-      return row.messages;
-    case "sessions":
-      return row.sessions;
+    case "estimatedCostUsd":
+      return row.estimatedCostUsd;
     case "totalTokens":
       return row.totalTokens;
   }
-}
-
-function resolveMetric(rows: BreakdownRow[]): BreakdownMetric {
-  if (rows.some((row) => row.totalTokens > 0)) {
-    return "totalTokens";
-  }
-
-  if (rows.some((row) => row.sessions > 0)) {
-    return "sessions";
-  }
-
-  return "messages";
 }
 
 function sortRowsByMetric(rows: BreakdownRow[], metric: BreakdownMetric) {
@@ -141,7 +152,11 @@ function sortRowsByMetric(rows: BreakdownRow[], metric: BreakdownMetric) {
       return diff;
     }
 
-    return right.totalTokens - left.totalTokens;
+    if (right.totalTokens !== left.totalTokens) {
+      return right.totalTokens - left.totalTokens;
+    }
+
+    return right.estimatedCostUsd - left.estimatedCostUsd;
   });
 }
 
@@ -164,16 +179,22 @@ function getMetricShare(
 
 function getMetricLabelKey(metric: BreakdownMetric) {
   switch (metric) {
-    case "messages":
-      return "messages";
-    case "sessions":
-      return "sessions";
+    case "estimatedCostUsd":
+      return "estimatedCost";
     case "totalTokens":
       return "totalTokens";
   }
 }
 
-function formatMetricValue(value: number) {
+function formatMetricValue(
+  value: number,
+  metric: BreakdownMetric,
+  locale: string,
+) {
+  if (metric === "estimatedCostUsd") {
+    return formatUsdAmount(value, locale, { compact: true });
+  }
+
   return formatTokenCount(value);
 }
 
@@ -188,6 +209,7 @@ function truncateLabel(value: string, maxLength = 14) {
 function toChartData(
   rows: BreakdownRow[],
   metric: BreakdownMetric,
+  locale: string,
 ): BreakdownChartDatum[] {
   return rows.map((row) => {
     const value = getMetricValue(row, metric);
@@ -197,13 +219,32 @@ function toChartData(
       name: row.name,
       shortName: truncateLabel(row.name),
       value,
-      valueLabel: formatMetricValue(value),
+      valueLabel: formatMetricValue(value, metric, locale),
       share: getMetricShare(rows, row, metric),
       totalTokens: row.totalTokens,
+      estimatedCostUsd: row.estimatedCostUsd,
+      totalSeconds: row.totalSeconds,
       sessions: row.sessions,
       messages: row.messages,
     };
   });
+}
+
+function createInitialMetricViews(
+  defaultMetricView: BreakdownMetricView,
+): BreakdownMetricViews {
+  return cards.reduce<BreakdownMetricViews>(
+    (result, card) => {
+      result[card.key] = defaultMetricView;
+      return result;
+    },
+    {
+      devices: defaultMetricView,
+      tools: defaultMetricView,
+      models: defaultMetricView,
+      projects: defaultMetricView,
+    },
+  );
 }
 
 type BreakdownTooltipContentProps = {
@@ -229,7 +270,7 @@ function BreakdownTooltipContent({
   }
 
   return (
-    <div className="min-w-44 rounded-lg border bg-background/95 p-3 shadow-md">
+    <div className="min-w-48 rounded-lg border bg-background/95 p-3 shadow-md">
       <div className="mb-3 text-sm font-medium text-foreground">
         {point.name}
       </div>
@@ -239,7 +280,7 @@ function BreakdownTooltipContent({
             {t(getMetricLabelKey(metric))}
           </span>
           <span className="font-medium text-foreground">
-            {formatMetricValue(point.value)}
+            {formatMetricValue(point.value, metric, locale)}
           </span>
         </div>
         <div className="flex items-center justify-between gap-6 text-sm">
@@ -248,16 +289,40 @@ function BreakdownTooltipContent({
             {formatPercentage(point.share, locale)}
           </span>
         </div>
+        {metric !== "totalTokens" ? (
+          <div className="flex items-center justify-between gap-6 text-sm">
+            <span className="text-muted-foreground">{t("totalTokens")}</span>
+            <span className="font-medium text-foreground">
+              {formatTokenCount(point.totalTokens)}
+            </span>
+          </div>
+        ) : null}
+        {metric !== "estimatedCostUsd" ? (
+          <div className="flex items-center justify-between gap-6 text-sm">
+            <span className="text-muted-foreground">{t("estimatedCost")}</span>
+            <span className="font-medium text-foreground">
+              {formatUsdAmount(point.estimatedCostUsd, locale)}
+            </span>
+          </div>
+        ) : null}
+        {point.totalSeconds > 0 ? (
+          <div className="flex items-center justify-between gap-6 text-sm">
+            <span className="text-muted-foreground">{t("totalTime")}</span>
+            <span className="font-medium text-foreground">
+              {formatDuration(point.totalSeconds)}
+            </span>
+          </div>
+        ) : null}
         <div className="flex items-center justify-between gap-6 text-sm">
           <span className="text-muted-foreground">{t("sessions")}</span>
           <span className="font-medium text-foreground">
-            {formatMetricValue(point.sessions)}
+            {formatTokenCount(point.sessions)}
           </span>
         </div>
         <div className="flex items-center justify-between gap-6 text-sm">
           <span className="text-muted-foreground">{t("messages")}</span>
           <span className="font-medium text-foreground">
-            {formatMetricValue(point.messages)}
+            {formatTokenCount(point.messages)}
           </span>
         </div>
       </div>
@@ -268,9 +333,13 @@ function BreakdownTooltipContent({
 export function BreakdownGrid({
   breakdowns,
   defaultOpen = false,
+  defaultMetricView = "tokens",
 }: BreakdownGridProps) {
   const locale = useLocale();
   const t = useTranslations("usage.breakdowns");
+  const [metricViews, setMetricViews] = useState<BreakdownMetricViews>(() =>
+    createInitialMetricViews(defaultMetricView),
+  );
 
   return (
     <CollapsibleSection
@@ -280,23 +349,52 @@ export function BreakdownGrid({
     >
       <div className="grid gap-3 md:grid-cols-2">
         {cards.map((card) => {
-          const metric = resolveMetric(breakdowns[card.key]);
+          const metricView = metricViews[card.key];
+          const metric: BreakdownMetric =
+            metricView === "cost" ? "estimatedCostUsd" : "totalTokens";
           const rows = getDisplayRows(
             sortRowsByMetric(breakdowns[card.key], metric),
             t("others"),
           );
-          const chartData = toChartData(rows, metric);
+          const chartData = toChartData(rows, metric, locale);
           const chartHeight = Math.max(chartData.length * 40 + 20, 196);
+          const hasMetricData = chartData.some((row) => row.value > 0);
 
           return (
             <Card key={card.key} size="sm" className="min-h-[280px]">
-              <CardHeader className="pb-2">
-                <CardTitle>{t(`tabs.${card.labelKey}`)}</CardTitle>
+              <CardHeader className="flex flex-col gap-3 pb-2 lg:flex-row lg:items-center">
+                <CardTitle className="shrink-0">
+                  {t(`tabs.${card.labelKey}`)}
+                </CardTitle>
+                <div className="inline-flex items-center gap-1 lg:ml-auto lg:shrink-0">
+                  {BREAKDOWN_VIEW_OPTIONS.map((view) => (
+                    <Button
+                      key={view.value}
+                      type="button"
+                      size="xs"
+                      variant={
+                        metricView === view.value ? "secondary" : "ghost"
+                      }
+                      onClick={() =>
+                        setMetricViews((current) => ({
+                          ...current,
+                          [card.key]: view.value,
+                        }))
+                      }
+                    >
+                      {t(view.labelKey)}
+                    </Button>
+                  ))}
+                </div>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col">
                 {chartData.length === 0 ? (
                   <div className="flex flex-1 items-center rounded-xl border border-dashed px-4 text-sm text-muted-foreground">
                     {t(`empty.${card.emptyLabelKey}`)}
+                  </div>
+                ) : metric === "estimatedCostUsd" && !hasMetricData ? (
+                  <div className="flex flex-1 items-center rounded-xl border border-dashed px-4 text-sm text-muted-foreground">
+                    {t("emptyCost")}
                   </div>
                 ) : (
                   <div className="flex flex-1 flex-col">
@@ -326,7 +424,9 @@ export function BreakdownGrid({
                           <XAxis
                             type="number"
                             tick={{ fontSize: 12 }}
-                            tickFormatter={formatMetricValue}
+                            tickFormatter={(value) =>
+                              formatMetricValue(value, metric, locale)
+                            }
                             axisLine={false}
                             tickLine={false}
                           />
@@ -356,7 +456,11 @@ export function BreakdownGrid({
                             {chartData.map((entry, index) => (
                               <Cell
                                 key={entry.key}
-                                fill="var(--chart-1)"
+                                fill={
+                                  metric === "estimatedCostUsd"
+                                    ? "var(--chart-2)"
+                                    : "var(--chart-1)"
+                                }
                                 fillOpacity={Math.max(1 - index * 0.14, 0.35)}
                               />
                             ))}

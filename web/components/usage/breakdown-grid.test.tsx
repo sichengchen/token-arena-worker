@@ -1,6 +1,4 @@
-import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { Bar, BarChart, LabelList, ResponsiveContainer } from "recharts";
 import { describe, expect, it, vi } from "vitest";
 
 import type { UsageBreakdowns } from "@/lib/usage/types";
@@ -17,6 +15,11 @@ vi.mock("next-intl", () => ({
             title: "Breakdowns",
             description:
               "Break down usage by device, tool, model, and project.",
+            "views.tokens": "Total Tokens",
+            "views.cost": "Est. Cost",
+            "summary.tokens": "Tokens",
+            "summary.cost": "Cost",
+            "summary.totalTime": "Time",
             "tabs.devices": "Devices",
             "tabs.tools": "Tools",
             "tabs.models": "Models",
@@ -28,6 +31,7 @@ vi.mock("next-intl", () => ({
             "empty.tools": "No tool data in this range.",
             "empty.models": "No model data in this range.",
             "empty.projects": "No project data in this range.",
+            emptyCost: "No priced usage in this range.",
             others: "Others",
           }[key] ?? key
         );
@@ -37,6 +41,8 @@ vi.mock("next-intl", () => ({
         return (
           {
             totalTokens: "Total Tokens",
+            estimatedCost: "Est. Cost",
+            totalTime: "Total Time",
             sessions: "Sessions",
             messages: "Messages",
             share: "Share",
@@ -47,47 +53,6 @@ vi.mock("next-intl", () => ({
       return key;
     },
 }));
-
-function collectElements(node: ReactNode): Array<{
-  type: unknown;
-  props: Record<string, unknown>;
-}> {
-  const elements: Array<{ type: unknown; props: Record<string, unknown> }> = [];
-
-  function visit(value: ReactNode) {
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        visit(item);
-      }
-
-      return;
-    }
-
-    if (
-      value &&
-      typeof value === "object" &&
-      "type" in value &&
-      "props" in value &&
-      value.props &&
-      typeof value.props === "object"
-    ) {
-      const element = value as {
-        type: unknown;
-        props: Record<string, unknown> & { children?: ReactNode };
-      };
-
-      elements.push({
-        type: element.type,
-        props: element.props,
-      });
-      visit(element.props.children);
-    }
-  }
-
-  visit(node);
-
-  return elements;
-}
 
 describe("BreakdownGrid", () => {
   const breakdowns: UsageBreakdowns = {
@@ -101,7 +66,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 20,
         reasoningTokens: 5,
         cachedTokens: 5,
+        estimatedCostUsd: 10.5,
         activeSeconds: 0,
+        totalSeconds: 1800,
         sessions: 3,
         messages: 15,
         userMessages: 8,
@@ -115,7 +82,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 17,
         reasoningTokens: 3,
         cachedTokens: 2,
+        estimatedCostUsd: 8.25,
         activeSeconds: 0,
+        totalSeconds: 1200,
         sessions: 2,
         messages: 11,
         userMessages: 6,
@@ -129,7 +98,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 10,
         reasoningTokens: 3,
         cachedTokens: 2,
+        estimatedCostUsd: 6.75,
         activeSeconds: 0,
+        totalSeconds: 900,
         sessions: 2,
         messages: 8,
         userMessages: 4,
@@ -143,7 +114,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 8,
         reasoningTokens: 2,
         cachedTokens: 1,
+        estimatedCostUsd: 5.1,
         activeSeconds: 0,
+        totalSeconds: 600,
         sessions: 1,
         messages: 6,
         userMessages: 3,
@@ -157,7 +130,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 4,
         reasoningTokens: 1,
         cachedTokens: 0,
+        estimatedCostUsd: 2.6,
         activeSeconds: 0,
+        totalSeconds: 300,
         sessions: 1,
         messages: 3,
         userMessages: 2,
@@ -171,7 +146,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 2,
         reasoningTokens: 1,
         cachedTokens: 0,
+        estimatedCostUsd: 1.1,
         activeSeconds: 0,
+        totalSeconds: 120,
         sessions: 1,
         messages: 2,
         userMessages: 1,
@@ -187,7 +164,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 30,
         reasoningTokens: 5,
         cachedTokens: 5,
+        estimatedCostUsd: 12.5,
         activeSeconds: 0,
+        totalSeconds: 0,
         sessions: 0,
         messages: 0,
         userMessages: 0,
@@ -201,7 +180,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 8,
         reasoningTokens: 1,
         cachedTokens: 1,
+        estimatedCostUsd: 3.75,
         activeSeconds: 0,
+        totalSeconds: 0,
         sessions: 0,
         messages: 0,
         userMessages: 0,
@@ -217,7 +198,9 @@ describe("BreakdownGrid", () => {
         outputTokens: 50,
         reasoningTokens: 10,
         cachedTokens: 5,
+        estimatedCostUsd: 16.25,
         activeSeconds: 0,
+        totalSeconds: 3600,
         sessions: 4,
         messages: 18,
         userMessages: 10,
@@ -237,10 +220,7 @@ describe("BreakdownGrid", () => {
     expect(markup).not.toContain("md:grid-cols-2");
   });
 
-  it("renders a 2x2 recharts layout instead of a tabbed table", () => {
-    const tree = BreakdownGrid({ breakdowns, defaultOpen: true });
-    const elements = collectElements(tree);
-    const charts = elements.filter((element) => element.type === BarChart);
+  it("renders a 2x2 chart layout with per-card controls", () => {
     const markup = renderToStaticMarkup(
       <BreakdownGrid breakdowns={breakdowns} defaultOpen />,
     );
@@ -248,28 +228,33 @@ describe("BreakdownGrid", () => {
     expect(markup).toContain("Breakdowns");
     expect(markup).toContain('aria-expanded="true"');
     expect(markup).toContain("md:grid-cols-2");
+    expect(markup.match(/>Total Tokens<\/button>/g) ?? []).toHaveLength(4);
+    expect(markup.match(/>Est\. Cost<\/button>/g) ?? []).toHaveLength(4);
     expect(markup).toContain("Devices");
     expect(markup).toContain("Tools");
     expect(markup).toContain("Models");
     expect(markup).toContain("Projects");
     expect(markup).toContain("No device data in this range.");
-    expect(
-      elements.filter((element) => element.type === ResponsiveContainer),
-    ).toHaveLength(3);
-    expect(charts).toHaveLength(3);
-    expect(elements.filter((element) => element.type === Bar)).toHaveLength(3);
-    expect(
-      elements.filter((element) => element.type === LabelList),
-    ).toHaveLength(3);
-    expect(
-      (charts[0]?.props.data as Array<{ name: string }>).at(-1)?.name,
-    ).toBe("Others");
-    expect((charts[0]?.props.data as Array<{ value: number }>)[0]?.value).toBe(
-      50,
-    );
-    expect((charts[1]?.props.data as Array<{ value: number }>)[0]?.value).toBe(
-      80,
-    );
+    expect(markup).not.toContain("$34.30");
+    expect(markup).not.toContain("1h 22m");
     expect(markup).not.toContain("<table");
+  });
+
+  it("can switch the charts to estimated cost mode", () => {
+    const markup = renderToStaticMarkup(
+      <BreakdownGrid
+        breakdowns={breakdowns}
+        defaultOpen
+        defaultMetricView="cost"
+      />,
+    );
+
+    expect(
+      markup.match(/data-variant="ghost"[^>]*>Total Tokens<\/button>/g) ?? [],
+    ).toHaveLength(4);
+    expect(
+      markup.match(/data-variant="secondary"[^>]*>Est\. Cost<\/button>/g) ?? [],
+    ).toHaveLength(4);
+    expect(markup).not.toContain("No priced usage in this range.");
   });
 });
