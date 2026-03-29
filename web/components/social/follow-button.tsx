@@ -2,14 +2,29 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Link } from "@/i18n/navigation";
+import {
+  type FollowTag,
+  type FollowTagSelectValue,
+  followTags,
+  fromFollowTagSelectValue,
+  toFollowTagSelectValue,
+} from "@/lib/social/follow-tags";
 
 type FollowButtonProps = {
   locale: string;
   username: string;
   initialFollowing: boolean;
+  initialTag?: FollowTag | null;
   isAuthenticated: boolean;
   isSelf?: boolean;
   canFollow?: boolean;
@@ -20,6 +35,7 @@ export function FollowButton({
   locale,
   username,
   initialFollowing,
+  initialTag = null,
   isAuthenticated,
   isSelf = false,
   canFollow = true,
@@ -27,10 +43,20 @@ export function FollowButton({
 }: FollowButtonProps) {
   const router = useRouter();
   const t = useTranslations("social.profile");
+  const tTags = useTranslations("social.tags");
   const tErrors = useTranslations("social.errors");
   const [following, setFollowing] = useState(initialFollowing);
+  const [tag, setTag] = useState<FollowTag | null>(initialTag);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFollowing(initialFollowing);
+  }, [initialFollowing]);
+
+  useEffect(() => {
+    setTag(initialTag);
+  }, [initialTag]);
 
   if (isSelf) {
     return null;
@@ -77,6 +103,7 @@ export function FollowButton({
               }
 
               setFollowing(!following);
+              setTag(null);
               router.refresh();
             } catch {
               setError(tErrors("followFailed"));
@@ -86,6 +113,68 @@ export function FollowButton({
       >
         {following ? t("followingAction") : t("follow")}
       </Button>
+
+      {following ? (
+        <Select
+          value={toFollowTagSelectValue(tag)}
+          onValueChange={(nextValue) => {
+            startTransition(async () => {
+              setError(null);
+
+              const nextTag = fromFollowTagSelectValue(
+                nextValue as FollowTagSelectValue,
+              );
+
+              try {
+                const response = await fetch(
+                  `/api/social/follows/${encodeURIComponent(username)}`,
+                  {
+                    method: "PATCH",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      tag: nextTag,
+                    }),
+                  },
+                );
+
+                if (response.status === 401) {
+                  router.push(`/${locale}/login`);
+                  return;
+                }
+
+                if (!response.ok) {
+                  throw new Error(tErrors("tagFailed"));
+                }
+
+                setTag(nextTag);
+                router.refresh();
+              } catch {
+                setError(tErrors("tagFailed"));
+              }
+            });
+          }}
+          disabled={isPending}
+        >
+          <SelectTrigger
+            aria-label={tTags("selectLabel")}
+            size={size}
+            className="min-w-[132px] bg-background"
+          >
+            <SelectValue placeholder={tTags("none")} />
+          </SelectTrigger>
+          <SelectContent align="end">
+            <SelectItem value="none">{tTags("none")}</SelectItem>
+            {followTags.map((value) => (
+              <SelectItem key={value} value={value}>
+                {tTags(`options.${value}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : null}
+
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
     </div>
   );

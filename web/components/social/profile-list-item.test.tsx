@@ -38,6 +38,7 @@ describe("ProfileListItem", () => {
           followerCount: 0,
           followingCount: 0,
           isFollowing: false,
+          followTag: null,
           followsYou: false,
           isSelf: true,
           publicProfileEnabled: true,

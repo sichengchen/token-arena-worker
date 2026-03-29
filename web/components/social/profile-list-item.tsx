@@ -112,6 +112,7 @@ export function ProfileListItem({
             locale={locale}
             username={profile.username}
             initialFollowing={profile.isFollowing}
+            initialTag={profile.followTag}
             isAuthenticated={isAuthenticated}
             isSelf={profile.isSelf}
             canFollow={profile.publicProfileEnabled || profile.isFollowing}

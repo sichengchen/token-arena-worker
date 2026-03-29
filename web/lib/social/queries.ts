@@ -11,6 +11,7 @@ import {
   resolveDashboardRange,
 } from "@/lib/usage/date-range";
 import { formatDateInput } from "@/lib/usage/format";
+import type { FollowTag } from "./follow-tags";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -62,6 +63,7 @@ export type SocialListProfile = {
   followerCount: number;
   followingCount: number;
   isFollowing: boolean;
+  followTag: FollowTag | null;
   followsYou: boolean;
   isSelf: boolean;
 };
@@ -86,6 +88,7 @@ export type PublicProfilePageData = {
   followerCount: number;
   followingCount: number;
   isFollowing: boolean;
+  followTag: FollowTag | null;
   followsYou: boolean;
   isSelf: boolean;
   overview: {
@@ -110,6 +113,7 @@ export type PublicProfilePageData = {
 
 type RelationFlags = {
   isFollowing: boolean;
+  followTag: FollowTag | null;
   followsYou: boolean;
 };
 
@@ -129,17 +133,20 @@ function createDailyRange(timezone: string, days: number) {
 
 function mapRelationFlags(
   ids: string[],
-  direct: Array<{ followingId: string }>,
+  direct: Array<{ followingId: string; tag: FollowTag | null }>,
   reverse: Array<{ followerId: string }>,
 ) {
-  const followingIds = new Set(direct.map((record) => record.followingId));
+  const followingMap = new Map(
+    direct.map((record) => [record.followingId, record.tag] as const),
+  );
   const followerIds = new Set(reverse.map((record) => record.followerId));
 
   return new Map<string, RelationFlags>(
     ids.map((id) => [
       id,
       {
-        isFollowing: followingIds.has(id),
+        isFollowing: followingMap.has(id),
+        followTag: followingMap.get(id) ?? null,
         followsYou: followerIds.has(id),
       },
     ]),
@@ -161,6 +168,7 @@ function mapUserToListProfile(
     followerCount: user._count.followers,
     followingCount: user._count.following,
     isFollowing: relationFlags.isFollowing,
+    followTag: relationFlags.followTag,
     followsYou: relationFlags.followsYou,
     isSelf: viewerUserId === user.id,
   };
@@ -173,6 +181,7 @@ async function getRelationFlags(
   if (!viewerUserId || viewerUserId === targetUserId) {
     return {
       isFollowing: false,
+      followTag: null,
       followsYou: false,
     };
   }
@@ -185,7 +194,7 @@ async function getRelationFlags(
           followingId: targetUserId,
         },
       },
-      select: { id: true },
+      select: { id: true, tag: true },
     }),
     prisma.follow.findUnique({
       where: {
@@ -200,6 +209,7 @@ async function getRelationFlags(
 
   return {
     isFollowing: Boolean(isFollowing),
+    followTag: isFollowing?.tag ?? null,
     followsYou: Boolean(followsYou),
   };
 }
@@ -465,6 +475,7 @@ export async function getPublicProfilePageData(input: {
     followerCount: user._count.followers,
     followingCount: user._count.following,
     isFollowing: relationFlags.isFollowing,
+    followTag: relationFlags.followTag,
     followsYou: relationFlags.followsYou,
     isSelf,
     overview: {
@@ -553,6 +564,7 @@ export async function searchPublicProfiles(input: {
         user,
         {
           isFollowing: false,
+          followTag: null,
           followsYou: false,
         },
         input.viewerUserId,
@@ -570,6 +582,7 @@ export async function searchPublicProfiles(input: {
       },
       select: {
         followingId: true,
+        tag: true,
       },
     }),
     prisma.follow.findMany({
@@ -592,6 +605,7 @@ export async function searchPublicProfiles(input: {
       user,
       relationMap.get(user.id) ?? {
         isFollowing: false,
+        followTag: null,
         followsYou: false,
       },
       input.viewerUserId,
@@ -608,6 +622,7 @@ export async function listFollowingProfiles(viewerUserId: string) {
       createdAt: "desc",
     },
     select: {
+      tag: true,
       following: {
         select: profileUserSelect,
       },
@@ -633,6 +648,7 @@ export async function listFollowingProfiles(viewerUserId: string) {
       row.following,
       {
         isFollowing: true,
+        followTag: row.tag,
         followsYou: reverseSet.has(row.following.id),
       },
       viewerUserId,
@@ -665,15 +681,19 @@ export async function listFollowerProfiles(viewerUserId: string) {
     },
     select: {
       followingId: true,
+      tag: true,
     },
   });
-  const directSet = new Set(direct.map((record) => record.followingId));
+  const directMap = new Map(
+    direct.map((record) => [record.followingId, record.tag] as const),
+  );
 
   return rows.map((row) =>
     mapUserToListProfile(
       row.follower,
       {
-        isFollowing: directSet.has(row.follower.id),
+        isFollowing: directMap.has(row.follower.id),
+        followTag: directMap.get(row.follower.id) ?? null,
         followsYou: true,
       },
       viewerUserId,

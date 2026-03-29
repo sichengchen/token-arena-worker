@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { normalizeUsername } from "@/lib/auth-username";
 import { prisma } from "@/lib/prisma";
 import { getOptionalSession } from "@/lib/session";
+import { followTagUpdateSchema } from "@/lib/social/contracts";
 
 async function getTargetUser(username: string) {
   return prisma.user.findUnique({
@@ -86,4 +87,46 @@ export async function DELETE(
   });
 
   return NextResponse.json({ success: true });
+}
+
+export async function PATCH(
+  request: Request,
+  context: RouteContext<"/api/social/follows/[username]">,
+) {
+  const session = await getOptionalSession();
+
+  if (!session) {
+    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
+  }
+
+  const body = followTagUpdateSchema.parse(await request.json());
+  const { username } = await context.params;
+  const targetUser = await getTargetUser(username);
+
+  if (!targetUser) {
+    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  }
+
+  if (targetUser.id === session.user.id) {
+    return NextResponse.json({ error: "INVALID_TARGET" }, { status: 400 });
+  }
+
+  const result = await prisma.follow.updateMany({
+    where: {
+      followerId: session.user.id,
+      followingId: targetUser.id,
+    },
+    data: {
+      tag: body.tag,
+    },
+  });
+
+  if (result.count === 0) {
+    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    success: true,
+    tag: body.tag,
+  });
 }

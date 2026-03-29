@@ -145,6 +145,7 @@ export default async function PublicProfilePage({
                     locale={locale}
                     username={profile.username}
                     initialFollowing={profile.isFollowing}
+                    initialTag={profile.followTag}
                     isAuthenticated={Boolean(viewer)}
                     canFollow={profile.publicProfileEnabled}
                   />
