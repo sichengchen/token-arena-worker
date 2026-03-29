@@ -143,6 +143,7 @@
       "outputTokens": "输出 Tokens",
       "reasoningTokens": "推理 Tokens",
       "reasoningIncluded": "{value} 推理",
+      "reasoningSuffix": " 推理",
       "cachedTokens": "缓存 Tokens",
       "activeTime": "活跃时长",
       "totalTime": "总时长",

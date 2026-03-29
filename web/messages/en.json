@@ -143,6 +143,7 @@
       "outputTokens": "Output Tokens",
       "reasoningTokens": "Reasoning Tokens",
       "reasoningIncluded": "{value} reasoning",
+      "reasoningSuffix": " reasoning",
       "cachedTokens": "Cached Tokens",
       "activeTime": "Active Time",
       "totalTime": "Total Time",

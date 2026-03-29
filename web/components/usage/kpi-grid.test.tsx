@@ -1,6 +1,18 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("@/components/ui/count-up", () => ({
+  default: function MockCountUp({
+    to,
+    format,
+  }: {
+    to: number;
+    format: (n: number) => string;
+  }) {
+    return <span>{format(to)}</span>;
+  },
+}));
+
 vi.mock("next-intl/server", () => ({
   getTranslations:
     async () => (key: string, values?: Record<string, string>) => {
@@ -16,6 +28,7 @@ vi.mock("next-intl/server", () => ({
           outputTokens: "Output Tokens",
           reasoningTokens: "Reasoning Tokens",
           reasoningIncluded: `${values?.value ?? ""} reasoning`,
+          reasoningSuffix: " reasoning",
           cachedTokens: "Cached Tokens",
           activeTime: "Active Time",
           totalTime: "Total Time",
@@ -94,8 +107,9 @@ describe("KpiGrid", () => {
     expect(markup).toContain('data-slot="pricing-match-dialog"');
     expect(markup).toContain("330.8M");
     expect(markup).toContain(">+197.9M</span>");
-    expect(markup).toContain(">2.6M</div>");
-    expect(markup).toContain("825.5K reasoning");
+    expect(markup).toContain("2.6M");
+    expect(markup).toContain("825.5K");
+    expect(markup).toContain(" reasoning");
     expect(markup).toContain('title="-550.6K vs previous 3.2M"');
     expect(markup).toContain(">+6h45m</span>");
     expect(markup).toContain('title="+197.9M vs previous 132.9M"');

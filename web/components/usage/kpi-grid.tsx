@@ -1,16 +1,17 @@
 import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  formatDuration,
-  formatTokenCount,
-  formatUsdAmount,
-} from "@/lib/usage/format";
+  formatKpiDelta,
+  formatKpiMetricValue,
+  type KpiMetricKind,
+} from "@/lib/usage/kpi-format";
 import type {
   ModelPricingRow,
   UsageOverviewMetrics,
   UsagePricingSummary,
 } from "@/lib/usage/types";
 import { cn } from "@/lib/utils";
+import { AnimatedKpiDelta, AnimatedKpiValue } from "./kpi-animated-metric";
 import { PricingMatchDialog } from "./pricing-match-dialog";
 
 type KpiGridProps = {
@@ -18,8 +19,6 @@ type KpiGridProps = {
   pricingSummary?: UsagePricingSummary;
   modelPricingRows?: ModelPricingRow[];
 };
-
-type KpiMetricKind = "tokens" | "duration" | "count" | "currency";
 
 type SingleKpiConfig = {
   type: "single";
@@ -108,27 +107,6 @@ const kpis: KpiConfig[] = [
 
 type DeltaTone = "positive" | "negative" | "neutral";
 
-function formatMetricValue(
-  value: number,
-  kind: KpiMetricKind,
-  options?: { compact?: boolean },
-) {
-  if (kind === "currency") {
-    return formatUsdAmount(value, "en", options);
-  }
-
-  if (kind === "duration") {
-    return formatDuration(value, options);
-  }
-
-  return formatTokenCount(value);
-}
-
-function formatDelta(value: number, kind: KpiMetricKind) {
-  const prefix = value > 0 ? "+" : "";
-  return `${prefix}${formatMetricValue(value, kind, { compact: true })}`;
-}
-
 function getDeltaTone(value: number): DeltaTone {
   if (value > 0) {
     return "positive";
@@ -210,7 +188,7 @@ function DeltaBadge({
           getDeltaToneClasses(deltaTone),
         )}
       >
-        {formatDelta(metric.delta, kind)}
+        <AnimatedKpiDelta delta={metric.delta} kind={kind} />
       </span>
     </>
   );
@@ -241,17 +219,9 @@ export async function KpiGrid({
             primaryMetric,
             secondaryMetric,
           );
-          const primaryValue = formatMetricValue(
-            combinedMetric.current,
-            kpi.primary.kind,
-          );
-          const secondaryValue = formatMetricValue(
-            secondaryMetric.current,
-            kpi.secondary.kind,
-          );
           const primaryDeltaDescription = t("deltaVsPrevious", {
-            delta: formatDelta(combinedMetric.delta, kpi.primary.kind),
-            previous: formatMetricValue(
+            delta: formatKpiDelta(combinedMetric.delta, kpi.primary.kind),
+            previous: formatKpiMetricValue(
               combinedMetric.previous,
               kpi.primary.kind,
             ),
@@ -272,10 +242,17 @@ export async function KpiGrid({
               <CardContent>
                 <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
                   <div className="text-2xl font-semibold tracking-tight">
-                    {primaryValue}
+                    <AnimatedKpiValue
+                      kind={kpi.primary.kind}
+                      to={combinedMetric.current}
+                    />
                   </div>
-                  <div className="pb-1 text-xs text-muted-foreground">
-                    {t("reasoningIncluded", { value: secondaryValue })}
+                  <div className="inline-flex flex-wrap items-baseline gap-x-1 pb-1 text-xs text-muted-foreground">
+                    <AnimatedKpiValue
+                      kind={kpi.secondary.kind}
+                      to={secondaryMetric.current}
+                    />
+                    <span>{t("reasoningSuffix")}</span>
                   </div>
                 </div>
               </CardContent>
@@ -284,10 +261,9 @@ export async function KpiGrid({
         }
 
         const metric = getMetricSnapshot(kpi.key, overview, pricingSummary);
-        const currentValue = formatMetricValue(metric.current, kpi.kind);
-        const previousValue = formatMetricValue(metric.previous, kpi.kind);
+        const previousValue = formatKpiMetricValue(metric.previous, kpi.kind);
         const deltaDescription = t("deltaVsPrevious", {
-          delta: formatDelta(metric.delta, kpi.kind),
+          delta: formatKpiDelta(metric.delta, kpi.kind),
           previous: previousValue,
         });
         const isEstimatedCostCard = kpi.key === "estimatedCostUsd";
@@ -311,7 +287,7 @@ export async function KpiGrid({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-semibold tracking-tight">
-                {currentValue}
+                <AnimatedKpiValue kind={kpi.kind} to={metric.current} />
               </div>
             </CardContent>
           </Card>
