@@ -1,7 +1,7 @@
 export const leaderboardPeriods = ["day", "week", "month", "all_time"] as const;
 export type LeaderboardPeriod = (typeof leaderboardPeriods)[number];
 
-export const leaderboardMetrics = ["total_tokens"] as const;
+export const leaderboardMetrics = ["total_tokens", "estimated_cost"] as const;
 export type LeaderboardMetric = (typeof leaderboardMetrics)[number];
 export const defaultLeaderboardMetric: LeaderboardMetric = "total_tokens";
 
@@ -17,6 +17,7 @@ export type LeaderboardEntry = {
   username: string;
   image: string | null;
   bio: string | null;
+  estimatedCostUsd: number;
   totalTokens: number;
   inputTokens: number;
   outputTokens: number;

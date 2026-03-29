@@ -62,6 +62,7 @@ export default async function LeaderboardPage({
   const metric = resolveMetric(firstValue(resolvedSearchParams?.metric));
   const data = await getLeaderboardPageData({
     period,
+    metric,
     viewerUserId: viewer?.user.id ?? null,
   });
   const t = await getTranslations({ locale, namespace: "social.leaderboard" });
@@ -76,6 +77,7 @@ export default async function LeaderboardPage({
   ];
   const metricItems: Array<{ value: LeaderboardMetric; label: string }> = [
     { value: "total_tokens", label: t("metrics.totalTokens") },
+    { value: "estimated_cost", label: t("metrics.estimatedCost") },
   ];
 
   const viewerSummary =
@@ -148,6 +150,7 @@ export default async function LeaderboardPage({
             rank: t("table.rank"),
             user: t("table.user"),
             totalTokens: t("table.totalTokens"),
+            estimatedCost: t("table.estimatedCost"),
             activeTime: t("table.activeTime"),
             sessions: t("table.sessions"),
             followers: t("table.followers"),
@@ -167,6 +170,7 @@ export default async function LeaderboardPage({
               rank: t("table.rank"),
               user: t("table.user"),
               totalTokens: t("table.totalTokens"),
+              estimatedCost: t("table.estimatedCost"),
               activeTime: t("table.activeTime"),
               sessions: t("table.sessions"),
               followers: t("table.followers"),

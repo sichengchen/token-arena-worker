@@ -22,6 +22,7 @@ import {
   getFilterOptions,
   getLastSyncedAt,
   getOverviewMetrics,
+  getPricingSummaryAndRows,
   getSessionRows,
   getTokenTrend,
 } from "@/lib/usage/queries";
@@ -99,6 +100,7 @@ export default async function UsagePage({
     overview,
     tokenTrend,
     breakdowns,
+    pricing,
     sessions,
     filterOptions,
     lastSyncedAt,
@@ -106,6 +108,7 @@ export default async function UsagePage({
     getOverviewMetrics({ userId: session.user.id, range, filters }),
     getTokenTrend({ userId: session.user.id, range, filters }),
     getBreakdowns({ userId: session.user.id, range, filters }),
+    getPricingSummaryAndRows({ userId: session.user.id, range, filters }),
     getSessionRows({ userId: session.user.id, range, filters }),
     getFilterOptions(session.user.id),
     getLastSyncedAt(session.user.id),
@@ -145,7 +148,11 @@ export default async function UsagePage({
 
           {hasData ? (
             <>
-              <KpiGrid overview={overview} />
+              <KpiGrid
+                overview={overview}
+                pricingSummary={pricing.summary}
+                modelPricingRows={pricing.modelPricingRows}
+              />
               <TokenTrendCard data={tokenTrend} />
               <BreakdownGrid breakdowns={breakdowns} />
               <SessionsSection

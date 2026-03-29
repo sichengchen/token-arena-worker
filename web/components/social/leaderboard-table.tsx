@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
 import type { LeaderboardEntry } from "@/lib/leaderboard/types";
-import { formatDuration, formatTokenCount } from "@/lib/usage/format";
+import {
+  formatDuration,
+  formatTokenCount,
+  formatUsdAmount,
+} from "@/lib/usage/format";
 
 type LeaderboardTableProps = {
   locale: string;
@@ -21,6 +25,7 @@ type LeaderboardTableProps = {
     rank: string;
     user: string;
     totalTokens: string;
+    estimatedCost: string;
     activeTime: string;
     sessions: string;
     followers: string;
@@ -59,6 +64,9 @@ export function LeaderboardTable({
                 <TableHead>{labels.user}</TableHead>
                 <TableHead className="text-right">
                   {labels.totalTokens}
+                </TableHead>
+                <TableHead className="text-right">
+                  {labels.estimatedCost}
                 </TableHead>
                 <TableHead className="text-right">
                   {labels.activeTime}
@@ -122,6 +130,9 @@ export function LeaderboardTable({
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     {formatTokenCount(entry.totalTokens)}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {formatUsdAmount(entry.estimatedCostUsd, locale)}
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground">
                     {formatDuration(entry.activeSeconds)}

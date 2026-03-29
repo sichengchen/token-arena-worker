@@ -1,8 +1,14 @@
+import { getPricingCatalog } from "@/lib/pricing/catalog";
+import {
+  estimateCostUsd,
+  resolveOfficialPricingMatch,
+} from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import { resolveLeaderboardWindow, sameLeaderboardWindow } from "./date";
 import type {
   LeaderboardDataset,
   LeaderboardEntry,
+  LeaderboardMetric,
   LeaderboardPageData,
   LeaderboardPeriod,
   LeaderboardWindow,
@@ -39,8 +45,26 @@ type LeaderboardEntrySummary = {
   reasoningTokens: number;
   cachedTokens: number;
   totalTokens: number;
+  estimatedCostUsd: number;
   activeSeconds: number;
   sessions: number;
+};
+
+type LeaderboardUserUsageAggregate = Omit<
+  LeaderboardEntrySummary,
+  "rank" | "activeSeconds" | "sessions"
+>;
+
+type UsageBucketCostGroupRow = {
+  userId: string;
+  model: string;
+  _sum: {
+    inputTokens: number | null;
+    outputTokens: number | null;
+    reasoningTokens: number | null;
+    cachedTokens: number | null;
+    totalTokens: number | null;
+  };
 };
 
 type RelationFlags = {
@@ -59,6 +83,19 @@ function buildWindowWhere(window: LeaderboardWindow) {
 
   return {
     statDate: {
+      gte: window.start,
+      lt: window.end,
+    },
+  };
+}
+
+function buildBucketWindowWhere(window: LeaderboardWindow) {
+  if (!window.start || !window.end) {
+    return {};
+  }
+
+  return {
+    bucketStart: {
       gte: window.start,
       lt: window.end,
     },
@@ -137,8 +174,180 @@ async function getRelationMap(
   return mapRelationFlags(ids, following, followers);
 }
 
+function estimateGroupedRowCostUsd(
+  row: UsageBucketCostGroupRow,
+  catalog: Awaited<ReturnType<typeof getPricingCatalog>>,
+) {
+  const match = resolveOfficialPricingMatch(catalog, row.model);
+  const estimate = estimateCostUsd(
+    {
+      inputTokens: coerceInt(row._sum.inputTokens),
+      outputTokens: coerceInt(row._sum.outputTokens),
+      reasoningTokens: coerceInt(row._sum.reasoningTokens),
+      cachedTokens: coerceInt(row._sum.cachedTokens),
+    },
+    match?.cost,
+  );
+
+  return estimate?.totalUsd ?? 0;
+}
+
+function buildUserUsageAggregates(
+  rows: UsageBucketCostGroupRow[],
+  catalog: Awaited<ReturnType<typeof getPricingCatalog>>,
+) {
+  const aggregates = new Map<string, LeaderboardUserUsageAggregate>();
+
+  for (const row of rows) {
+    const current = aggregates.get(row.userId) ?? {
+      userId: row.userId,
+      inputTokens: 0,
+      outputTokens: 0,
+      reasoningTokens: 0,
+      cachedTokens: 0,
+      totalTokens: 0,
+      estimatedCostUsd: 0,
+    };
+
+    current.inputTokens += coerceInt(row._sum.inputTokens);
+    current.outputTokens += coerceInt(row._sum.outputTokens);
+    current.reasoningTokens += coerceInt(row._sum.reasoningTokens);
+    current.cachedTokens += coerceInt(row._sum.cachedTokens);
+    current.totalTokens += coerceInt(row._sum.totalTokens);
+    current.estimatedCostUsd += estimateGroupedRowCostUsd(row, catalog);
+
+    aggregates.set(row.userId, current);
+  }
+
+  return aggregates;
+}
+
+async function getEstimatedCostMapForUsers(
+  userIds: string[],
+  window: LeaderboardWindow,
+) {
+  if (userIds.length === 0) {
+    return new Map<string, number>();
+  }
+
+  const [catalog, rows] = await Promise.all([
+    getPricingCatalog(),
+    prisma.usageBucket.groupBy({
+      by: ["userId", "model"],
+      where: {
+        userId: {
+          in: userIds,
+        },
+        ...buildBucketWindowWhere(window),
+      },
+      _sum: {
+        inputTokens: true,
+        outputTokens: true,
+        reasoningTokens: true,
+        cachedTokens: true,
+        totalTokens: true,
+      },
+    }),
+  ]);
+
+  return new Map(
+    Array.from(buildUserUsageAggregates(rows, catalog).values()).map((row) => [
+      row.userId,
+      row.estimatedCostUsd,
+    ]),
+  );
+}
+
+async function getLeaderboardDayStatsMap(
+  userIds: string[],
+  window: LeaderboardWindow,
+) {
+  if (userIds.length === 0) {
+    return new Map<
+      string,
+      Pick<LeaderboardEntrySummary, "activeSeconds" | "sessions">
+    >();
+  }
+
+  const rows = await prisma.leaderboardUserDay.groupBy({
+    by: ["userId"],
+    where: {
+      userId: {
+        in: userIds,
+      },
+      ...buildWindowWhere(window),
+    },
+    _sum: {
+      activeSeconds: true,
+      sessions: true,
+    },
+  });
+
+  return new Map(
+    rows.map((row) => [
+      row.userId,
+      {
+        activeSeconds: coerceInt(row._sum.activeSeconds),
+        sessions: coerceInt(row._sum.sessions),
+      },
+    ]),
+  );
+}
+
+function rankSummaries(
+  aggregates: Iterable<LeaderboardUserUsageAggregate>,
+  statsMap: Map<
+    string,
+    Pick<LeaderboardEntrySummary, "activeSeconds" | "sessions">
+  >,
+  metric: LeaderboardMetric,
+  limit: number,
+) {
+  const summaries = Array.from(aggregates)
+    .map((aggregate) => ({
+      rank: 0,
+      userId: aggregate.userId,
+      inputTokens: aggregate.inputTokens,
+      outputTokens: aggregate.outputTokens,
+      reasoningTokens: aggregate.reasoningTokens,
+      cachedTokens: aggregate.cachedTokens,
+      totalTokens: aggregate.totalTokens,
+      estimatedCostUsd: aggregate.estimatedCostUsd,
+      activeSeconds: statsMap.get(aggregate.userId)?.activeSeconds ?? 0,
+      sessions: statsMap.get(aggregate.userId)?.sessions ?? 0,
+    }))
+    .filter((summary) =>
+      metric === "estimated_cost"
+        ? summary.estimatedCostUsd > 0
+        : summary.totalTokens > 0,
+    )
+    .sort((left, right) => {
+      const metricDiff =
+        metric === "estimated_cost"
+          ? right.estimatedCostUsd - left.estimatedCostUsd
+          : right.totalTokens - left.totalTokens;
+
+      if (metricDiff !== 0) {
+        return metricDiff;
+      }
+
+      if (right.totalTokens !== left.totalTokens) {
+        return right.totalTokens - left.totalTokens;
+      }
+
+      return left.userId.localeCompare(right.userId);
+    })
+    .slice(0, limit);
+
+  return summaries.map((summary, index) => ({
+    ...summary,
+    rank: index + 1,
+  }));
+}
+
 async function hydrateEntries(
   summaries: LeaderboardEntrySummary[],
+  window: LeaderboardWindow,
   viewerUserId?: string | null,
 ) {
   if (summaries.length === 0) {
@@ -146,7 +355,10 @@ async function hydrateEntries(
   }
 
   const ids = summaries.map((entry) => entry.userId);
-  const [users, relationMap] = await Promise.all([
+  const needsEstimatedCost = summaries.every(
+    (summary) => summary.estimatedCostUsd === 0,
+  );
+  const [users, relationMap, estimatedCostMap] = await Promise.all([
     prisma.user.findMany({
       where: {
         id: {
@@ -156,6 +368,9 @@ async function hydrateEntries(
       select: leaderboardUserSelect,
     }),
     getRelationMap(viewerUserId, ids),
+    needsEstimatedCost
+      ? getEstimatedCostMapForUsers(ids, window)
+      : Promise.resolve(new Map<string, number>()),
   ]);
 
   const userMap = new Map(users.map((user) => [user.id, user]));
@@ -180,6 +395,10 @@ async function hydrateEntries(
       username: user.username,
       image: user.image,
       bio: user.usagePreference?.bio ?? null,
+      estimatedCostUsd:
+        summary.estimatedCostUsd > 0
+          ? summary.estimatedCostUsd
+          : (estimatedCostMap.get(summary.userId) ?? 0),
       totalTokens: summary.totalTokens,
       inputTokens: summary.inputTokens,
       outputTokens: summary.outputTokens,
@@ -256,6 +475,7 @@ async function rebuildGlobalSnapshot(period: LeaderboardPeriod, now: Date) {
       reasoningTokens: coerceInt(row._sum.reasoningTokens),
       cachedTokens: coerceInt(row._sum.cachedTokens),
       totalTokens: coerceInt(row._sum.totalTokens),
+      estimatedCostUsd: 0,
       activeSeconds: coerceInt(row._sum.activeSeconds),
       sessions: coerceInt(row._sum.sessions),
     }))
@@ -353,6 +573,7 @@ async function ensureGlobalSnapshot(period: LeaderboardPeriod, now: Date) {
         reasoningTokens: row.reasoningTokens,
         cachedTokens: row.cachedTokens,
         totalTokens: row.totalTokens,
+        estimatedCostUsd: 0,
         activeSeconds: row.activeSeconds,
         sessions: row.sessions,
       })),
@@ -362,17 +583,159 @@ async function ensureGlobalSnapshot(period: LeaderboardPeriod, now: Date) {
   return rebuildGlobalSnapshot(period, now);
 }
 
+async function getGlobalCostRankedSummaries(
+  period: LeaderboardPeriod,
+  now: Date,
+) {
+  const window = resolveLeaderboardWindow(period, now);
+  const [catalog, groupedRows] = await Promise.all([
+    getPricingCatalog(),
+    prisma.usageBucket.groupBy({
+      by: ["userId", "model"],
+      where: {
+        ...buildBucketWindowWhere(window),
+        user: {
+          usagePreference: {
+            is: {
+              publicProfileEnabled: true,
+            },
+          },
+        },
+      },
+      _sum: {
+        inputTokens: true,
+        outputTokens: true,
+        reasoningTokens: true,
+        cachedTokens: true,
+        totalTokens: true,
+      },
+    }),
+  ]);
+
+  const aggregates = buildUserUsageAggregates(groupedRows, catalog);
+  const statsMap = await getLeaderboardDayStatsMap(
+    Array.from(aggregates.keys()),
+    window,
+  );
+
+  return {
+    generatedAt: now,
+    window,
+    summaries: rankSummaries(
+      aggregates.values(),
+      statsMap,
+      "estimated_cost",
+      LEADERBOARD_PAGE_LIMIT,
+    ),
+  };
+}
+
+async function getFollowingCostRankedSummaries(input: {
+  period: LeaderboardPeriod;
+  viewerUserId: string;
+  now: Date;
+}) {
+  const following = await prisma.follow.findMany({
+    where: {
+      followerId: input.viewerUserId,
+    },
+    select: {
+      followingId: true,
+    },
+  });
+
+  const ids = Array.from(
+    new Set([input.viewerUserId, ...following.map((row) => row.followingId)]),
+  );
+  const window = resolveLeaderboardWindow(input.period, input.now);
+
+  if (ids.length === 0) {
+    return {
+      generatedAt: input.now,
+      window,
+      summaries: [] as LeaderboardEntrySummary[],
+    };
+  }
+
+  const [catalog, groupedRows] = await Promise.all([
+    getPricingCatalog(),
+    prisma.usageBucket.groupBy({
+      by: ["userId", "model"],
+      where: {
+        ...buildBucketWindowWhere(window),
+        userId: {
+          in: ids,
+        },
+        OR: [
+          {
+            userId: input.viewerUserId,
+          },
+          {
+            user: {
+              usagePreference: {
+                is: {
+                  publicProfileEnabled: true,
+                },
+              },
+            },
+          },
+        ],
+      },
+      _sum: {
+        inputTokens: true,
+        outputTokens: true,
+        reasoningTokens: true,
+        cachedTokens: true,
+        totalTokens: true,
+      },
+    }),
+  ]);
+
+  const aggregates = buildUserUsageAggregates(groupedRows, catalog);
+  const statsMap = await getLeaderboardDayStatsMap(
+    Array.from(aggregates.keys()),
+    window,
+  );
+
+  return {
+    generatedAt: input.now,
+    window,
+    summaries: rankSummaries(
+      aggregates.values(),
+      statsMap,
+      "estimated_cost",
+      LEADERBOARD_PAGE_LIMIT,
+    ),
+  };
+}
+
 export async function getGlobalLeaderboard(input: {
   period: LeaderboardPeriod;
+  metric: LeaderboardMetric;
   viewerUserId?: string | null;
   now?: Date;
 }) {
   const now = input.now ?? new Date();
+
+  if (input.metric === "estimated_cost") {
+    const { generatedAt, summaries, window } =
+      await getGlobalCostRankedSummaries(input.period, now);
+    const entries = await hydrateEntries(summaries, window, input.viewerUserId);
+
+    return toDataset({
+      scope: "global",
+      period: input.period,
+      generatedAt,
+      window,
+      entries,
+    });
+  }
+
   const { snapshot, summaries, window } = await ensureGlobalSnapshot(
     input.period,
     now,
   );
-  const entries = await hydrateEntries(summaries, input.viewerUserId);
+  const entries = await hydrateEntries(summaries, window, input.viewerUserId);
 
   return toDataset({
     scope: "global",
@@ -385,10 +748,30 @@ export async function getGlobalLeaderboard(input: {
 
 export async function getFollowingLeaderboard(input: {
   period: LeaderboardPeriod;
+  metric: LeaderboardMetric;
   viewerUserId: string;
   now?: Date;
 }) {
   const now = input.now ?? new Date();
+
+  if (input.metric === "estimated_cost") {
+    const { generatedAt, summaries, window } =
+      await getFollowingCostRankedSummaries({
+        period: input.period,
+        viewerUserId: input.viewerUserId,
+        now,
+      });
+    const entries = await hydrateEntries(summaries, window, input.viewerUserId);
+
+    return toDataset({
+      scope: "following",
+      period: input.period,
+      generatedAt,
+      window,
+      entries,
+    });
+  }
+
   const following = await prisma.follow.findMany({
     where: {
       followerId: input.viewerUserId,
@@ -466,11 +849,12 @@ export async function getFollowingLeaderboard(input: {
       reasoningTokens: coerceInt(row._sum.reasoningTokens),
       cachedTokens: coerceInt(row._sum.cachedTokens),
       totalTokens: coerceInt(row._sum.totalTokens),
+      estimatedCostUsd: 0,
       activeSeconds: coerceInt(row._sum.activeSeconds),
       sessions: coerceInt(row._sum.sessions),
     }))
     .filter((row) => row.totalTokens > 0);
-  const entries = await hydrateEntries(summaries, input.viewerUserId);
+  const entries = await hydrateEntries(summaries, window, input.viewerUserId);
 
   return toDataset({
     scope: "following",
@@ -483,6 +867,7 @@ export async function getFollowingLeaderboard(input: {
 
 export async function getLeaderboardPageData(input: {
   period: LeaderboardPeriod;
+  metric: LeaderboardMetric;
   viewerUserId?: string | null;
   now?: Date;
 }): Promise<LeaderboardPageData> {
@@ -490,12 +875,14 @@ export async function getLeaderboardPageData(input: {
   const [global, following, viewerPreference] = await Promise.all([
     getGlobalLeaderboard({
       period: input.period,
+      metric: input.metric,
       viewerUserId: input.viewerUserId,
       now,
     }),
     input.viewerUserId
       ? getFollowingLeaderboard({
           period: input.period,
+          metric: input.metric,
           viewerUserId: input.viewerUserId,
           now,
         })

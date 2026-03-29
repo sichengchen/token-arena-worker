@@ -11,7 +11,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 import { getOptionalSession } from "@/lib/session";
 import { getPublicProfilePageData } from "@/lib/social/queries";
-import { formatDuration, formatTokenCount } from "@/lib/usage/format";
+import {
+  formatDuration,
+  formatTokenCount,
+  formatUsdAmount,
+} from "@/lib/usage/format";
 
 type PublicProfilePageProps = {
   params: Promise<{
@@ -188,7 +192,7 @@ export default async function PublicProfilePage({
           </Card>
         ) : null}
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:col-start-2">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5 lg:col-start-2">
           <Card className="bg-card shadow-sm ring-1 ring-border/60">
             <CardHeader className="pb-1">
               <CardTitle className="text-sm text-muted-foreground">
@@ -198,6 +202,19 @@ export default async function PublicProfilePage({
             <CardContent className="pb-1">
               <div className="text-xl font-semibold">
                 {formatTokenCount(profile.overview.totalTokens)}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card shadow-sm ring-1 ring-border/60">
+            <CardHeader className="pb-1">
+              <CardTitle className="text-sm text-muted-foreground">
+                {t("estimatedCost")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pb-1">
+              <div className="text-xl font-semibold">
+                {formatUsdAmount(profile.overview.estimatedCostUsd, locale)}
               </div>
             </CardContent>
           </Card>

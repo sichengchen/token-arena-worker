@@ -1,4 +1,9 @@
 import { normalizeUsername } from "@/lib/auth-username";
+import { getPricingCatalog } from "@/lib/pricing/catalog";
+import {
+  estimateCostUsd,
+  resolveOfficialPricingMatch,
+} from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import {
   groupByHourOrDay,
@@ -85,6 +90,7 @@ export type PublicProfilePageData = {
   isSelf: boolean;
   overview: {
     totalTokens: number;
+    estimatedCostUsd: number;
     activeSeconds: number;
     sessions: number;
     activeDays: number;
@@ -321,6 +327,30 @@ function buildTopModels(
     .slice(0, 5);
 }
 
+function estimateBucketCostUsd(
+  bucket: {
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    reasoningTokens: number;
+    cachedTokens: number;
+  },
+  catalog: Awaited<ReturnType<typeof getPricingCatalog>>,
+) {
+  const match = resolveOfficialPricingMatch(catalog, bucket.model);
+  const estimate = estimateCostUsd(
+    {
+      inputTokens: bucket.inputTokens,
+      outputTokens: bucket.outputTokens,
+      reasoningTokens: bucket.reasoningTokens,
+      cachedTokens: bucket.cachedTokens,
+    },
+    match?.cost,
+  );
+
+  return estimate?.totalUsd ?? 0;
+}
+
 export async function getPublicProfilePageData(input: {
   username: string;
   viewerUserId?: string | null;
@@ -348,64 +378,75 @@ export async function getPublicProfilePageData(input: {
   const range365 = createDailyRange(timezone, 365);
   const range30 = createDailyRange(timezone, 30);
 
-  const [relationFlags, sessions365, buckets365, sessions30, buckets30] =
-    await Promise.all([
-      getRelationFlags(input.viewerUserId, user.id),
-      prisma.usageSession.findMany({
-        where: {
-          userId: user.id,
-          firstMessageAt: {
-            gte: range365.from,
-            lte: range365.to,
-          },
+  const [
+    catalog,
+    relationFlags,
+    sessions365,
+    buckets365,
+    sessions30,
+    buckets30,
+  ] = await Promise.all([
+    getPricingCatalog(),
+    getRelationFlags(input.viewerUserId, user.id),
+    prisma.usageSession.findMany({
+      where: {
+        userId: user.id,
+        firstMessageAt: {
+          gte: range365.from,
+          lte: range365.to,
         },
-        select: {
-          firstMessageAt: true,
-          activeSeconds: true,
+      },
+      select: {
+        firstMessageAt: true,
+        activeSeconds: true,
+      },
+      orderBy: { firstMessageAt: "asc" },
+    }),
+    prisma.usageBucket.findMany({
+      where: {
+        userId: user.id,
+        bucketStart: {
+          gte: range365.from,
+          lte: range365.to,
         },
-        orderBy: { firstMessageAt: "asc" },
-      }),
-      prisma.usageBucket.findMany({
-        where: {
-          userId: user.id,
-          bucketStart: {
-            gte: range365.from,
-            lte: range365.to,
-          },
+      },
+      select: {
+        bucketStart: true,
+        totalTokens: true,
+      },
+      orderBy: { bucketStart: "asc" },
+    }),
+    prisma.usageSession.findMany({
+      where: {
+        userId: user.id,
+        firstMessageAt: {
+          gte: range30.from,
+          lte: range30.to,
         },
-        select: {
-          bucketStart: true,
-          totalTokens: true,
+      },
+      select: {
+        activeSeconds: true,
+      },
+    }),
+    prisma.usageBucket.findMany({
+      where: {
+        userId: user.id,
+        bucketStart: {
+          gte: range30.from,
+          lte: range30.to,
         },
-        orderBy: { bucketStart: "asc" },
-      }),
-      prisma.usageSession.findMany({
-        where: {
-          userId: user.id,
-          firstMessageAt: {
-            gte: range30.from,
-            lte: range30.to,
-          },
-        },
-        select: {
-          activeSeconds: true,
-        },
-      }),
-      prisma.usageBucket.findMany({
-        where: {
-          userId: user.id,
-          bucketStart: {
-            gte: range30.from,
-            lte: range30.to,
-          },
-        },
-        select: {
-          source: true,
-          model: true,
-          totalTokens: true,
-        },
-      }),
-    ]);
+      },
+      select: {
+        source: true,
+        model: true,
+        inputTokens: true,
+        outputTokens: true,
+        reasoningTokens: true,
+        cachedTokens: true,
+        totalTokens: true,
+      },
+    }),
+  ]);
 
   const heatmap = buildHeatmap(timezone, sessions365, buckets365);
   const activeDays = heatmap
@@ -429,6 +470,10 @@ export async function getPublicProfilePageData(input: {
     overview: {
       totalTokens: buckets30.reduce(
         (sum, bucket) => sum + bucket.totalTokens,
+        0,
+      ),
+      estimatedCostUsd: buckets30.reduce(
+        (sum, bucket) => sum + estimateBucketCostUsd(bucket, catalog),
         0,
       ),
       activeSeconds: sessions30.reduce(

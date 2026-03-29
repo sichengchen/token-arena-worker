@@ -34,6 +34,7 @@ describe("LeaderboardTable", () => {
             username: "ada",
             image: null,
             bio: "Building with Codex",
+            estimatedCostUsd: 12.34,
             totalTokens: 152340,
             inputTokens: 60000,
             outputTokens: 80000,
@@ -52,6 +53,7 @@ describe("LeaderboardTable", () => {
           rank: "Rank",
           user: "User",
           totalTokens: "Total Tokens",
+          estimatedCost: "Est. Cost",
           activeTime: "Active Time",
           sessions: "Sessions",
           followers: "Followers",
@@ -68,5 +70,7 @@ describe("LeaderboardTable", () => {
     expect(markup).toContain("@ada");
     expect(markup).toContain("You");
     expect(markup).toContain("View profile");
+    expect(markup).toContain("Est. Cost");
+    expect(markup).toContain("$12.34");
   });
 });
