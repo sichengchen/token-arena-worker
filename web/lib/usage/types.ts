@@ -157,6 +157,13 @@ export type UsageSessionRow = {
   activeSeconds: number;
   messageCount: number;
   userMessageCount: number;
+  estimatedCostUsd: number | null;
+  totalTokens: number;
+  inputTokens: number;
+  outputTokens: number;
+  reasoningTokens: number;
+  cachedTokens: number;
+  primaryModel: string;
 };
 
 export type UsageFilterOptions = {

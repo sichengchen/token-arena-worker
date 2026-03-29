@@ -1,0 +1,2 @@
+ALTER TABLE "UsageSession"
+ADD COLUMN "primaryModel" TEXT NOT NULL DEFAULT '';

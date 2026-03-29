@@ -76,6 +76,24 @@ export const ingestSessionSchema = z.object({
   activeSeconds: z.number().int().nonnegative(),
   messageCount: z.number().int().nonnegative(),
   userMessageCount: z.number().int().nonnegative(),
+  inputTokens: z.number().int().nonnegative().optional(),
+  outputTokens: z.number().int().nonnegative().optional(),
+  reasoningTokens: z.number().int().nonnegative().optional(),
+  cachedTokens: z.number().int().nonnegative().optional(),
+  totalTokens: z.number().int().nonnegative().optional(),
+  primaryModel: z.string().optional(),
+  modelUsages: z
+    .array(
+      z.object({
+        model: z.string(),
+        inputTokens: z.number().int().nonnegative(),
+        outputTokens: z.number().int().nonnegative(),
+        reasoningTokens: z.number().int().nonnegative(),
+        cachedTokens: z.number().int().nonnegative(),
+        totalTokens: z.number().int().nonnegative(),
+      }),
+    )
+    .optional(),
 });
 
 export const ingestRequestSchema = z.object({

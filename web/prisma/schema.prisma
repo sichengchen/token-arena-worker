@@ -227,6 +227,7 @@ model UsageSession {
   reasoningTokens  Int      @default(0)
   cachedTokens     Int      @default(0)
   totalTokens      Int      @default(0)
+  primaryModel     String   @default("")
   estimatedCostUsd Float?
   messageCount     Int
   userMessageCount Int

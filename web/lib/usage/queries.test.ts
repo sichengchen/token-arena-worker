@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   usageApiKeyFindMany: vi.fn(),
   getPricingCatalog: vi.fn(),
   resolveOfficialPricingMatch: vi.fn(),
+  resolveOfficialPricingProvider: vi.fn(),
   estimateCostUsd: vi.fn(),
 }));
 
@@ -33,6 +34,7 @@ vi.mock("@/lib/pricing/catalog", () => ({
 
 vi.mock("@/lib/pricing/resolve", () => ({
   resolveOfficialPricingMatch: mocks.resolveOfficialPricingMatch,
+  resolveOfficialPricingProvider: mocks.resolveOfficialPricingProvider,
   estimateCostUsd: mocks.estimateCostUsd,
 }));
 
@@ -166,7 +168,7 @@ describe("getSessionRows", () => {
     mocks.estimateCostUsd.mockReturnValue(null);
   });
 
-  it("returns sessions with disambiguated device labels", async () => {
+  it("returns sessions with disambiguated device labels and estimated cost", async () => {
     mocks.deviceFindMany.mockResolvedValue([
       {
         deviceId: "11111111-alpha",
@@ -189,6 +191,13 @@ describe("getSessionRows", () => {
         lastMessageAt: new Date("2026-03-25T12:20:00.000Z"),
         durationSeconds: 1200,
         activeSeconds: 900,
+        inputTokens: 1000,
+        outputTokens: 500,
+        reasoningTokens: 200,
+        cachedTokens: 100,
+        totalTokens: 1800,
+        primaryModel: "claude-sonnet-4-20250514",
+        estimatedCostUsd: 0.012,
         messageCount: 10,
         userMessageCount: 4,
       },
@@ -215,6 +224,13 @@ describe("getSessionRows", () => {
         activeSeconds: 900,
         messageCount: 10,
         userMessageCount: 4,
+        estimatedCostUsd: 0.012,
+        totalTokens: 1800,
+        inputTokens: 1000,
+        outputTokens: 500,
+        reasoningTokens: 200,
+        cachedTokens: 100,
+        primaryModel: "claude-sonnet-4-20250514",
       },
     ]);
   });

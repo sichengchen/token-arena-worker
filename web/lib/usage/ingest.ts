@@ -4,6 +4,11 @@ import {
   invalidateLeaderboardSnapshots,
   recomputeLeaderboardUserDays,
 } from "@/lib/leaderboard/aggregates";
+import { getPricingCatalog } from "@/lib/pricing/catalog";
+import {
+  estimateCostUsd,
+  resolveOfficialPricingMatch,
+} from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import type { ingestRequestSchema } from "./contracts";
 
@@ -30,6 +35,107 @@ type IngestUsagePayloadInput = {
   apiKeyId?: string | null;
   payload: IngestPayload;
 };
+
+type NormalizedSessionUsage = {
+  inputTokens: number;
+  outputTokens: number;
+  reasoningTokens: number;
+  cachedTokens: number;
+  totalTokens: number;
+  primaryModel: string;
+  estimatedCostUsd: number | null;
+};
+
+function normalizeSessionUsage(
+  session: IngestPayload["sessions"][number],
+  catalog: Awaited<ReturnType<typeof getPricingCatalog>>,
+): NormalizedSessionUsage | null {
+  const aggregatedFromModels = session.modelUsages?.reduce(
+    (result, modelUsage) => {
+      const modelTotalTokens =
+        modelUsage.inputTokens +
+        modelUsage.outputTokens +
+        modelUsage.reasoningTokens +
+        modelUsage.cachedTokens;
+
+      result.inputTokens += modelUsage.inputTokens;
+      result.outputTokens += modelUsage.outputTokens;
+      result.reasoningTokens += modelUsage.reasoningTokens;
+      result.cachedTokens += modelUsage.cachedTokens;
+      result.totalTokens += modelTotalTokens;
+
+      const match = resolveOfficialPricingMatch(catalog, modelUsage.model);
+      const estimate = estimateCostUsd(
+        {
+          inputTokens: modelUsage.inputTokens,
+          outputTokens: modelUsage.outputTokens,
+          reasoningTokens: modelUsage.reasoningTokens,
+          cachedTokens: modelUsage.cachedTokens,
+        },
+        match?.cost,
+      );
+
+      if (estimate) {
+        result.estimatedCostUsd += estimate.totalUsd;
+        result.hasPricedModel = true;
+      }
+
+      return result;
+    },
+    {
+      inputTokens: 0,
+      outputTokens: 0,
+      reasoningTokens: 0,
+      cachedTokens: 0,
+      totalTokens: 0,
+      estimatedCostUsd: 0,
+      hasPricedModel: false,
+    },
+  );
+
+  const hasExplicitUsage =
+    session.inputTokens !== undefined ||
+    session.outputTokens !== undefined ||
+    session.reasoningTokens !== undefined ||
+    session.cachedTokens !== undefined ||
+    session.totalTokens !== undefined;
+
+  if (!aggregatedFromModels && !hasExplicitUsage) {
+    return null;
+  }
+
+  if (aggregatedFromModels) {
+    return {
+      inputTokens: aggregatedFromModels.inputTokens,
+      outputTokens: aggregatedFromModels.outputTokens,
+      reasoningTokens: aggregatedFromModels.reasoningTokens,
+      cachedTokens: aggregatedFromModels.cachedTokens,
+      totalTokens: aggregatedFromModels.totalTokens,
+      primaryModel:
+        session.primaryModel ?? session.modelUsages?.[0]?.model ?? "",
+      estimatedCostUsd: aggregatedFromModels.hasPricedModel
+        ? aggregatedFromModels.estimatedCostUsd
+        : null,
+    };
+  }
+
+  const inputTokens = session.inputTokens ?? 0;
+  const outputTokens = session.outputTokens ?? 0;
+  const reasoningTokens = session.reasoningTokens ?? 0;
+  const cachedTokens = session.cachedTokens ?? 0;
+
+  return {
+    inputTokens,
+    outputTokens,
+    reasoningTokens,
+    cachedTokens,
+    totalTokens:
+      session.totalTokens ??
+      inputTokens + outputTokens + reasoningTokens + cachedTokens,
+    primaryModel: session.primaryModel ?? "",
+    estimatedCostUsd: null,
+  };
+}
 
 export async function upsertDevice(
   db: UsageWriteClient,
@@ -106,10 +212,13 @@ export async function upsertBuckets(
 export async function upsertSessions(
   db: UsageWriteClient,
   input: IngestUsagePayloadInput,
+  catalog: Awaited<ReturnType<typeof getPricingCatalog>>,
 ) {
   await Promise.all(
-    input.payload.sessions.map((session) =>
-      db.usageSession.upsert({
+    input.payload.sessions.map((session) => {
+      const normalizedUsage = normalizeSessionUsage(session, catalog);
+
+      return db.usageSession.upsert({
         where: {
           userId_deviceId_source_sessionHash: {
             userId: input.userId,
@@ -128,6 +237,17 @@ export async function upsertSessions(
           activeSeconds: session.activeSeconds,
           messageCount: session.messageCount,
           userMessageCount: session.userMessageCount,
+          ...(normalizedUsage
+            ? {
+                inputTokens: normalizedUsage.inputTokens,
+                outputTokens: normalizedUsage.outputTokens,
+                reasoningTokens: normalizedUsage.reasoningTokens,
+                cachedTokens: normalizedUsage.cachedTokens,
+                totalTokens: normalizedUsage.totalTokens,
+                primaryModel: normalizedUsage.primaryModel,
+                estimatedCostUsd: normalizedUsage.estimatedCostUsd,
+              }
+            : {}),
         },
         create: {
           userId: input.userId,
@@ -143,14 +263,22 @@ export async function upsertSessions(
           activeSeconds: session.activeSeconds,
           messageCount: session.messageCount,
           userMessageCount: session.userMessageCount,
+          inputTokens: normalizedUsage?.inputTokens ?? 0,
+          outputTokens: normalizedUsage?.outputTokens ?? 0,
+          reasoningTokens: normalizedUsage?.reasoningTokens ?? 0,
+          cachedTokens: normalizedUsage?.cachedTokens ?? 0,
+          totalTokens: normalizedUsage?.totalTokens ?? 0,
+          primaryModel: normalizedUsage?.primaryModel ?? "",
+          estimatedCostUsd: normalizedUsage?.estimatedCostUsd ?? null,
         },
-      }),
-    ),
+      });
+    }),
   );
 }
 
 export async function ingestUsagePayload(input: IngestUsagePayloadInput) {
   const seenAt = new Date();
+  const catalog = await getPricingCatalog();
 
   return prisma.$transaction(async (tx) => {
     await upsertDevice(tx, {
@@ -177,7 +305,7 @@ export async function ingestUsagePayload(input: IngestUsagePayloadInput) {
     });
 
     await upsertBuckets(tx, input);
-    await upsertSessions(tx, input);
+    await upsertSessions(tx, input, catalog);
 
     const affectedDates = collectAffectedLeaderboardDates({
       bucketStarts: input.payload.buckets.map((bucket) => bucket.bucketStart),

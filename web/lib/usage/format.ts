@@ -128,23 +128,29 @@ function normalizeDate(value: Date | string) {
   return value instanceof Date ? value : new Date(value);
 }
 
-export function formatTokenCount(value: number): string {
+export function formatTokenCount(value: number, locale = "en"): string {
   const absValue = Math.abs(value);
   const sign = value < 0 ? "-" : "";
 
   if (absValue < 1000) {
-    return String(value);
+    return `${sign}${absValue.toLocaleString(locale)}`;
   }
 
   if (absValue < 1_000_000) {
-    return `${sign}${(absValue / 1000).toFixed(1)}K`;
+    return `${sign}${(absValue / 1000).toLocaleString(locale, {
+      maximumFractionDigits: 1,
+    })}K`;
   }
 
   if (absValue < 1_000_000_000) {
-    return `${sign}${(absValue / 1_000_000).toFixed(1)}M`;
+    return `${sign}${(absValue / 1_000_000).toLocaleString(locale, {
+      maximumFractionDigits: 1,
+    })}M`;
   }
 
-  return `${sign}${(absValue / 1_000_000_000).toFixed(1)}B`;
+  return `${sign}${(absValue / 1_000_000_000).toLocaleString(locale, {
+    maximumFractionDigits: 1,
+  })}B`;
 }
 
 export function formatDuration(

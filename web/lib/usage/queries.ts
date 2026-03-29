@@ -665,6 +665,13 @@ export async function getSessionRows(input: {
         lastMessageAt: true,
         durationSeconds: true,
         activeSeconds: true,
+        inputTokens: true,
+        outputTokens: true,
+        reasoningTokens: true,
+        cachedTokens: true,
+        totalTokens: true,
+        primaryModel: true,
+        estimatedCostUsd: true,
         messageCount: true,
         userMessageCount: true,
       },
@@ -695,6 +702,13 @@ export async function getSessionRows(input: {
     activeSeconds: session.activeSeconds,
     messageCount: session.messageCount,
     userMessageCount: session.userMessageCount,
+    estimatedCostUsd: session.estimatedCostUsd,
+    totalTokens: session.totalTokens,
+    inputTokens: session.inputTokens,
+    outputTokens: session.outputTokens,
+    reasoningTokens: session.reasoningTokens,
+    cachedTokens: session.cachedTokens,
+    primaryModel: session.primaryModel,
   }));
 }
 
