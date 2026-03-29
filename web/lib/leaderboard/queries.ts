@@ -4,6 +4,7 @@ import {
   resolveOfficialPricingMatch,
 } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
+import type { FollowTagFilter } from "@/lib/social/follow-tags";
 import { resolveLeaderboardWindow, sameLeaderboardWindow } from "./date";
 import type {
   LeaderboardDataset,
@@ -172,6 +173,29 @@ async function getRelationMap(
   ]);
 
   return mapRelationFlags(ids, following, followers);
+}
+
+async function getFollowingNetworkIds(
+  viewerUserId: string,
+  followTag: FollowTagFilter,
+) {
+  const following = await prisma.follow.findMany({
+    where: {
+      followerId: viewerUserId,
+      ...(followTag === "all"
+        ? {}
+        : {
+            tag: followTag,
+          }),
+    },
+    select: {
+      followingId: true,
+    },
+  });
+
+  return Array.from(
+    new Set([viewerUserId, ...following.map((row) => row.followingId)]),
+  );
 }
 
 function estimateGroupedRowCostUsd(
@@ -633,20 +657,10 @@ async function getGlobalCostRankedSummaries(
 async function getFollowingCostRankedSummaries(input: {
   period: LeaderboardPeriod;
   viewerUserId: string;
+  followTag: FollowTagFilter;
   now: Date;
 }) {
-  const following = await prisma.follow.findMany({
-    where: {
-      followerId: input.viewerUserId,
-    },
-    select: {
-      followingId: true,
-    },
-  });
-
-  const ids = Array.from(
-    new Set([input.viewerUserId, ...following.map((row) => row.followingId)]),
-  );
+  const ids = await getFollowingNetworkIds(input.viewerUserId, input.followTag);
   const window = resolveLeaderboardWindow(input.period, input.now);
 
   if (ids.length === 0) {
@@ -750,15 +764,18 @@ export async function getFollowingLeaderboard(input: {
   period: LeaderboardPeriod;
   metric: LeaderboardMetric;
   viewerUserId: string;
+  followTag?: FollowTagFilter;
   now?: Date;
 }) {
   const now = input.now ?? new Date();
+  const followTag = input.followTag ?? "all";
 
   if (input.metric === "estimated_cost") {
     const { generatedAt, summaries, window } =
       await getFollowingCostRankedSummaries({
         period: input.period,
         viewerUserId: input.viewerUserId,
+        followTag,
         now,
       });
     const entries = await hydrateEntries(summaries, window, input.viewerUserId);
@@ -772,18 +789,7 @@ export async function getFollowingLeaderboard(input: {
     });
   }
 
-  const following = await prisma.follow.findMany({
-    where: {
-      followerId: input.viewerUserId,
-    },
-    select: {
-      followingId: true,
-    },
-  });
-
-  const ids = Array.from(
-    new Set([input.viewerUserId, ...following.map((row) => row.followingId)]),
-  );
+  const ids = await getFollowingNetworkIds(input.viewerUserId, followTag);
   const window = resolveLeaderboardWindow(input.period, now);
 
   if (ids.length === 0) {
@@ -869,6 +875,7 @@ export async function getLeaderboardPageData(input: {
   period: LeaderboardPeriod;
   metric: LeaderboardMetric;
   viewerUserId?: string | null;
+  followTag?: FollowTagFilter;
   now?: Date;
 }): Promise<LeaderboardPageData> {
   const now = input.now ?? new Date();
@@ -884,6 +891,7 @@ export async function getLeaderboardPageData(input: {
           period: input.period,
           metric: input.metric,
           viewerUserId: input.viewerUserId,
+          followTag: input.followTag,
           now,
         })
       : Promise.resolve(null),
