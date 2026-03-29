@@ -137,10 +137,12 @@
       "reset": "重置"
     },
     "kpis": {
+      "estimatedCost": "预估费用",
       "totalTokens": "总 Tokens",
       "inputTokens": "输入 Tokens",
       "outputTokens": "输出 Tokens",
       "reasoningTokens": "推理 Tokens",
+      "reasoningIncluded": "{value} 推理",
       "cachedTokens": "缓存 Tokens",
       "activeTime": "活跃时长",
       "totalTime": "总时长",
@@ -151,14 +153,57 @@
     },
     "trend": {
       "title": "每日趋势",
+      "views": {
+        "tokens": "Token",
+        "cost": "费用",
+        "totalTime": "时长"
+      },
+      "summary": {
+        "tokens": "Tokens",
+        "cost": "费用",
+        "totalTime": "时长"
+      },
       "total": "总计",
       "cache": "缓存",
       "input": "输入",
-      "output": "输出"
+      "output": "输出",
+      "reasoning": "推理",
+      "cost": "预估费用",
+      "totalTime": "总时长",
+      "emptyCost": "这个时间范围内没有可定价的模型使用数据。"
+    },
+    "pricing": {
+      "title": "模型定价匹配",
+      "description": "查看预估费用使用到的模型匹配与单价。",
+      "open": "模型价格",
+      "count": "{count} 个模型",
+      "coverage": "已定价 {pricedModels}/{totalModels} 个模型 · 覆盖 {coverage} Tokens",
+      "empty": "这个时间范围内没有模型使用数据。",
+      "table": {
+        "rawModel": "原始模型",
+        "officialMatch": "官方匹配",
+        "tokens": "Tokens",
+        "estimatedCost": "预估费用",
+        "provider": "提供方",
+        "unmatched": "未匹配到官方模型",
+        "input": "输入",
+        "output": "输出",
+        "reasoning": "推理",
+        "cache": "缓存"
+      }
     },
     "breakdowns": {
       "title": "分类明细",
       "description": "按设备、工具、模型和项目查看使用情况。",
+      "views": {
+        "tokens": "总 Tokens",
+        "cost": "总费用"
+      },
+      "summary": {
+        "tokens": "Tokens",
+        "cost": "费用",
+        "totalTime": "时长"
+      },
       "tabs": {
         "devices": "设备",
         "tools": "工具",
@@ -177,13 +222,16 @@
         "models": "这个时间范围内没有模型数据。",
         "projects": "这个时间范围内没有项目数据。"
       },
+      "emptyCost": "这个时间范围内没有可定价的模型使用数据。",
       "table": {
         "name": "名称",
         "totalTokens": "总 Tokens",
+        "estimatedCost": "预估费用",
         "input": "输入",
         "output": "输出",
         "cache": "缓存",
         "activeTime": "活跃时长",
+        "totalTime": "总时长",
         "sessions": "会话数",
         "messages": "消息数",
         "userMessages": "用户消息数",
@@ -275,6 +323,7 @@
       "activityTitle": "AI 编程活跃度",
       "activitySubtitle": "过去 365 天",
       "totalTokens": "总 Tokens",
+      "estimatedCost": "预估费用",
       "activeTime": "活跃时长",
       "sessions": "会话数",
       "activeDays": "活跃天数",
@@ -334,7 +383,8 @@
       },
       "metricSelectLabel": "排行榜指标",
       "metrics": {
-        "totalTokens": "总 Tokens"
+        "totalTokens": "总 Tokens",
+        "estimatedCost": "总费用"
       },
       "globalTitle": "全站排行榜",
       "followingTitle": "关注排行榜",
@@ -349,6 +399,7 @@
         "rank": "排名",
         "user": "用户",
         "totalTokens": "总 Tokens",
+        "estimatedCost": "预估费用",
         "activeTime": "活跃时长",
         "sessions": "会话数",
         "followers": "粉丝"

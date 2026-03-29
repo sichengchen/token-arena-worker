@@ -137,10 +137,12 @@
       "reset": "Reset"
     },
     "kpis": {
+      "estimatedCost": "Est. Cost",
       "totalTokens": "Total Tokens",
       "inputTokens": "Input Tokens",
       "outputTokens": "Output Tokens",
       "reasoningTokens": "Reasoning Tokens",
+      "reasoningIncluded": "{value} reasoning",
       "cachedTokens": "Cached Tokens",
       "activeTime": "Active Time",
       "totalTime": "Total Time",
@@ -151,14 +153,57 @@
     },
     "trend": {
       "title": "Daily Trend",
+      "views": {
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "totalTime": "Time"
+      },
+      "summary": {
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "totalTime": "Time"
+      },
       "total": "Total",
       "cache": "Cache",
       "input": "Input",
-      "output": "Output"
+      "output": "Output",
+      "reasoning": "Reasoning",
+      "cost": "Est. Cost",
+      "totalTime": "Total Time",
+      "emptyCost": "No priced usage in this range."
+    },
+    "pricing": {
+      "title": "Model Price Matches",
+      "description": "Review the model matches and unit prices used for estimated cost.",
+      "open": "Model prices",
+      "count": "{count, plural, =0 {0 models} one {# model} other {# models}}",
+      "coverage": "Priced {pricedModels}/{totalModels} models · {coverage} of tokens matched",
+      "empty": "No model usage in this range.",
+      "table": {
+        "rawModel": "Raw Model",
+        "officialMatch": "Official Match",
+        "tokens": "Tokens",
+        "estimatedCost": "Estimated Cost",
+        "provider": "Provider",
+        "unmatched": "No official match",
+        "input": "Input",
+        "output": "Output",
+        "reasoning": "Reasoning",
+        "cache": "Cache"
+      }
     },
     "breakdowns": {
       "title": "Breakdowns",
       "description": "Break down usage by device, tool, model, and project.",
+      "views": {
+        "tokens": "Total Tokens",
+        "cost": "Est. Cost"
+      },
+      "summary": {
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "totalTime": "Time"
+      },
       "tabs": {
         "devices": "Devices",
         "tools": "Tools",
@@ -177,13 +222,16 @@
         "models": "No model data in this range.",
         "projects": "No project data in this range."
       },
+      "emptyCost": "No priced usage in this range.",
       "table": {
         "name": "Name",
         "totalTokens": "Total Tokens",
+        "estimatedCost": "Est. Cost",
         "input": "Input",
         "output": "Output",
         "cache": "Cache",
         "activeTime": "Active Time",
+        "totalTime": "Total Time",
         "sessions": "Sessions",
         "messages": "Messages",
         "userMessages": "User Messages",
@@ -275,6 +323,7 @@
       "activityTitle": "AI Coding Activity",
       "activitySubtitle": "Past 365 days",
       "totalTokens": "Total Tokens",
+      "estimatedCost": "Est. Cost",
       "activeTime": "Active Time",
       "sessions": "Sessions",
       "activeDays": "Active Days",
@@ -334,7 +383,8 @@
       },
       "metricSelectLabel": "Leaderboard metric",
       "metrics": {
-        "totalTokens": "Total tokens"
+        "totalTokens": "Total tokens",
+        "estimatedCost": "Est. cost"
       },
       "globalTitle": "Global leaderboard",
       "followingTitle": "Following leaderboard",
@@ -349,6 +399,7 @@
         "rank": "Rank",
         "user": "User",
         "totalTokens": "Total Tokens",
+        "estimatedCost": "Est. Cost",
         "activeTime": "Active Time",
         "sessions": "Sessions",
         "followers": "Followers"
