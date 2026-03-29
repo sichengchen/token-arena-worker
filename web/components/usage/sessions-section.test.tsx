@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-
+import { TooltipProvider } from "@/components/ui/tooltip";
 import type { UsageSessionRow } from "@/lib/usage/types";
 import { SessionsSection } from "./sessions-section";
 
@@ -21,13 +21,19 @@ vi.mock("next-intl", () => ({
           empty: "No session data in this range.",
           "table.startedAt": "Started",
           "table.tool": "Tool",
+          "table.model": "Model",
           "table.project": "Project",
           "table.device": "Device",
-          "table.duration": "Duration",
-          "table.messages": "Messages",
-          "table.endedAt": `Ended ${values?.value ?? ""}`.trim(),
-          "table.totalDuration": `Total ${values?.value ?? ""}`.trim(),
-          "table.userMessages": `${values?.value ?? ""} from you`.trim(),
+          "table.tokens": "Tokens",
+          "table.cost": "Est. Cost",
+          "table.input": "Input",
+          "table.output": "Output",
+          "table.reasoning": "Reasoning",
+          "table.cache": "Cache",
+          "pagination.prev": "Previous",
+          "pagination.next": "Next",
+          "pagination.info":
+            `${values?.from ?? ""}–${values?.to ?? ""} of ${values?.total ?? ""}`.trim(),
         }[key] ?? key
       );
     },
@@ -49,12 +55,21 @@ describe("SessionsSection", () => {
       activeSeconds: 2700,
       messageCount: 12,
       userMessageCount: 5,
+      estimatedCostUsd: 0.12,
+      totalTokens: 15000,
+      inputTokens: 8000,
+      outputTokens: 5000,
+      reasoningTokens: 1500,
+      cachedTokens: 500,
+      primaryModel: "claude-sonnet-4-20250514",
     },
   ];
 
   it("is collapsed by default", () => {
     const markup = renderToStaticMarkup(
-      <SessionsSection sessions={sessions} timezone="Asia/Shanghai" />,
+      <TooltipProvider>
+        <SessionsSection sessions={sessions} timezone="Asia/Shanghai" />
+      </TooltipProvider>,
     );
 
     expect(markup).toContain("Sessions");
@@ -65,21 +80,25 @@ describe("SessionsSection", () => {
 
   it("renders the session table when expanded", () => {
     const markup = renderToStaticMarkup(
-      <SessionsSection
-        sessions={sessions}
-        timezone="Asia/Shanghai"
-        defaultOpen
-      />,
+      <TooltipProvider>
+        <SessionsSection
+          sessions={sessions}
+          timezone="Asia/Shanghai"
+          defaultOpen
+        />
+      </TooltipProvider>,
     );
 
     expect(markup).toContain("Sessions");
     expect(markup).toContain('aria-expanded="true"');
     expect(markup).toContain("Started");
     expect(markup).toContain("Claude Code");
+    expect(markup).toContain("claude-sonnet-4-20250514");
     expect(markup).toContain("tokens-burned");
     expect(markup).toContain("mac-mini");
-    expect(markup).toContain("Total 1h");
-    expect(markup).toContain("5 from you");
+    expect(markup).toContain("15K");
+    expect(markup).toContain("Tokens");
+    expect(markup).toContain("Model");
     expect(markup).toContain("<table");
   });
 });

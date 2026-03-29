@@ -52,7 +52,10 @@ export function ActivityTrendCard({ data }: ActivityTrendCardProps) {
             >
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="label" minTickGap={24} tick={{ fontSize: 12 }} />
-              <YAxis tickFormatter={formatTokenCount} tick={{ fontSize: 12 }} />
+              <YAxis
+                tickFormatter={(value) => formatTokenCount(value)}
+                tick={{ fontSize: 12 }}
+              />
               <Tooltip
                 formatter={(value, name) => {
                   const numericValue =

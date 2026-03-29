@@ -165,9 +165,9 @@ describe("TokenTrendCard", () => {
     expect(markup).toContain("Est. Cost");
     expect(markup).toContain("Total Time");
     expect(markup).toContain("1.5M");
-    expect(markup).toContain("300.0K");
-    expect(markup).toContain("700.0K");
-    expect(markup).toContain("500.0K");
+    expect(markup).toContain("300K");
+    expect(markup).toContain("700K");
+    expect(markup).toContain("500K");
     expect(markup).toContain("0");
     expect(markup).toContain("$1.25");
     expect(markup).toContain("1h");

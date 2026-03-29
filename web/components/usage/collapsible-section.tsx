@@ -40,19 +40,20 @@ export function CollapsibleSection({
         onClick={() => setIsOpen((current) => !current)}
         aria-expanded={isOpen}
       >
-        <div className="min-w-0 space-y-1">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-base leading-none font-medium">{title}</h2>
+            {description ? (
+              <span className="text-xs text-muted-foreground">
+                {description}
+              </span>
+            ) : null}
             {countLabel ? (
               <span className="text-xs text-muted-foreground">
                 {countLabel}
               </span>
             ) : null}
           </div>
-
-          {description ? (
-            <p className="text-sm text-muted-foreground">{description}</p>
-          ) : null}
         </div>
 
         <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-border/60 text-muted-foreground">
