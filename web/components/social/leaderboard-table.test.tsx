@@ -69,7 +69,6 @@ describe("LeaderboardTable", () => {
     expect(markup).toContain("Ada");
     expect(markup).toContain("@ada");
     expect(markup).toContain("You");
-    expect(markup).toContain("View profile");
     expect(markup).toContain("Est. Cost");
     expect(markup).toContain("$12.34");
   });

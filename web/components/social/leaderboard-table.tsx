@@ -35,10 +35,6 @@ type LeaderboardTableProps = {
   };
 };
 
-function getInitial(value: string) {
-  return value.trim().charAt(0).toUpperCase() || "?";
-}
-
 export function LeaderboardTable({
   locale,
   title,
@@ -80,52 +76,22 @@ export function LeaderboardTable({
                 <TableRow key={entry.userId}>
                   <TableCell className="font-medium">#{entry.rank}</TableCell>
                   <TableCell className="min-w-64">
-                    <div className="flex min-w-0 items-start gap-3">
-                      {entry.image ? (
-                        /* biome-ignore lint/performance/noImgElement: user avatars may come from arbitrary remote URLs */
-                        <img
-                          src={entry.image}
-                          alt={entry.name}
-                          className="mt-0.5 size-10 shrink-0 rounded-full border border-border/60 object-cover"
-                        />
-                      ) : (
-                        <div className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border/60 bg-muted text-sm font-semibold text-foreground">
-                          {getInitial(entry.username)}
-                        </div>
-                      )}
-
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex min-w-0 flex-wrap items-center gap-2">
-                          <Link
-                            href={`/u/${entry.username}`}
-                            className="truncate font-medium text-foreground hover:underline"
-                          >
-                            {entry.name}
-                          </Link>
-                          <span className="text-sm text-muted-foreground">
-                            @{entry.username}
-                          </span>
-                          {entry.isSelf ? (
-                            <Badge variant="outline">{labels.you}</Badge>
-                          ) : null}
-                          {entry.isFollowing && entry.followsYou ? (
-                            <Badge variant="secondary">{labels.mutual}</Badge>
-                          ) : null}
-                        </div>
-                        {entry.bio ? (
-                          <p className="line-clamp-2 text-sm text-muted-foreground">
-                            {entry.bio}
-                          </p>
-                        ) : null}
-                        <div className="text-xs text-muted-foreground">
-                          <Link
-                            href={`/u/${entry.username}`}
-                            className="hover:text-foreground hover:underline"
-                          >
-                            {labels.viewProfile}
-                          </Link>
-                        </div>
-                      </div>
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                      <Link
+                        href={`/u/${entry.username}`}
+                        className="truncate font-medium text-foreground hover:underline"
+                      >
+                        {entry.name}
+                      </Link>
+                      <span className="text-sm text-muted-foreground">
+                        @{entry.username}
+                      </span>
+                      {entry.isSelf ? (
+                        <Badge variant="outline">{labels.you}</Badge>
+                      ) : null}
+                      {entry.isFollowing && entry.followsYou ? (
+                        <Badge variant="secondary">{labels.mutual}</Badge>
+                      ) : null}
                     </div>
                   </TableCell>
                   <TableCell className="text-right font-medium">
