@@ -110,7 +110,7 @@ export function SocialLoginForm({
               <span className="flex min-w-0 flex-[3] items-center justify-center">
                 {renderProviderIcon(provider.id)}
               </span>
-              <span className="flex min-w-0 flex-[7] items-center justify-center text-center">
+              <span className="flex min-w-0 flex-[7] items-center justify-start text-left">
                 {provider.label}
               </span>
             </Button>
