@@ -139,13 +139,13 @@ export function ConnectedAccountsCard({
         provider.kind === "social"
           ? await postAuthAction("/link-social", {
               provider: provider.id,
-              callbackURL: "/settings",
-              errorCallbackURL: "/settings",
+              callbackURL: "/settings/authentication",
+              errorCallbackURL: "/settings/authentication",
             })
           : await postAuthAction("/oauth2/link", {
               providerId: provider.id,
-              callbackURL: "/settings",
-              errorCallbackURL: "/settings",
+              callbackURL: "/settings/authentication",
+              errorCallbackURL: "/settings/authentication",
             });
 
       if (typeof payload.url === "string" && payload.url) {
