@@ -238,14 +238,14 @@ export async function runSync(
     const uploadBuckets = toUploadBuckets(allBuckets, settings, device);
     const uploadSessions = toUploadSessions(allSessions, settings, device);
 
-    if (!quiet) {
-      const projectModeLabel: Record<ApiSettings["projectMode"], string> = {
-        hashed: "哈希化",
-        raw: "原始名称",
-        disabled: "已隐藏",
-      };
-      logger.info(`📂 项目模式: ${projectModeLabel[settings.projectMode]}`);
-    }
+    // if (!quiet) {
+      // const projectModeLabel: Record<ApiSettings["projectMode"], string> = {
+      //   hashed: "哈希化",
+      //   raw: "原始名称",
+      //   disabled: "已隐藏",
+      // };
+      // logger.info(`📂 项目模式: ${projectModeLabel[settings.projectMode]}`);
+    // }
 
     const bucketBatches = Math.ceil(uploadBuckets.length / BATCH_SIZE);
     const sessionBatches = Math.ceil(
@@ -306,25 +306,25 @@ export async function runSync(
       syncParts.push(`${totalSessionsSynced} sessions`);
     }
 
-    logger.info(`Synced ${syncParts.join(" + ")}.`);
+    // logger.info(`Synced ${syncParts.join(" + ")}.`);
 
-    if (!quiet && totalSessionsSynced > 0) {
-      const totalActive = uploadSessions.reduce(
-        (sum, session) => sum + session.activeSeconds,
-        0,
-      );
-      const totalDuration = uploadSessions.reduce(
-        (sum, session) => sum + session.durationSeconds,
-        0,
-      );
-      const totalMsgs = uploadSessions.reduce(
-        (sum, session) => sum + session.messageCount,
-        0,
-      );
-      logger.info(
-        `  active: ${formatTime(totalActive)} / total: ${formatTime(totalDuration)}, ${totalMsgs} messages`,
-      );
-    }
+    // if (!quiet && totalSessionsSynced > 0) {
+    //   const totalActive = uploadSessions.reduce(
+    //     (sum, session) => sum + session.activeSeconds,
+    //     0,
+    //   );
+    //   const totalDuration = uploadSessions.reduce(
+    //     (sum, session) => sum + session.durationSeconds,
+    //     0,
+    //   );
+    //   const totalMsgs = uploadSessions.reduce(
+    //     (sum, session) => sum + session.messageCount,
+    //     0,
+    //   );
+    //   logger.info(
+    //     `  active: ${formatTime(totalActive)} / total: ${formatTime(totalDuration)}, ${totalMsgs} messages`,
+    //   );
+    // }
 
     if (!quiet) {
       logger.info(`\nView your dashboard at: ${apiUrl}/usage`);
