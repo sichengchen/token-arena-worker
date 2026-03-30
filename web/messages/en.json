@@ -163,10 +163,9 @@
     },
     "emptyState": {
       "title": "No usage data yet",
-      "step1": "1. Create or copy a usage API key.",
-      "step2": "2. Install the CLI globally:",
+      "step2": "Install the CLI globally:",
       "copyCommand": "Copy command",
-      "step3": "3. Run the command below in your CLI and paste your API key when prompted:",
+      "step3": "Run the command below in your CLI and paste your API key when prompted:",
       "createFirstKey": "Create your first key"
     },
     "filters": {
