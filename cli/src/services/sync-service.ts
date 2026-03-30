@@ -209,7 +209,7 @@ export async function runSync(
       }
     }
 
-    const apiUrl = config.apiUrl || "http://localhost:3000";
+    const apiUrl = config.apiUrl || "https://token.poco-ai.com";
     const apiClient = new ApiClient(apiUrl, config.apiKey);
 
     let settings: ApiSettings | null;
