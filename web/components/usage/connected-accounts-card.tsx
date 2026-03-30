@@ -214,7 +214,7 @@ export function ConnectedAccountsCard({
                 key={row.key}
                 className="flex flex-wrap items-center gap-4 px-4 py-4 sm:flex-nowrap"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted/50 text-foreground">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center text-foreground">
                   <ProviderIcon providerId="credential" />
                 </div>
                 <div className="min-w-0 flex-1 space-y-0.5">
@@ -245,7 +245,7 @@ export function ConnectedAccountsCard({
                 key={row.key}
                 className="flex flex-wrap items-center gap-4 px-4 py-4 sm:flex-nowrap"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted/50 text-foreground">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center text-foreground">
                   <ProviderIcon providerId={provider.id} />
                 </div>
                 <div className="min-w-0 flex-1 space-y-0.5">
@@ -282,7 +282,7 @@ export function ConnectedAccountsCard({
               key={row.key}
               className="flex flex-wrap items-center gap-4 px-4 py-4 sm:flex-nowrap"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted/50 text-foreground">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center text-foreground">
                 <ProviderIcon providerId={provider.id} />
               </div>
               <div className="min-w-0 flex-1 space-y-0.5">
