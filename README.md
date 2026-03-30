@@ -85,6 +85,7 @@ pnpm dev:cli    # 启动 CLI 工具
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/token_arena
 BETTER_AUTH_SECRET=your-secret
 BETTER_AUTH_URL=http://localhost:3000
+AUTH_MODE=self-hosted
 ```
 
 ### 环境变量
@@ -93,10 +94,18 @@ BETTER_AUTH_URL=http://localhost:3000
 |------|------|------|
 | `BETTER_AUTH_SECRET` | 认证密钥 | `openssl rand -base64 32` 生成 |
 | `BETTER_AUTH_URL` | 应用对外访问 URL | `http://localhost:3000` |
+| `AUTH_MODE` | 认证模式（`self-hosted` / `production`） | `self-hosted` |
 | `DATABASE_URL` | PostgreSQL 连接字符串 | `postgresql://postgres:postgres@db:5432/token_arena` |
 | `POSTGRES_USER` | PostgreSQL 用户名 | `postgres` |
 | `POSTGRES_PASSWORD` | PostgreSQL 密码 | `postgres` |
 | `POSTGRES_DB` | PostgreSQL 数据库名 | `token_arena` |
+
+当 `AUTH_MODE=production` 时，还需要按需配置以下 OAuth 变量：
+
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
+- `LINUXDO_CLIENT_ID` / `LINUXDO_CLIENT_SECRET`
+- `WATCHA_CLIENT_ID` / `WATCHA_CLIENT_SECRET`
 
 ### Docker 常用命令
 

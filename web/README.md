@@ -16,12 +16,26 @@ Next.js 16 App Router Web 应用，负责：
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/token_arena
 BETTER_AUTH_SECRET=your-secret
 BETTER_AUTH_URL=http://localhost:3000
+AUTH_MODE=self-hosted
 ```
 
 可选：
 
 ```bash
 SHADOW_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/token_arena_shadow
+```
+
+当 `AUTH_MODE=production` 时，还需要按需配置 OAuth 提供商环境变量：
+
+```bash
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+LINUXDO_CLIENT_ID=
+LINUXDO_CLIENT_SECRET=
+WATCHA_CLIENT_ID=
+WATCHA_CLIENT_SECRET=
 ```
 
 ## 本地运行

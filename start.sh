@@ -22,6 +22,8 @@ if [ ! -f .env ]; then
     echo "⚠️  Please edit .env to configure:"
     echo "   - BETTER_AUTH_URL: Your public URL (default: http://localhost:3000)"
     echo "   - DATABASE_URL: Your database connection (default: docker-compose postgres)"
+    echo "   - AUTH_MODE: self-hosted or production"
+    echo "   - OAuth provider credentials (only if AUTH_MODE=production)"
     echo ""
 fi
 
