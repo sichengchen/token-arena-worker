@@ -147,7 +147,10 @@ export function ProfileHeatmap({
     <div className={styles.root}>
       <div
         ref={scrollerRef}
-        className={cn(styles.scroller, "overflow-x-auto pb-2")}
+        className={cn(
+          styles.scroller,
+          "overflow-x-auto overflow-y-hidden pb-2",
+        )}
       >
         <div className={styles.content}>
           <div

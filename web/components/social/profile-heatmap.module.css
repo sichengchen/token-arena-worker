@@ -8,37 +8,29 @@
 }
 
 .scroller {
+  /* Overflow is set in TSX (overflow-x-auto overflow-y-hidden) so SSR/CSR classNames stay aligned. */
   scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
+  /* Horizontal scrollbar always visible when content overflows (Firefox). */
+  scrollbar-color: color-mix(in oklab, var(--border) 80%, transparent)
+    color-mix(in oklab, var(--muted) 40%, transparent);
 }
 
 .scroller::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
+  height: 8px;
+  width: 8px;
 }
 
 .scroller::-webkit-scrollbar-track {
-  background: transparent;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--muted) 35%, transparent);
 }
 
 .scroller::-webkit-scrollbar-thumb {
   border-radius: 9999px;
-  background: transparent;
-}
-
-.scroller:hover,
-.scroller:focus-within {
-  scrollbar-color: color-mix(in oklab, var(--border) 80%, transparent)
-    transparent;
-}
-
-.scroller:hover::-webkit-scrollbar-thumb,
-.scroller:focus-within::-webkit-scrollbar-thumb {
   background: color-mix(in oklab, var(--border) 80%, transparent);
 }
 
-.scroller:hover::-webkit-scrollbar-thumb:hover,
-.scroller:focus-within::-webkit-scrollbar-thumb:hover {
+.scroller::-webkit-scrollbar-thumb:hover {
   background: var(--border);
 }
 
