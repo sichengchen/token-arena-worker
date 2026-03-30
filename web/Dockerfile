@@ -48,13 +48,25 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy pnpm-installed dependencies so Prisma CLI is available at runtime
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=deps --chown=nextjs:nodejs /app/web/node_modules ./web/node_modules
+
 # Copy standalone server output
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
 # Next serves static assets relative to /app/web/server.js inside standalone
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./web/.next/static
 
+# Copy Prisma schema, migrations, and config for migrate deploy
+COPY --from=builder --chown=nextjs:nodejs /app/web/package.json ./web/package.json
+COPY --from=builder --chown=nextjs:nodejs /app/web/prisma ./web/prisma
+COPY --from=builder --chown=nextjs:nodejs /app/web/prisma.config.ts ./web/prisma.config.ts
+
 # Copy Prisma generated client
 COPY --from=builder --chown=nextjs:nodejs /app/web/generated ./generated
+
+COPY --chown=nextjs:nodejs web/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 
 USER nextjs
 
@@ -62,5 +74,6 @@ EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+ENV RUN_DB_MIGRATIONS=1
 
-CMD ["node", "web/server.js"]
+CMD ["./docker-entrypoint.sh"]
