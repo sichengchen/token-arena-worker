@@ -15,7 +15,8 @@
       "light": "Light",
       "dark": "Dark",
       "system": "System"
-    }
+    },
+    "footerCopyright": "© {year} TokenArena @ Poco-ai"
   },
   "auth": {
     "fields": {
@@ -449,7 +450,8 @@
       "followers": "Followers",
       "signIn": "Sign in",
       "register": "Register",
-      "leaderboard": "Leaderboard"
+      "leaderboard": "Leaderboard",
+      "openSourceGitHub": "View source on GitHub"
     },
     "profile": {
       "activityTitle": "AI Coding Activity",

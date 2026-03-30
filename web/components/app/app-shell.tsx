@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import { AppFooter } from "@/components/app/app-footer";
 import { AppHeaderNav } from "@/components/app/header-nav";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { ThemeSwitcher } from "@/components/shared/theme-switcher";
@@ -38,7 +39,9 @@ export async function AppShell({
       ];
 
   return (
-    <main className={cn("min-h-screen bg-muted/30", mainClassName)}>
+    <main
+      className={cn("flex min-h-screen flex-col bg-muted/30", mainClassName)}
+    >
       <header className="border-b border-border/60 bg-background/95 supports-[backdrop-filter]:bg-background/85">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2">
@@ -74,9 +77,11 @@ export async function AppShell({
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8">
         {children}
       </div>
+
+      <AppFooter />
     </main>
   );
 }

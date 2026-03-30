@@ -15,7 +15,8 @@
       "light": "浅色",
       "dark": "深色",
       "system": "跟随系统"
-    }
+    },
+    "footerCopyright": "© {year} TokenArena @ Poco-ai"
   },
   "auth": {
     "fields": {
@@ -449,7 +450,8 @@
       "followers": "粉丝",
       "signIn": "登录",
       "register": "注册",
-      "leaderboard": "排行榜"
+      "leaderboard": "排行榜",
+      "openSourceGitHub": "在 GitHub 上查看开源仓库"
     },
     "profile": {
       "activityTitle": "AI 编程活跃度",
