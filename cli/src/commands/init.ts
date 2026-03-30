@@ -2,7 +2,7 @@ import { execFileSync, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import { homedir, platform } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, posix, win32 } from "node:path";
 import { createInterface } from "node:readline";
 import { ApiClient } from "../infrastructure/api/client";
 import {
@@ -36,6 +36,15 @@ interface ResolveShellAliasSetupOptions {
   exists?: (path: string) => boolean;
   homeDir?: string;
   resolvePowerShellProfilePath?: () => string | null;
+}
+
+function joinForPlatform(
+  currentPlatform: NodeJS.Platform,
+  ...parts: string[]
+): string {
+  return currentPlatform === "win32"
+    ? win32.join(...parts)
+    : posix.join(...parts);
 }
 
 function prompt(question: string): Promise<string> {
@@ -152,19 +161,25 @@ export function resolveShellAliasSetup(
       return {
         aliasLine: `alias ${aliasName}="tokenarena"`,
         aliasPatterns: [`alias ${aliasName}=`, `function ${aliasName}`],
-        configFile: join(homeDir, ".zshrc"),
+        configFile: joinForPlatform(currentPlatform, homeDir, ".zshrc"),
         shellLabel: "zsh",
         sourceHint: "source ~/.zshrc",
       };
     case "bash": {
-      const bashProfile = join(homeDir, ".bash_profile");
+      const bashProfile = joinForPlatform(
+        currentPlatform,
+        homeDir,
+        ".bash_profile",
+      );
       const useBashProfile =
         currentPlatform === "darwin" && pathExists(bashProfile);
 
       return {
         aliasLine: `alias ${aliasName}="tokenarena"`,
         aliasPatterns: [`alias ${aliasName}=`, `function ${aliasName}`],
-        configFile: useBashProfile ? bashProfile : join(homeDir, ".bashrc"),
+        configFile: useBashProfile
+          ? bashProfile
+          : joinForPlatform(currentPlatform, homeDir, ".bashrc"),
         shellLabel: "bash",
         sourceHint: useBashProfile
           ? "source ~/.bash_profile"
@@ -175,7 +190,13 @@ export function resolveShellAliasSetup(
       return {
         aliasLine: `alias ${aliasName} "tokenarena"`,
         aliasPatterns: [`alias ${aliasName}`, `function ${aliasName}`],
-        configFile: join(homeDir, ".config", "fish", "config.fish"),
+        configFile: joinForPlatform(
+          currentPlatform,
+          homeDir,
+          ".config",
+          "fish",
+          "config.fish",
+        ),
         shellLabel: "fish",
         sourceHint: "source ~/.config/fish/config.fish",
       };
@@ -183,7 +204,8 @@ export function resolveShellAliasSetup(
       const configFile =
         options.resolvePowerShellProfilePath?.() ||
         resolvePowerShellProfilePath() ||
-        join(
+        joinForPlatform(
+          currentPlatform,
           homeDir,
           "Documents",
           "PowerShell",
