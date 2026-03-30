@@ -48,15 +48,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files from builder
-COPY --from=builder /app/web/public ./public
-
-# Copy standalone output (includes nested web/ folder from monorepo)
+# Copy standalone output (includes public and .next/static)
 COPY --from=builder --chown=nextjs:nodejs /app/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/web/.next/static ./.next/static
 
 # Copy Prisma generated client
-COPY --from=builder /app/web/generated ./generated
+COPY --from=builder --chown=nextjs:nodejs /app/web/generated ./generated
 
 USER nextjs
 
