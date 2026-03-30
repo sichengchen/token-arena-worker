@@ -10,4 +10,5 @@ build
 .vercel
 .DS_Store
 *.tsbuildinfo
-.env*
+.env
+!.env.example
