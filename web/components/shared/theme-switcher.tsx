@@ -72,7 +72,6 @@ export function ThemeSwitcher({
         size="default"
         className={cn("h-8 w-[112px] bg-background")}
       >
-        <ThemeIcon className="size-3.5 text-muted-foreground" />
         <SelectValue placeholder={t("theme")} />
       </SelectTrigger>
       <SelectContent align="center">
