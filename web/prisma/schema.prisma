@@ -129,7 +129,7 @@ model UsagePreference {
   theme                ThemeMode   @default(system)
   timezone             String      @default("UTC")
   projectMode          ProjectMode @default(hashed)
-  publicProfileEnabled Boolean     @default(false)
+  publicProfileEnabled Boolean     @default(true)
   bio                  String?
   projectHashSalt      String
   createdAt            DateTime    @default(now())
