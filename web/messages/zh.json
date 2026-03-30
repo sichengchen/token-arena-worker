@@ -28,7 +28,7 @@
     "login": {
       "title": "欢迎回来",
       "description": "使用邮箱和密码登录。",
-      "oauthDescription": "使用已配置的第三方账号登录。",
+      "oauthDescription": "使用第三方账号登录 Token Arena。",
       "submit": "登录",
       "submitting": "登录中...",
       "invalidSession": "当前会话已失效或过期，请重新登录。",
