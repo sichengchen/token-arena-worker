@@ -13,7 +13,7 @@ COPY web/package.json ./web/
 COPY web/prisma ./web/prisma/
 
 # Install dependencies
-RUN pnpm install --filter web --frozen-lockfile
+RUN pnpm install --filter ./web --frozen-lockfile
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
