@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { FOOTER_ICON_BUTTON_CLASS } from "@/lib/utils";
 
 const REPO_URL = "https://github.com/poco-ai/tokenarena";
 
@@ -26,7 +27,12 @@ export function GitHubRepoLink() {
   const t = useTranslations("social.nav");
 
   return (
-    <Button asChild variant="ghost" size="icon" className="size-9">
+    <Button
+      asChild
+      variant="ghost"
+      size="icon"
+      className={FOOTER_ICON_BUTTON_CLASS}
+    >
       <a
         href={REPO_URL}
         target="_blank"

@@ -19,9 +19,9 @@ type SocialLoginFormProps = {
 function renderProviderIcon(providerId: LoginProvider["id"]): ReactNode {
   switch (providerId) {
     case "github":
-      return <SiGithub className="mr-2 h-4 w-4" />;
+      return <SiGithub className="h-4 w-4 shrink-0" />;
     case "google":
-      return <SiGoogle className="mr-2 h-4 w-4" />;
+      return <SiGoogle className="h-4 w-4 shrink-0" />;
     case "linuxdo":
       return (
         <Image
@@ -29,7 +29,7 @@ function renderProviderIcon(providerId: LoginProvider["id"]): ReactNode {
           alt="Linux.do"
           width={16}
           height={16}
-          className="mr-2"
+          className="shrink-0"
         />
       );
     case "watcha":
@@ -39,7 +39,7 @@ function renderProviderIcon(providerId: LoginProvider["id"]): ReactNode {
           alt="Watcha"
           width={16}
           height={16}
-          className="mr-2"
+          className="shrink-0"
         />
       );
   }
@@ -101,11 +101,16 @@ export function SocialLoginForm({
               key={provider.id}
               type="button"
               variant="outline"
+              className="flex h-auto min-h-8 w-full items-stretch gap-0 px-0 py-2.5"
               onClick={() => handleProviderSignIn(provider)}
               disabled={isSubmitting}
             >
-              {renderProviderIcon(provider.id)}
-              {provider.label}
+              <span className="flex min-w-0 flex-[3] items-center justify-center">
+                {renderProviderIcon(provider.id)}
+              </span>
+              <span className="flex min-w-0 flex-[7] items-center justify-center text-center">
+                {provider.label}
+              </span>
             </Button>
           ))}
         </div>

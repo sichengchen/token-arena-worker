@@ -16,7 +16,7 @@
       "dark": "Dark",
       "system": "System"
     },
-    "footerCopyright": "© {year} TokenArena @ Poco-ai"
+    "footerCopyright": "TokenArena @ Poco-ai"
   },
   "auth": {
     "fields": {
@@ -26,7 +26,7 @@
       "password": "Password"
     },
     "login": {
-      "title": "Welcome back",
+      "title": "Welcome",
       "description": "Sign in with your email and password.",
       "oauthDescription": "Sign in with one of the supported providers.",
       "submit": "Sign in",

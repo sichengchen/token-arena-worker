@@ -16,7 +16,7 @@
       "dark": "深色",
       "system": "跟随系统"
     },
-    "footerCopyright": "© {year} TokenArena @ Poco-ai"
+    "footerCopyright": "TokenArena @ Poco-ai"
   },
   "auth": {
     "fields": {
@@ -26,7 +26,7 @@
       "password": "密码"
     },
     "login": {
-      "title": "欢迎回来",
+      "title": "Welcome",
       "description": "使用邮箱和密码登录。",
       "oauthDescription": "使用第三方账号登录 Token Arena。",
       "submit": "登录",

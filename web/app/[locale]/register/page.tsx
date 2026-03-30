@@ -44,10 +44,10 @@ export default async function RegisterPage({
     <AuthShell
       title={t("title")}
       description={t("description")}
-      headerActions={
+      footerActions={
         <>
-          <LanguageSwitcher />
-          <ThemeSwitcher />
+          <LanguageSwitcher footerIcon variant="icon" />
+          <ThemeSwitcher footerIcon variant="icon" />
         </>
       }
     >

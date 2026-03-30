@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { LoginDitherBackground } from "@/components/auth/login-dither-background";
 import { LoginForm } from "@/components/auth/login-form";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
-import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { authMode, isSelfHosted } from "@/lib/auth-config";
 import { getEnabledLoginProviders } from "@/lib/auth-providers";
 import { getOptionalSession } from "@/lib/session";
@@ -50,21 +50,20 @@ export default async function LoginPage({
   const description = isSelfHosted ? t("description") : t("oauthDescription");
 
   return (
-    <AuthShell
-      title={t("title")}
-      description={description}
-      headerActions={
-        <>
-          <LanguageSwitcher />
-          <ThemeSwitcher />
-        </>
-      }
-    >
-      <LoginForm
-        mode={authMode}
-        showInvalidSessionMessage={showInvalidSessionMessage}
-        providers={getEnabledLoginProviders()}
-      />
-    </AuthShell>
+    <div className="dark min-h-screen-ios">
+      <AuthShell
+        background={<LoginDitherBackground />}
+        title={t("title")}
+        description={description}
+        titleVariant="hero"
+        footerActions={<LanguageSwitcher footerIcon variant="icon" />}
+      >
+        <LoginForm
+          mode={authMode}
+          showInvalidSessionMessage={showInvalidSessionMessage}
+          providers={getEnabledLoginProviders()}
+        />
+      </AuthShell>
+    </div>
   );
 }
