@@ -71,6 +71,9 @@ chmod +x start.sh
 
 启动脚本会自动创建配置文件、生成安全密钥并启动所有服务。
 
+> 使用 `docker compose` / `./start.sh` 时，请修改仓库根目录的 `.env`。
+> 此时 `DATABASE_URL` 的主机名应为 `db`，不要写 `localhost`。
+
 ### 本地开发
 
 ```bash
