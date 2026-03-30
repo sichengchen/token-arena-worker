@@ -318,6 +318,7 @@
       "dialogTitle": "API Keys",
       "total": "{count} total",
       "active": "{count} active",
+      "empty": "No API keys available.",
       "createKey": "Create key",
       "newKey": "New key",
       "copyShownOnce": "Copy it now. It will only be shown once.",

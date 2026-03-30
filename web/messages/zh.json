@@ -318,6 +318,7 @@
       "dialogTitle": "API Keys",
       "total": "共 {count} 个",
       "active": "启用 {count} 个",
+      "empty": "暂无 api-key",
       "createKey": "创建 Key",
       "newKey": "新 Key",
       "copyShownOnce": "请立即复制，这个 Key 只会显示一次。",
