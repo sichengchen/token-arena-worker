@@ -201,8 +201,29 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer utilities {
+  /**
+   * Full-viewport min-height for auth / fixed layers.
+   * Safari (esp. iOS) mis-resolves `100vh`/`dvh` vs the visible viewport; `-webkit-fill-available`
+   * matches the layout viewport. Keep VH first, then WebKit, then dvh as progressive enhancement.
+   */
+  .min-h-screen-ios {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
   }
 }
