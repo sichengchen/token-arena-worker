@@ -6,8 +6,8 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { getConfigHome } from "../xdg";
 
 export interface Config {
   apiKey: string;
@@ -17,7 +17,7 @@ export interface Config {
   logLevel?: "debug" | "info" | "warn" | "error";
 }
 
-const CONFIG_DIR = join(homedir(), ".tokenarena");
+const CONFIG_DIR = join(getConfigHome(), "tokenarena");
 const isDev = process.env.TOKEN_ARENA_DEV === "1";
 const CONFIG_FILE = join(CONFIG_DIR, isDev ? "config.dev.json" : "config.json");
 

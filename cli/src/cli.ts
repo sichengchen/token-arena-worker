@@ -17,7 +17,8 @@ export function createCli(): Command {
     .description("Track token burn across AI coding tools")
     .version(CLI_VERSION)
     .showHelpAfterError()
-    .showSuggestionAfterError();
+    .showSuggestionAfterError()
+    .helpCommand("help [command]", "Display help for command");
 
   // Default action: show help or error for unknown commands
   program.action(() => {

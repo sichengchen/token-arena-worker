@@ -7,6 +7,10 @@ import {
   getConfigPath,
   loadConfig,
 } from "../infrastructure/config/manager";
+import {
+  getRuntimeDirPath,
+  getStateDir,
+} from "../infrastructure/runtime/paths";
 import { logger } from "../utils/logger";
 
 function prompt(question: string): Promise<string> {
@@ -111,14 +115,7 @@ export async function runUninstall(): Promise<void> {
   deleteConfig();
   logger.info("Deleted configuration file.");
 
-  // 2. Delete runtime directory (sync.lock, status.json, etc.)
-  const runtimeDir = `${configDir}/runtime`;
-  if (existsSync(runtimeDir)) {
-    rmSync(runtimeDir, { recursive: true, force: true });
-    logger.info("Deleted runtime data.");
-  }
-
-  // 3. Remove config directory if empty
+  // 2. Remove config directory if empty
   if (existsSync(configDir)) {
     try {
       rmSync(configDir, { recursive: false, force: true });
@@ -126,6 +123,20 @@ export async function runUninstall(): Promise<void> {
     } catch {
       // Directory not empty (other files), skip silently
     }
+  }
+
+  // 3. Delete state directory (status.json, etc.)
+  const stateDir = getStateDir();
+  if (existsSync(stateDir)) {
+    rmSync(stateDir, { recursive: true, force: true });
+    logger.info("Deleted state data.");
+  }
+
+  // 4. Delete runtime directory (sync.lock, etc.)
+  const runtimeDir = getRuntimeDirPath();
+  if (existsSync(runtimeDir)) {
+    rmSync(runtimeDir, { recursive: true, force: true });
+    logger.info("Deleted runtime data.");
   }
 
   // 4. Clean up shell alias

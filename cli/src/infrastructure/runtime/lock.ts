@@ -6,7 +6,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { ensureAppRuntimeDirs, getSyncLockPath } from "./paths";
+import { ensureAppDirs, getSyncLockPath } from "./paths";
 import type { SyncSource } from "./state";
 
 interface LockMetadata {
@@ -54,7 +54,7 @@ function removeStaleLock(lockPath: string): void {
 }
 
 export function tryAcquireSyncLock(source: SyncSource): SyncLock | null {
-  ensureAppRuntimeDirs();
+  ensureAppDirs();
   const lockPath = getSyncLockPath();
 
   try {

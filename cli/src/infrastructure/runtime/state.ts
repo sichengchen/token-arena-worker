@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { ensureAppRuntimeDirs, getSyncStatePath } from "./paths";
+import { ensureAppDirs, getSyncStatePath } from "./paths";
 
 export type SyncSource = "daemon" | "default" | "init" | "manual";
 
@@ -46,7 +46,7 @@ export function loadSyncState(): SyncState {
 }
 
 export function saveSyncState(next: SyncState): void {
-  ensureAppRuntimeDirs();
+  ensureAppDirs();
   writeFileSync(
     getSyncStatePath(),
     `${JSON.stringify(next, null, 2)}\n`,
