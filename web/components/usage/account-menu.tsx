@@ -116,7 +116,7 @@ export function AccountMenu({
       icon: LayoutDashboard,
     },
     { href: "/people", label: tSocial("people"), icon: Users },
-    { href: "/settings", label: t("settings"), icon: Cog },
+    { href: "/settings/account", label: t("settings"), icon: Cog },
   ];
 
   useEffect(() => {

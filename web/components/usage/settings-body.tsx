@@ -2,13 +2,17 @@
 
 import { Key, Shield, SlidersHorizontal, User } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
-
+import { Suspense, useEffect, useState } from "react";
+import { Link, usePathname } from "@/i18n/navigation";
 import type { LoginProvider } from "@/lib/auth-providers";
 import {
   type PreferenceNoticeDetail,
   preferenceNoticeEventName,
 } from "@/lib/usage/preference-notice";
+import {
+  type SettingsSectionId,
+  settingsSectionToPath,
+} from "@/lib/usage/settings-routes";
 import type { ProjectMode } from "@/lib/usage/types";
 import { cn } from "@/lib/utils";
 import { AccountIdentityCard } from "./account-identity-card";
@@ -27,11 +31,7 @@ type SettingsPreferenceState = {
   bio: string | null;
 };
 
-export type SettingsSectionId =
-  | "account"
-  | "preferences"
-  | "authentication"
-  | "cliKeys";
+export type { SettingsSectionId };
 
 export type SettingsBodyProps = {
   initialName?: string;
@@ -52,6 +52,10 @@ export type SettingsBodyProps = {
   }>;
   availableProviders?: LoginProvider[];
   keyManagerVariant?: "page" | "dialog";
+  /** When set with `navigateWithUrl`, the matching section is shown (URL-driven). */
+  initialSection?: SettingsSectionId;
+  /** Use `/settings/…` links for the sidebar instead of in-memory section state. */
+  navigateWithUrl?: boolean;
   viewer?: SettingsPageHeaderViewer;
   className?: string;
 };
@@ -68,11 +72,18 @@ export function SettingsBody({
   connectedAccounts = [],
   availableProviders = [],
   keyManagerVariant = "page",
+  initialSection = "account",
+  navigateWithUrl = false,
   viewer,
   className,
 }: SettingsBodyProps) {
   const t = useTranslations("usage.settings");
-  const [section, setSection] = useState<SettingsSectionId>("account");
+  const pathname = usePathname();
+  const [section, setSection] = useState<SettingsSectionId>(initialSection);
+
+  useEffect(() => {
+    setSection(initialSection);
+  }, [initialSection]);
 
   const [preferences, setPreferences] = useState<SettingsPreferenceState>({
     timezone: initialTimezone,
@@ -154,6 +165,17 @@ export function SettingsBody({
 
   const activePanel = panelCopy[section];
 
+  const hrefForSection = (id: SettingsSectionId) =>
+    `/settings/${settingsSectionToPath(id)}`;
+
+  const isNavActive = (id: SettingsSectionId) => {
+    if (navigateWithUrl) {
+      const target = hrefForSection(id);
+      return pathname === target || pathname === `${target}/`;
+    }
+    return section === id;
+  };
+
   const preferenceSnapshot = {
     timezone: preferences.timezone,
     projectMode: preferences.projectMode,
@@ -173,24 +195,42 @@ export function SettingsBody({
           <div className="flex flex-col gap-0.5 p-2 sm:p-3">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = section === item.id;
+              const isActive = isNavActive(item.id);
+              const navClassName = cn(
+                "flex w-full items-center gap-2 rounded-md py-2 pr-2.5 pl-2.5 text-left text-sm transition-colors",
+                isActive
+                  ? "bg-accent text-accent-foreground font-medium"
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+              );
 
               return (
                 <div key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => setSection(item.id)}
-                    className={cn(
-                      "flex w-full items-center gap-2 rounded-md py-2 pr-2.5 pl-2.5 text-left text-sm transition-colors",
-                      isActive
-                        ? "bg-accent text-accent-foreground font-medium"
-                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-                    )}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    <Icon className="size-4 shrink-0 opacity-80" aria-hidden />
-                    <span className="min-w-0 truncate">{item.label}</span>
-                  </button>
+                  {navigateWithUrl ? (
+                    <Link
+                      href={hrefForSection(item.id)}
+                      className={navClassName}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      <Icon
+                        className="size-4 shrink-0 opacity-80"
+                        aria-hidden
+                      />
+                      <span className="min-w-0 truncate">{item.label}</span>
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setSection(item.id)}
+                      className={navClassName}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      <Icon
+                        className="size-4 shrink-0 opacity-80"
+                        aria-hidden
+                      />
+                      <span className="min-w-0 truncate">{item.label}</span>
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -236,14 +276,16 @@ export function SettingsBody({
             ) : null}
 
             {section === "cliKeys" ? (
-              <KeyManager
-                initialKeys={initialKeys}
-                variant={keyManagerVariant}
-                sectionHeading={{
-                  title: activePanel.title,
-                  description: activePanel.description,
-                }}
-              />
+              <Suspense fallback={null}>
+                <KeyManager
+                  initialKeys={initialKeys}
+                  variant={keyManagerVariant}
+                  sectionHeading={{
+                    title: activePanel.title,
+                    description: activePanel.description,
+                  }}
+                />
+              </Suspense>
             ) : null}
           </div>
         </div>

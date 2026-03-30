@@ -1,9 +1,9 @@
 "use client";
 
 import { Copy, Pencil, Plus, Power, Trash2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { SETTINGS_CLI_KEY_CREATE_QUERY } from "@/lib/usage/settings-routes";
 import type { UsageApiKeyStatus } from "@/lib/usage/types";
 import { cn } from "@/lib/utils";
 import { KeyDialog } from "./key-dialog";
@@ -59,6 +61,9 @@ export function KeyManager({
 }: KeyManagerProps) {
   const t = useTranslations("usage.keys");
   const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [keys, setKeys] = useState(initialKeys);
   const [error, setError] = useState<string | null>(null);
   const [rawKey, setRawKey] = useState<string | null>(null);
@@ -67,6 +72,21 @@ export function KeyManager({
   const [pendingKeyId, setPendingKeyId] = useState<string | null>(null);
   const [isDialogPending, setIsDialogPending] = useState(false);
   const isDialog = variant === "dialog";
+
+  useEffect(() => {
+    if (
+      searchParams.get(SETTINGS_CLI_KEY_CREATE_QUERY.name) !==
+      SETTINGS_CLI_KEY_CREATE_QUERY.value
+    ) {
+      return;
+    }
+
+    setIsCreateOpen(true);
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete(SETTINGS_CLI_KEY_CREATE_QUERY.name);
+    const query = next.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname);
+  }, [searchParams, pathname, router]);
 
   const request = async <T,>(
     input: RequestInfo,

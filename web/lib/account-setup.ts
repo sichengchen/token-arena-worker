@@ -14,7 +14,9 @@ export function getAuthenticatedAppPath(
   locale: string,
   user: UserWithSetupState | null | undefined,
 ) {
-  return needsUsernameSetup(user) ? `/${locale}/settings` : `/${locale}/usage`;
+  return needsUsernameSetup(user)
+    ? `/${locale}/settings/account`
+    : `/${locale}/usage`;
 }
 
 export function redirectIfUsernameSetupNeeded(
@@ -22,6 +24,6 @@ export function redirectIfUsernameSetupNeeded(
   user: UserWithSetupState | null | undefined,
 ) {
   if (needsUsernameSetup(user)) {
-    redirect(`/${locale}/settings`);
+    redirect(`/${locale}/settings/account`);
   }
 }
