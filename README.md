@@ -69,6 +69,13 @@ chmod +x start.sh
 ./start.sh
 ```
 
+```powershell
+git clone https://github.com/poco-ai/tokenarena.git
+cd tokenarena
+.\start.ps1
+# or: .\start.cmd
+```
+
 启动脚本会自动创建配置文件、生成安全密钥并启动所有服务。
 
 ### 本地开发
@@ -85,6 +92,12 @@ pnpm dev:cli    # 启动 CLI 工具
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/token_arena
 BETTER_AUTH_SECRET=your-secret
 BETTER_AUTH_URL=http://localhost:3000
+```
+
+Docker Compose 启动时，根目录 `.env` 里的 `DATABASE_URL` 应使用 `db` 作为主机名，例如：
+
+```bash
+DATABASE_URL=postgresql://postgres:postgres@db:5432/tokens_burned
 ```
 
 ### 环境变量
