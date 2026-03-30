@@ -37,7 +37,7 @@ export function handleConfig(args: string[]): void {
       }
       const config = loadConfig() || {
         apiKey: "",
-        apiUrl: "http://localhost:3000",
+        apiUrl: "https://token.poco-ai.com",
       };
 
       // Type conversion for numeric values

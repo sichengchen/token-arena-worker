@@ -21,7 +21,7 @@ export async function runStatus(): Promise<void> {
   } else {
     logger.info(`  Config: ${getConfigPath()}`);
     logger.info(`  API key: ${config.apiKey.slice(0, 8)}...`);
-    logger.info(`  API URL: ${config.apiUrl || "http://localhost:3000"}`);
+    logger.info(`  API URL: ${config.apiUrl || "https://token.poco-ai.com"}`);
     if (config.syncInterval) {
       logger.info(
         `  Sync interval: ${Math.round(config.syncInterval / 60000)}m`,
