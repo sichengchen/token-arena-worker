@@ -1,6 +1,6 @@
 "use client";
 
-import { Monitor, MoonStar, Sun } from "lucide-react";
+import { MoonStar, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@/components/providers/theme-provider";
 import { Button } from "@/components/ui/button";
@@ -19,12 +19,6 @@ type ThemeSwitcherProps = {
   authenticated?: boolean;
   variant?: "default" | "compact";
 };
-
-const themeIcons = {
-  light: Sun,
-  dark: MoonStar,
-  system: Monitor,
-} satisfies Record<ThemeMode, typeof Sun>;
 
 export function ThemeSwitcher({
   authenticated = false,
