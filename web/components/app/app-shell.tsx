@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { AppFooter } from "@/components/app/app-footer";
@@ -49,8 +50,24 @@ export async function AppShell({
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2">
             <Link
               href={viewer ? "/usage" : "/"}
-              className="inline-flex shrink-0 items-center text-lg font-semibold tracking-tight text-foreground sm:text-xl"
+              className="inline-flex shrink-0 items-center gap-2 text-lg font-semibold tracking-tight text-foreground sm:text-xl"
             >
+              <Image
+                src="/logo_dark.svg"
+                alt=""
+                width={32}
+                height={32}
+                className="size-8 shrink-0 dark:hidden"
+                priority
+              />
+              <Image
+                src="/logo_white.svg"
+                alt=""
+                width={32}
+                height={32}
+                className="hidden size-8 shrink-0 dark:block"
+                priority
+              />
               Token Arena
             </Link>
             <AppHeaderNav items={navItems} />
