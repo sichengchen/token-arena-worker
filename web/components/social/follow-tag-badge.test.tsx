@@ -17,12 +17,12 @@ vi.mock("next-intl", () => ({
     (key: string): string => {
       const translations: Record<string, Record<string, string>> = {
         "social.tags": {
-          selectLabel: "关系",
-          none: "未分类",
+          selectLabel: "关注标签",
+          none: "未分组",
           "options.coworker": "同事",
           "options.friend": "朋友",
           "options.peer": "同行",
-          "options.inspiration": "灵感来源",
+          "options.inspiration": "灵感",
         },
         "social.errors": {
           tagFailed: "标签更新失败",
@@ -34,28 +34,29 @@ vi.mock("next-intl", () => ({
 }));
 
 describe("FollowTagBadge", () => {
-  it("renders tag with label when tag is set", () => {
+  it("renders tag label with dropdown icon when tag is set", () => {
     const markup = renderToStaticMarkup(
       <FollowTagBadge locale="zh-CN" username="alice" tag="coworker" />,
     );
 
     expect(markup).toContain("同事");
-    expect(markup).toContain('variant="secondary"');
+    expect(markup).toContain('type="button"');
   });
 
-  it("renders none label when tag is null", () => {
+  it("renders selectLabel when tag is null", () => {
     const markup = renderToStaticMarkup(
       <FollowTagBadge locale="zh-CN" username="alice" tag={null} />,
     );
 
-    expect(markup).toContain("未分类");
+    expect(markup).toContain("关注标签");
   });
 
-  it("has cursor-pointer class", () => {
+  it("shows button with border and muted background", () => {
     const markup = renderToStaticMarkup(
       <FollowTagBadge locale="zh-CN" username="alice" tag={null} />,
     );
 
-    expect(markup).toContain("cursor-pointer");
+    expect(markup).toContain("border");
+    expect(markup).toContain("bg-muted");
   });
 });
