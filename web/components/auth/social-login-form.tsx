@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { SiGithub, SiGoogle } from "react-icons/si";
@@ -49,9 +49,13 @@ export function SocialLoginForm({
   showInvalidSessionMessage = false,
   providers,
 }: SocialLoginFormProps) {
+  const locale = useLocale();
   const t = useTranslations("auth");
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const callbackURL = `/${locale}/usage`;
+  const newUserCallbackURL = `/${locale}/settings/account`;
 
   const handleProviderSignIn = async (provider: LoginProvider) => {
     setIsSubmitting(true);
@@ -61,14 +65,14 @@ export function SocialLoginForm({
       if (provider.kind === "social") {
         await authClient.signIn.social({
           provider: provider.id,
-          callbackURL: "/usage",
-          newUserCallbackURL: "/settings/account",
+          callbackURL,
+          newUserCallbackURL,
         });
       } else {
         await authClient.signIn.oauth2({
           providerId: provider.id,
-          callbackURL: "/usage",
-          newUserCallbackURL: "/settings/account",
+          callbackURL,
+          newUserCallbackURL,
         });
       }
     } catch (error) {
