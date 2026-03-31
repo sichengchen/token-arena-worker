@@ -16,8 +16,11 @@ Next.js 16 App Router Web 应用，负责：
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/token_arena
 BETTER_AUTH_SECRET=your-secret
 BETTER_AUTH_URL=http://localhost:3000
+GA_SECRET=G-XXXXXXXXXX
 AUTH_MODE=self-hosted
 ```
+
+`GA_SECRET` 用于注入 Google Analytics 4（`gtag`）脚本；未配置时不会注入。
 
 可选：
 

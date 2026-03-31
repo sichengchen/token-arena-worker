@@ -121,6 +121,7 @@ git add --renormalize .
 |------|------|------|
 | `BETTER_AUTH_SECRET` | 认证密钥 | `openssl rand -base64 32` 生成 |
 | `BETTER_AUTH_URL` | 应用对外访问 URL | `http://localhost:3000` |
+| `GA_SECRET` | Google Analytics 4 测量 ID（配置后才注入 GA 脚本） | `G-XXXXXXXXXX` |
 | `AUTH_MODE` | 认证模式（`self-hosted` / `production`） | `self-hosted` |
 | `DATABASE_URL` | PostgreSQL 连接字符串 | `postgresql://postgres:postgres@db:5432/token_arena` |
 | `POSTGRES_USER` | PostgreSQL 用户名 | `postgres` |

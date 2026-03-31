@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import Script from "next/script";
 import { getLocale } from "next-intl/server";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemeScript } from "@/components/providers/theme-script";
@@ -18,6 +19,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaSecret = process.env.GA_SECRET;
   const cookieStore = await cookies();
   const locale =
     (await getLocale().catch(() => defaultLocale)) ?? defaultLocale;
@@ -29,6 +31,20 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <ThemeScript initialThemeMode={initialThemeMode} />
+        {gaSecret ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaSecret}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaSecret}');`}
+            </Script>
+          </>
+        ) : null}
         <ThemeProvider initialThemeMode={initialThemeMode}>
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
