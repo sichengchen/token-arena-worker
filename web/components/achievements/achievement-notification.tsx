@@ -77,9 +77,9 @@ export function AchievementNotification() {
       <PopoverTrigger asChild>
         <Button
           type="button"
-          variant="outline"
-          size="icon"
-          className="relative rounded-full"
+          variant="ghost"
+          size="icon-sm"
+          className="relative rounded-full hover:bg-muted/70 dark:hover:bg-muted/45"
           aria-label={t("button")}
         >
           <Bell className="size-4" aria-hidden />

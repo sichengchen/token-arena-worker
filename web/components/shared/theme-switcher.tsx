@@ -67,7 +67,7 @@ export function ThemeSwitcher({
   if (variant === "icon") {
     const iconButtonClass = footerIcon
       ? FOOTER_ICON_BUTTON_CLASS
-      : "rounded-full border border-transparent bg-muted/40 hover:bg-muted/70 dark:bg-muted/25 dark:hover:bg-muted/45";
+      : "rounded-full hover:bg-muted/70 dark:hover:bg-muted/45";
 
     return (
       <Popover open={open} onOpenChange={setOpen}>
