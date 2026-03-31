@@ -697,79 +697,79 @@
     },
     "items": {
       "first_sync": {
-        "title": "First Sync",
+        "title": "Hello, World",
         "description": "Successfully sync local usage data into Token Arena for the first time."
       },
       "sessions_1": {
-        "title": "First Session",
+        "title": "Session Zero",
         "description": "Complete your first session."
       },
       "streak_3": {
-        "title": "3-Day Spark",
+        "title": "Three-Day Streak — No Cap",
         "description": "Stay active for 3 consecutive days."
       },
       "streak_7": {
-        "title": "Weekly Momentum",
+        "title": "Main Character Week",
         "description": "Stay active for 7 consecutive days."
       },
       "streak_14": {
-        "title": "Two-Week Streak",
+        "title": "Two-Week Grind Arc",
         "description": "Stay active for 14 consecutive days."
       },
       "streak_30": {
-        "title": "30-Day Marathon",
+        "title": "30-Day Speedrun",
         "description": "Stay active for 30 consecutive days."
       },
       "active_days_7": {
-        "title": "Getting Started",
+        "title": "Week One — Unlocked",
         "description": "Reach 7 lifetime active days."
       },
       "active_days_30": {
-        "title": "Steady Builder",
+        "title": "Monthly Pass Holder",
         "description": "Reach 30 lifetime active days."
       },
       "active_days_100": {
-        "title": "Long-Game Builder",
+        "title": "100-Day Ironman",
         "description": "Reach 100 lifetime active days."
       },
       "active_days_365": {
-        "title": "Year of Building",
+        "title": "Full Orbit — 365",
         "description": "Reach 365 lifetime active days."
       },
       "sessions_200": {
-        "title": "200 Sessions",
+        "title": "200 — We're So Back",
         "description": "Complete 200 sessions."
       },
       "sessions_1k": {
-        "title": "1K Sessions",
+        "title": "1K Sessions — Touch Grass Later",
         "description": "Complete 1,000 sessions."
       },
       "sessions_5k": {
-        "title": "5K Sessions",
+        "title": "5K — Chat Dynasty",
         "description": "Complete 5,000 sessions."
       },
       "sessions_20k": {
-        "title": "20K Sessions",
+        "title": "20K — Side Quest Maximalist",
         "description": "Complete 20,000 sessions."
       },
       "sessions_100k": {
-        "title": "100K Sessions",
+        "title": "100K — Final Boss Energy",
         "description": "Complete 100,000 sessions."
       },
       "spend_usd_100": {
-        "title": "$100 Spent",
+        "title": "Starter Pack Billing",
         "description": "Reach $100 in estimated lifetime API spend."
       },
       "spend_usd_1k": {
-        "title": "$1K Spent",
+        "title": "1K — Rent Is Due",
         "description": "Reach $1,000 in estimated lifetime API spend."
       },
       "spend_usd_5k": {
-        "title": "$5K Spent",
+        "title": "5K — Whale Watchlist",
         "description": "Reach $5,000 in estimated lifetime API spend."
       },
       "spend_usd_20k": {
-        "title": "$20K Spent",
+        "title": "20K — Burn Rate CEO",
         "description": "Reach $20,000 in estimated lifetime API spend."
       },
       "spend_usd_100k": {
@@ -777,151 +777,151 @@
         "description": "Reach $100,000 in estimated lifetime API spend."
       },
       "tokens_100k": {
-        "title": "100K Burn",
+        "title": "100K — Token Snack",
         "description": "Accumulate 100K total tokens."
       },
       "tokens_1m": {
-        "title": "Million Fuel",
+        "title": "1M — Millionaire Mindset",
         "description": "Accumulate 1M total tokens."
       },
       "tokens_10m": {
-        "title": "10M Forge",
+        "title": "10M — Token Furnace",
         "description": "Accumulate 10M total tokens."
       },
       "tokens_1b": {
-        "title": "Billion Scale",
+        "title": "1B — Math Goes Brrr",
         "description": "Accumulate 1B total tokens."
       },
       "tokens_10b": {
-        "title": "10B Horizon",
+        "title": "10B — Universe Budget",
         "description": "Accumulate 10B total tokens."
       },
       "tokens_100b": {
-        "title": "100B Singularity",
+        "title": "100B — GPU's Last Wish",
         "description": "Accumulate 100B total tokens."
       },
       "active_hours_10": {
-        "title": "10 Active Hours",
+        "title": "10h — Coffee Break Scale",
         "description": "Reach 10 lifetime active hours."
       },
       "active_hours_100": {
-        "title": "100 Active Hours",
+        "title": "100h — Chair Imprint",
         "description": "Reach 100 lifetime active hours."
       },
       "active_hours_200": {
-        "title": "200 Active Hours",
+        "title": "200h — Deep Seat",
         "description": "Reach 200 lifetime active hours."
       },
       "active_hours_500": {
-        "title": "500 Active Hours",
+        "title": "500h — Legendary Camping",
         "description": "Reach 500 lifetime active hours."
       },
       "active_hours_2000": {
-        "title": "2,000 Active Hours",
+        "title": "2,000h — I Live Here Now",
         "description": "Reach 2,000 lifetime active hours."
       },
       "reasoning_25": {
-        "title": "Reasoning Driven",
+        "title": "Big Brain Mode",
         "description": "At least 25% of your last 30 days of tokens were spent on reasoning."
       },
       "reasoning_40": {
-        "title": "Reasoning Heavy",
+        "title": "Galaxy Brain",
         "description": "At least 40% of your last 30 days of tokens were spent on reasoning."
       },
       "cache_15": {
-        "title": "Cache Specialist",
+        "title": "Cache Money",
         "description": "At least 15% of your last 30 days of tokens came from cache hits."
       },
       "cache_30": {
-        "title": "Cache Master",
+        "title": "Cache Bandit",
         "description": "At least 30% of your last 30 days of tokens came from cache hits."
       },
       "project_focus_70": {
-        "title": "Deep Focus",
+        "title": "One Project to Rule Them All",
         "description": "At least 70% of your last 30 days of tokens were concentrated in one project."
       },
       "project_focus_90": {
-        "title": "Laser Focus",
+        "title": "Laser Focus — No Scatter",
         "description": "At least 90% of your last 30 days of tokens were concentrated in one project."
       },
       "models_3": {
-        "title": "Model Explorer",
+        "title": "Model Dilettante",
         "description": "Use 3 different models over time."
       },
       "models_5": {
-        "title": "Model Voyager",
+        "title": "Model Polyglot",
         "description": "Use 5 different models over time."
       },
       "tools_2": {
-        "title": "Tool Switcher",
+        "title": "Two-Tool Tango",
         "description": "Use 2 different AI tool sources."
       },
       "tools_4": {
-        "title": "Tool Quartet",
+        "title": "Full Stack of Vibes",
         "description": "Use 4 different AI tool sources."
       },
       "projects_5": {
-        "title": "Project Rover",
+        "title": "Project Hopper",
         "description": "Work across 5 projects."
       },
       "projects_15": {
-        "title": "Project Universe",
+        "title": "15 Projects — Collector Edition",
         "description": "Work across 15 projects."
       },
       "devices_2": {
-        "title": "Dual Device",
+        "title": "Two-Device Lifestyle",
         "description": "Be active from 2 different devices."
       },
       "devices_3": {
-        "title": "Triple Device",
+        "title": "Three-Device Chaos",
         "description": "Be active from 3 different devices."
       },
       "first_follow": {
-        "title": "First Follow",
+        "title": "First Follow — W",
         "description": "Follow your first public builder."
       },
       "following_10": {
-        "title": "Following Ten",
+        "title": "Following Ten — Fan Club",
         "description": "Follow 10 public builders."
       },
       "first_follower": {
-        "title": "First Follower",
+        "title": "First Fan Unlocked",
         "description": "Gain your first follower."
       },
       "followers_10": {
-        "title": "Ten Followers",
+        "title": "Ten Followers — Micro-Celebrity",
         "description": "Gain 10 followers."
       },
       "mutual_3": {
-        "title": "Mutual Circle",
+        "title": "Mutual Circle — Squad",
         "description": "Build 3 mutual follow relationships."
       },
       "mutual_10": {
-        "title": "Mutual Network",
+        "title": "Mutual Network — Full Party",
         "description": "Build 10 mutual follow relationships."
       },
       "leaderboard_day_top50": {
-        "title": "Daily Top 50",
+        "title": "Daily Speedrun Top 50",
         "description": "Place in the top 50 on the global daily total-tokens leaderboard."
       },
       "leaderboard_week_top50": {
-        "title": "Weekly Top 50",
+        "title": "Weekly Chart — Main Stage",
         "description": "Place in the top 50 on the global weekly total-tokens leaderboard."
       },
       "leaderboard_month_top50": {
-        "title": "Monthly Top 50",
+        "title": "Monthly Billboard Top",
         "description": "Place in the top 50 on the global monthly total-tokens leaderboard."
       },
       "leaderboard_all_time_top100": {
-        "title": "Hall of Fame",
+        "title": "Hall of Fame — Reserved Seat",
         "description": "Place in the top 100 on the global all-time total-tokens leaderboard."
       },
       "leaderboard_all_time_top10": {
-        "title": "All-Time Top 10",
+        "title": "All-Time Top 10 — Final Boss Lobby",
         "description": "Place in the top 10 on the global all-time total-tokens leaderboard."
       },
       "leaderboard_all_time_first": {
-        "title": "World #1",
+        "title": "World #1 — Printed",
         "description": "Reach #1 on the global all-time total-tokens leaderboard."
       }
     }
