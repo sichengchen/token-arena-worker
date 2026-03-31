@@ -1,3 +1,10 @@
+import { getUserGlobalLeaderboardRanksByTotalTokens } from "@/lib/leaderboard/rank";
+import type { PricingCatalog } from "@/lib/pricing/catalog";
+import { getPricingCatalog } from "@/lib/pricing/catalog";
+import {
+  estimateCostUsd,
+  resolveOfficialPricingMatch,
+} from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import { resolveDashboardRange } from "@/lib/usage/date-range";
 import { formatDateInput } from "@/lib/usage/format";
@@ -32,6 +39,30 @@ function sortIsoAsc<T extends { at: string }>(values: T[]) {
   return [...values].sort(
     (left, right) => Date.parse(left.at) - Date.parse(right.at),
   );
+}
+
+function estimateBucketCostUsd(
+  bucket: {
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    reasoningTokens: number;
+    cachedTokens: number;
+  },
+  catalog: PricingCatalog,
+) {
+  const match = resolveOfficialPricingMatch(catalog, bucket.model);
+  const estimate = estimateCostUsd(
+    {
+      inputTokens: bucket.inputTokens,
+      outputTokens: bucket.outputTokens,
+      reasoningTokens: bucket.reasoningTokens,
+      cachedTokens: bucket.cachedTokens,
+    },
+    match?.cost,
+  );
+
+  return estimate?.totalUsd ?? 0;
 }
 
 function resolveCurrentPersona(input: {
@@ -109,13 +140,28 @@ function buildAllTimeMetrics(input: {
   followers: Array<{ followerId: string; createdAt: Date }>;
   publicProfileEnabled: boolean;
   publicProfileUpdatedAt: Date | null;
+  leaderboardRanks?: {
+    day: number | null;
+    week: number | null;
+    month: number | null;
+    all_time: number | null;
+  };
+  costTimeline: AchievementTimelinePoint[];
+  totalEstimatedCostUsd: number;
 }): AchievementInputMetrics {
+  const leaderboardRanks = input.leaderboardRanks ?? {
+    day: null,
+    week: null,
+    month: null,
+    all_time: null,
+  };
   const tokenTimeline: AchievementTimelinePoint[] = sortIsoAsc(
     input.buckets.map((bucket) => ({
       at: bucket.bucketStart.toISOString(),
       value: bucket.totalTokens,
     })),
   );
+  const costTimeline = input.costTimeline;
   const sessionTimeline: AchievementTimelinePoint[] = sortIsoAsc(
     input.sessions.map((session) => ({
       at: session.firstMessageAt.toISOString(),
@@ -284,6 +330,8 @@ function buildAllTimeMetrics(input: {
       0,
     ),
     tokenTimeline,
+    costTimeline,
+    totalEstimatedCostUsd: input.totalEstimatedCostUsd,
     sessionTimeline,
     activeSecondsTimeline,
     modelTimeline,
@@ -299,70 +347,99 @@ function buildAllTimeMetrics(input: {
     ]),
     followingCount: input.following.length,
     firstFollowingAt: input.following[0]?.createdAt.toISOString() ?? null,
+    followingTimeline: input.following.map((record) =>
+      record.createdAt.toISOString(),
+    ),
     followerCount: input.followers.length,
     firstFollowerAt: input.followers[0]?.createdAt.toISOString() ?? null,
+    followerTimeline: input.followers.map((record) =>
+      record.createdAt.toISOString(),
+    ),
     mutualCount: mutualEffectiveDates.length,
     mutualReachedAt: mutualEffectiveDates[2] ?? null,
+    mutualTimeline: mutualEffectiveDates,
     currentPersona,
+    leaderboardDayRank: leaderboardRanks.day,
+    leaderboardWeekRank: leaderboardRanks.week,
+    leaderboardMonthRank: leaderboardRanks.month,
+    leaderboardAllTimeRank: leaderboardRanks.all_time,
   };
 }
 
 async function loadAchievementMetrics(userId: string) {
   const preference = await getUsagePreference(userId);
-  const [user, buckets, sessions, following, followers] = await Promise.all([
-    prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: {
-        usagePreference: {
-          select: {
-            publicProfileEnabled: true,
-            updatedAt: true,
+  const [user, buckets, sessions, following, followers, catalog] =
+    await Promise.all([
+      prisma.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: {
+          usagePreference: {
+            select: {
+              publicProfileEnabled: true,
+              updatedAt: true,
+            },
           },
         },
-      },
-    }),
-    prisma.usageBucket.findMany({
-      where: { userId },
-      select: {
-        bucketStart: true,
-        totalTokens: true,
-        inputTokens: true,
-        outputTokens: true,
-        reasoningTokens: true,
-        cachedTokens: true,
-        model: true,
-        source: true,
-        projectKey: true,
-        deviceId: true,
-      },
-      orderBy: { bucketStart: "asc" },
-    }),
-    prisma.usageSession.findMany({
-      where: { userId },
-      select: {
-        firstMessageAt: true,
-        activeSeconds: true,
-        deviceId: true,
-      },
-      orderBy: { firstMessageAt: "asc" },
-    }),
-    prisma.follow.findMany({
-      where: { followerId: userId },
-      select: {
-        followingId: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "asc" },
-    }),
-    prisma.follow.findMany({
-      where: { followingId: userId },
-      select: {
-        followerId: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "asc" },
-    }),
-  ]);
+      }),
+      prisma.usageBucket.findMany({
+        where: { userId },
+        select: {
+          bucketStart: true,
+          totalTokens: true,
+          inputTokens: true,
+          outputTokens: true,
+          reasoningTokens: true,
+          cachedTokens: true,
+          model: true,
+          source: true,
+          projectKey: true,
+          deviceId: true,
+        },
+        orderBy: { bucketStart: "asc" },
+      }),
+      prisma.usageSession.findMany({
+        where: { userId },
+        select: {
+          firstMessageAt: true,
+          activeSeconds: true,
+          deviceId: true,
+        },
+        orderBy: { firstMessageAt: "asc" },
+      }),
+      prisma.follow.findMany({
+        where: { followerId: userId },
+        select: {
+          followingId: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "asc" },
+      }),
+      prisma.follow.findMany({
+        where: { followingId: userId },
+        select: {
+          followerId: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "asc" },
+      }),
+      getPricingCatalog(),
+    ]);
+
+  const costTimeline = sortIsoAsc(
+    buckets.map((bucket) => ({
+      at: bucket.bucketStart.toISOString(),
+      value: estimateBucketCostUsd(bucket, catalog),
+    })),
+  );
+  const totalEstimatedCostUsd = costTimeline.reduce(
+    (sum, point) => sum + point.value,
+    0,
+  );
+
+  const publicProfileEnabled =
+    user.usagePreference?.publicProfileEnabled ?? false;
+  const leaderboardRanks =
+    await getUserGlobalLeaderboardRanksByTotalTokens(userId);
 
   return buildAllTimeMetrics({
     timezone: preference.timezone,
@@ -370,8 +447,11 @@ async function loadAchievementMetrics(userId: string) {
     sessions,
     following,
     followers,
-    publicProfileEnabled: user.usagePreference?.publicProfileEnabled ?? false,
+    publicProfileEnabled,
     publicProfileUpdatedAt: user.usagePreference?.updatedAt ?? null,
+    leaderboardRanks,
+    costTimeline,
+    totalEstimatedCostUsd,
   });
 }
 

@@ -17,6 +17,12 @@ export function formatAchievementMetric(input: {
       return formatDuration(Math.round(input.value));
     case "percent":
       return formatPercentage(input.value, input.locale);
+    case "usd":
+      return new Intl.NumberFormat(input.locale, {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: input.value >= 1000 ? 0 : 2,
+      }).format(input.value);
     default:
       return Math.floor(input.value).toLocaleString(input.locale);
   }

@@ -31,6 +31,8 @@ export type AchievementInputMetrics = {
   totalSessions: number;
   totalActiveSeconds: number;
   tokenTimeline: AchievementTimelinePoint[];
+  costTimeline: AchievementTimelinePoint[];
+  totalEstimatedCostUsd: number;
   sessionTimeline: AchievementTimelinePoint[];
   activeSecondsTimeline: AchievementTimelinePoint[];
   modelTimeline: AchievementDistinctTimelinePoint[];
@@ -43,11 +45,18 @@ export type AchievementInputMetrics = {
   recentWindowUnlockedAt: string | null;
   followingCount: number;
   firstFollowingAt: string | null;
+  followingTimeline: string[];
   followerCount: number;
   firstFollowerAt: string | null;
+  followerTimeline: string[];
   mutualCount: number;
   mutualReachedAt: string | null;
+  mutualTimeline: string[];
   currentPersona: UsageShareCardPersona | null;
+  leaderboardDayRank: number | null;
+  leaderboardWeekRank: number | null;
+  leaderboardMonthRank: number | null;
+  leaderboardAllTimeRank: number | null;
 };
 
 function clampRatio(current: number, target: number) {
@@ -56,6 +65,18 @@ function clampRatio(current: number, target: number) {
   }
 
   return Math.min(1, Math.max(0, current / target));
+}
+
+function rankTierProgress(rank: number | null, maxRankInclusive: number) {
+  if (rank === null) {
+    return { current: 0, target: 1 };
+  }
+
+  if (rank <= maxRankInclusive) {
+    return { current: maxRankInclusive - rank + 1, target: 1 };
+  }
+
+  return { current: 0, target: 1 };
 }
 
 function startOfDayIso(dateKey: string) {
@@ -108,6 +129,14 @@ function nthDateIso(activeDayKeys: string[], count: number) {
   }
 
   return startOfDayIso(activeDayKeys[count - 1]);
+}
+
+function nthTimelineIso(timeline: string[], count: number) {
+  if (timeline.length < count) {
+    return null;
+  }
+
+  return timeline[count - 1];
 }
 
 function streakUnlockedAt(
@@ -203,13 +232,11 @@ export function buildAchievementStatuses(
       unlockedAt: metrics.firstSyncAt,
     }),
     createStatus({
-      code: "public_profile",
-      current: metrics.publicProfileEnabled ? 1 : 0,
+      code: "sessions_1",
+      current: metrics.totalSessions,
       target: 1,
       unit: "count",
-      unlockedAt: metrics.publicProfileEnabled
-        ? metrics.publicProfileUpdatedAt
-        : null,
+      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 1),
     }),
     createStatus({
       code: "streak_3",
@@ -224,6 +251,13 @@ export function buildAchievementStatuses(
       target: 7,
       unit: "days",
       unlockedAt: streakUnlockedAt(metrics.activeDayKeys, currentStreak, 7),
+    }),
+    createStatus({
+      code: "streak_14",
+      current: currentStreak,
+      target: 14,
+      unit: "days",
+      unlockedAt: streakUnlockedAt(metrics.activeDayKeys, currentStreak, 14),
     }),
     createStatus({
       code: "streak_30",
@@ -254,6 +288,83 @@ export function buildAchievementStatuses(
       unlockedAt: nthDateIso(metrics.activeDayKeys, 100),
     }),
     createStatus({
+      code: "active_days_365",
+      current: activeDayCount,
+      target: 365,
+      unit: "days",
+      unlockedAt: nthDateIso(metrics.activeDayKeys, 365),
+    }),
+    createStatus({
+      code: "sessions_200",
+      current: metrics.totalSessions,
+      target: 200,
+      unit: "count",
+      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 200),
+    }),
+    createStatus({
+      code: "sessions_1k",
+      current: metrics.totalSessions,
+      target: 1000,
+      unit: "count",
+      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 1000),
+    }),
+    createStatus({
+      code: "sessions_5k",
+      current: metrics.totalSessions,
+      target: 5000,
+      unit: "count",
+      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 5000),
+    }),
+    createStatus({
+      code: "sessions_20k",
+      current: metrics.totalSessions,
+      target: 20_000,
+      unit: "count",
+      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 20_000),
+    }),
+    createStatus({
+      code: "sessions_100k",
+      current: metrics.totalSessions,
+      target: 100_000,
+      unit: "count",
+      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 100_000),
+    }),
+    createStatus({
+      code: "spend_usd_100",
+      current: metrics.totalEstimatedCostUsd,
+      target: 100,
+      unit: "usd",
+      unlockedAt: cumulativeThresholdDate(metrics.costTimeline, 100),
+    }),
+    createStatus({
+      code: "spend_usd_1k",
+      current: metrics.totalEstimatedCostUsd,
+      target: 1000,
+      unit: "usd",
+      unlockedAt: cumulativeThresholdDate(metrics.costTimeline, 1000),
+    }),
+    createStatus({
+      code: "spend_usd_5k",
+      current: metrics.totalEstimatedCostUsd,
+      target: 5000,
+      unit: "usd",
+      unlockedAt: cumulativeThresholdDate(metrics.costTimeline, 5000),
+    }),
+    createStatus({
+      code: "spend_usd_20k",
+      current: metrics.totalEstimatedCostUsd,
+      target: 20_000,
+      unit: "usd",
+      unlockedAt: cumulativeThresholdDate(metrics.costTimeline, 20_000),
+    }),
+    createStatus({
+      code: "spend_usd_100k",
+      current: metrics.totalEstimatedCostUsd,
+      target: 100_000,
+      unit: "usd",
+      unlockedAt: cumulativeThresholdDate(metrics.costTimeline, 100_000),
+    }),
+    createStatus({
       code: "tokens_100k",
       current: metrics.totalTokens,
       target: 100_000,
@@ -275,25 +386,31 @@ export function buildAchievementStatuses(
       unlockedAt: cumulativeThresholdDate(metrics.tokenTimeline, 10_000_000),
     }),
     createStatus({
-      code: "sessions_10",
-      current: metrics.totalSessions,
-      target: 10,
-      unit: "count",
-      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 10),
+      code: "tokens_1b",
+      current: metrics.totalTokens,
+      target: 1_000_000_000,
+      unit: "tokens",
+      unlockedAt: cumulativeThresholdDate(metrics.tokenTimeline, 1_000_000_000),
     }),
     createStatus({
-      code: "sessions_100",
-      current: metrics.totalSessions,
-      target: 100,
-      unit: "count",
-      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 100),
+      code: "tokens_10b",
+      current: metrics.totalTokens,
+      target: 10_000_000_000,
+      unit: "tokens",
+      unlockedAt: cumulativeThresholdDate(
+        metrics.tokenTimeline,
+        10_000_000_000,
+      ),
     }),
     createStatus({
-      code: "sessions_1000",
-      current: metrics.totalSessions,
-      target: 1000,
-      unit: "count",
-      unlockedAt: cumulativeThresholdDate(metrics.sessionTimeline, 1000),
+      code: "tokens_100b",
+      current: metrics.totalTokens,
+      target: 100_000_000_000,
+      unit: "tokens",
+      unlockedAt: cumulativeThresholdDate(
+        metrics.tokenTimeline,
+        100_000_000_000,
+      ),
     }),
     createStatus({
       code: "active_hours_10",
@@ -306,13 +423,13 @@ export function buildAchievementStatuses(
       ),
     }),
     createStatus({
-      code: "active_hours_50",
+      code: "active_hours_100",
       current: metrics.totalActiveSeconds,
-      target: 50 * 60 * 60,
+      target: 100 * 60 * 60,
       unit: "seconds",
       unlockedAt: cumulativeThresholdDate(
         metrics.activeSecondsTimeline,
-        50 * 60 * 60,
+        100 * 60 * 60,
       ),
     }),
     createStatus({
@@ -326,12 +443,42 @@ export function buildAchievementStatuses(
       ),
     }),
     createStatus({
+      code: "active_hours_500",
+      current: metrics.totalActiveSeconds,
+      target: 500 * 60 * 60,
+      unit: "seconds",
+      unlockedAt: cumulativeThresholdDate(
+        metrics.activeSecondsTimeline,
+        500 * 60 * 60,
+      ),
+    }),
+    createStatus({
+      code: "active_hours_2000",
+      current: metrics.totalActiveSeconds,
+      target: 2000 * 60 * 60,
+      unit: "seconds",
+      unlockedAt: cumulativeThresholdDate(
+        metrics.activeSecondsTimeline,
+        2000 * 60 * 60,
+      ),
+    }),
+    createStatus({
       code: "reasoning_25",
       current: metrics.reasoningShare30d,
       target: 0.25,
       unit: "percent",
       unlockedAt:
         metrics.reasoningShare30d >= 0.25
+          ? metrics.recentWindowUnlockedAt
+          : null,
+    }),
+    createStatus({
+      code: "reasoning_40",
+      current: metrics.reasoningShare30d,
+      target: 0.4,
+      unit: "percent",
+      unlockedAt:
+        metrics.reasoningShare30d >= 0.4
           ? metrics.recentWindowUnlockedAt
           : null,
     }),
@@ -344,12 +491,30 @@ export function buildAchievementStatuses(
         metrics.cacheShare30d >= 0.15 ? metrics.recentWindowUnlockedAt : null,
     }),
     createStatus({
+      code: "cache_30",
+      current: metrics.cacheShare30d,
+      target: 0.3,
+      unit: "percent",
+      unlockedAt:
+        metrics.cacheShare30d >= 0.3 ? metrics.recentWindowUnlockedAt : null,
+    }),
+    createStatus({
       code: "project_focus_70",
       current: metrics.topProjectShare30d,
       target: 0.7,
       unit: "percent",
       unlockedAt:
         metrics.topProjectShare30d >= 0.7
+          ? metrics.recentWindowUnlockedAt
+          : null,
+    }),
+    createStatus({
+      code: "project_focus_90",
+      current: metrics.topProjectShare30d,
+      target: 0.9,
+      unit: "percent",
+      unlockedAt:
+        metrics.topProjectShare30d >= 0.9
           ? metrics.recentWindowUnlockedAt
           : null,
     }),
@@ -361,11 +526,25 @@ export function buildAchievementStatuses(
       unlockedAt: distinctThresholdDate(metrics.modelTimeline, 3),
     }),
     createStatus({
+      code: "models_5",
+      current: new Set(metrics.modelTimeline.map((point) => point.key)).size,
+      target: 5,
+      unit: "count",
+      unlockedAt: distinctThresholdDate(metrics.modelTimeline, 5),
+    }),
+    createStatus({
       code: "tools_2",
       current: new Set(metrics.toolTimeline.map((point) => point.key)).size,
       target: 2,
       unit: "count",
       unlockedAt: distinctThresholdDate(metrics.toolTimeline, 2),
+    }),
+    createStatus({
+      code: "tools_4",
+      current: new Set(metrics.toolTimeline.map((point) => point.key)).size,
+      target: 4,
+      unit: "count",
+      unlockedAt: distinctThresholdDate(metrics.toolTimeline, 4),
     }),
     createStatus({
       code: "projects_5",
@@ -375,11 +554,25 @@ export function buildAchievementStatuses(
       unlockedAt: distinctThresholdDate(metrics.projectTimeline, 5),
     }),
     createStatus({
+      code: "projects_15",
+      current: new Set(metrics.projectTimeline.map((point) => point.key)).size,
+      target: 15,
+      unit: "count",
+      unlockedAt: distinctThresholdDate(metrics.projectTimeline, 15),
+    }),
+    createStatus({
       code: "devices_2",
       current: new Set(metrics.deviceTimeline.map((point) => point.key)).size,
       target: 2,
       unit: "count",
       unlockedAt: distinctThresholdDate(metrics.deviceTimeline, 2),
+    }),
+    createStatus({
+      code: "devices_3",
+      current: new Set(metrics.deviceTimeline.map((point) => point.key)).size,
+      target: 3,
+      unit: "count",
+      unlockedAt: distinctThresholdDate(metrics.deviceTimeline, 3),
     }),
     createStatus({
       code: "first_follow",
@@ -389,6 +582,13 @@ export function buildAchievementStatuses(
       unlockedAt: metrics.firstFollowingAt,
     }),
     createStatus({
+      code: "following_10",
+      current: metrics.followingCount,
+      target: 10,
+      unit: "count",
+      unlockedAt: nthTimelineIso(metrics.followingTimeline, 10),
+    }),
+    createStatus({
       code: "first_follower",
       current: metrics.followerCount,
       target: 1,
@@ -396,11 +596,83 @@ export function buildAchievementStatuses(
       unlockedAt: metrics.firstFollowerAt,
     }),
     createStatus({
+      code: "followers_10",
+      current: metrics.followerCount,
+      target: 10,
+      unit: "count",
+      unlockedAt: nthTimelineIso(metrics.followerTimeline, 10),
+    }),
+    createStatus({
       code: "mutual_3",
       current: metrics.mutualCount,
       target: 3,
       unit: "count",
       unlockedAt: metrics.mutualReachedAt,
+    }),
+    createStatus({
+      code: "mutual_10",
+      current: metrics.mutualCount,
+      target: 10,
+      unit: "count",
+      unlockedAt: nthTimelineIso(metrics.mutualTimeline, 10),
+    }),
+    createStatus({
+      code: "leaderboard_day_top50",
+      ...rankTierProgress(metrics.leaderboardDayRank, 50),
+      unit: "count",
+      unlockedAt:
+        metrics.leaderboardDayRank !== null && metrics.leaderboardDayRank <= 50
+          ? metrics.recentWindowUnlockedAt
+          : null,
+    }),
+    createStatus({
+      code: "leaderboard_week_top50",
+      ...rankTierProgress(metrics.leaderboardWeekRank, 50),
+      unit: "count",
+      unlockedAt:
+        metrics.leaderboardWeekRank !== null &&
+        metrics.leaderboardWeekRank <= 50
+          ? metrics.recentWindowUnlockedAt
+          : null,
+    }),
+    createStatus({
+      code: "leaderboard_month_top50",
+      ...rankTierProgress(metrics.leaderboardMonthRank, 50),
+      unit: "count",
+      unlockedAt:
+        metrics.leaderboardMonthRank !== null &&
+        metrics.leaderboardMonthRank <= 50
+          ? metrics.recentWindowUnlockedAt
+          : null,
+    }),
+    createStatus({
+      code: "leaderboard_all_time_top100",
+      ...rankTierProgress(metrics.leaderboardAllTimeRank, 100),
+      unit: "count",
+      unlockedAt:
+        metrics.leaderboardAllTimeRank !== null &&
+        metrics.leaderboardAllTimeRank <= 100
+          ? metrics.recentWindowUnlockedAt
+          : null,
+    }),
+    createStatus({
+      code: "leaderboard_all_time_top10",
+      ...rankTierProgress(metrics.leaderboardAllTimeRank, 10),
+      unit: "count",
+      unlockedAt:
+        metrics.leaderboardAllTimeRank !== null &&
+        metrics.leaderboardAllTimeRank <= 10
+          ? metrics.recentWindowUnlockedAt
+          : null,
+    }),
+    createStatus({
+      code: "leaderboard_all_time_first",
+      ...rankTierProgress(metrics.leaderboardAllTimeRank, 1),
+      unit: "count",
+      unlockedAt:
+        metrics.leaderboardAllTimeRank === 1
+          ? metrics.recentWindowUnlockedAt
+          : null,
     }),
   ].sort((left, right) => left.order - right.order);
 }
