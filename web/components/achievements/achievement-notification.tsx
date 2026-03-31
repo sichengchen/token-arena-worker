@@ -69,8 +69,8 @@ export function AchievementNotification() {
     };
   }, [open, state.status]);
 
-  const recentCount =
-    state.status === "success" ? state.data.recentUnlocks.length : 0;
+  const summary = state.status === "success" ? state.data : null;
+  const recentCount = summary?.recentUnlocks.length ?? 0;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -112,7 +112,7 @@ export function AchievementNotification() {
           <div className="px-4 py-6 text-sm text-muted-foreground">
             {t("error")}
           </div>
-        ) : (
+        ) : summary ? (
           <div className="space-y-4 px-4 py-4">
             <div className="grid grid-cols-3 gap-2">
               <div className="rounded-2xl border border-border/60 px-3 py-3 text-center">
@@ -120,7 +120,7 @@ export function AchievementNotification() {
                   {t("score")}
                 </div>
                 <div className="mt-1 text-base font-semibold">
-                  {formatTokenCount(state.data.score, locale)}
+                  {formatTokenCount(summary.score, locale)}
                 </div>
               </div>
               <div className="rounded-2xl border border-border/60 px-3 py-3 text-center">
@@ -128,7 +128,7 @@ export function AchievementNotification() {
                   {t("level")}
                 </div>
                 <div className="mt-1 text-base font-semibold">
-                  Lv. {state.data.level}
+                  Lv. {summary.level}
                 </div>
               </div>
               <div className="rounded-2xl border border-border/60 px-3 py-3 text-center">
@@ -136,7 +136,7 @@ export function AchievementNotification() {
                   {t("streak")}
                 </div>
                 <div className="mt-1 text-base font-semibold">
-                  {state.data.currentStreak}
+                  {summary.currentStreak}
                 </div>
               </div>
             </div>
@@ -147,8 +147,8 @@ export function AchievementNotification() {
                 {t("persona")}
               </div>
               <div className="rounded-2xl border border-border/60 px-3 py-3 text-sm text-foreground">
-                {state.data.currentPersona
-                  ? tPersona(`${state.data.currentPersona}.title`)
+                {summary.currentPersona
+                  ? tPersona(`${summary.currentPersona}.title`)
                   : t("noPersona")}
               </div>
             </div>
@@ -158,8 +158,8 @@ export function AchievementNotification() {
                 <Flame className="size-3.5" />
                 {t("recentUnlocks")}
               </div>
-              {state.data.recentUnlocks.length > 0 ? (
-                state.data.recentUnlocks.map((achievement) => (
+              {summary.recentUnlocks.length > 0 ? (
+                summary.recentUnlocks.map((achievement) => (
                   <div
                     key={achievement.code}
                     className="flex items-center gap-3 rounded-2xl border border-border/60 px-3 py-3"
@@ -191,8 +191,8 @@ export function AchievementNotification() {
                 <Target className="size-3.5" />
                 {t("nextTargets")}
               </div>
-              {state.data.nextTargets.length > 0 ? (
-                state.data.nextTargets.map((achievement) => (
+              {summary.nextTargets.length > 0 ? (
+                summary.nextTargets.map((achievement) => (
                   <div
                     key={achievement.code}
                     className="space-y-1.5 rounded-2xl border border-border/60 px-3 py-3"
@@ -234,7 +234,7 @@ export function AchievementNotification() {
               </Link>
             </Button>
           </div>
-        )}
+        ) : null}
       </PopoverContent>
     </Popover>
   );

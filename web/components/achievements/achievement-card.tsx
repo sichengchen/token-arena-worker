@@ -2,6 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { AchievementStatus } from "@/lib/achievements/types";
 import { AchievementBadge } from "./achievement-badge";
 
+function formatUnlockedAt(unlockedAt: string) {
+  const date = new Date(unlockedAt);
+
+  return `${date.getUTCFullYear()}.${date.getUTCMonth() + 1}.${date.getUTCDate()}`;
+}
+
 type AchievementCardProps = {
   achievement: AchievementStatus;
   title: string;
@@ -31,6 +37,11 @@ export function AchievementCard({
           <p className="w-full max-w-full break-words text-[11px] leading-5 text-zinc-400 sm:text-xs">
             {description}
           </p>
+          {achievement.unlockedAt ? (
+            <p className="w-full max-w-full break-words text-[10px] leading-4 text-zinc-500 sm:text-[11px]">
+              {formatUnlockedAt(achievement.unlockedAt)}
+            </p>
+          ) : null}
         </div>
       </CardContent>
     </Card>
