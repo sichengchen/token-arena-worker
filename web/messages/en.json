@@ -504,11 +504,15 @@
       "signIn": "Sign in",
       "register": "Register",
       "leaderboard": "Leaderboard",
-      "openSourceGitHub": "View source on GitHub"
+      "openSourceGitHub": "View source on GitHub",
+      "achievements": "Achievements"
     },
     "profile": {
       "activityTitle": "AI Coding Activity",
       "activitySubtitle": "Past 365 days",
+      "arenaScore": "Arena Score",
+      "arenaLevel": "Level",
+      "arenaProgressCaption": "Score {score} · {remaining} more to Lv.{nextLevel}",
       "totalTokens": "Total Tokens",
       "estimatedCost": "Est. Cost",
       "activeTime": "Active Time",
@@ -605,6 +609,192 @@
         "friend": "Friend",
         "peer": "Peer",
         "inspiration": "Inspiration"
+      }
+    }
+  },
+  "achievements": {
+    "page": {
+      "title": "Achievements",
+      "description": "Achievement badges and milestones.",
+      "empty": "No achievements unlocked yet. Sync once and the wall will start lighting up.",
+      "overview": {
+        "score": "Arena Score",
+        "level": "Level",
+        "streak": "Current streak",
+        "activeDays": "Active days",
+        "featured": "Featured badges",
+        "recent": "Recently unlocked",
+        "nextTargets": "Almost there",
+        "currentPersona": "Current persona",
+        "noPersona": "Detected after more activity",
+        "unlocked": "unlocked",
+        "noFeatured": "Keep syncing and your featured badges will appear here.",
+        "noRecent": "No recent unlocks yet.",
+        "noNextTargets": "No immediate targets right now."
+      },
+      "card": {
+        "unlocked": "Unlocked",
+        "locked": "Locked",
+        "unlockedOn": "Unlocked on",
+        "progress": "Progress"
+      },
+      "tiers": {
+        "bronze": "Bronze",
+        "silver": "Silver",
+        "gold": "Gold",
+        "special": "Special"
+      }
+    },
+    "sections": {
+      "activation": {
+        "title": "Activation",
+        "description": "Core actions that pull a new user into the achievement loop."
+      },
+      "consistency": {
+        "title": "Consistency",
+        "description": "Rewards for showing up regularly and sustaining momentum."
+      },
+      "volume": {
+        "title": "Volume",
+        "description": "Lifetime milestones for tokens, sessions, and active time."
+      },
+      "craft": {
+        "title": "Craft",
+        "description": "Badges for how you work: reasoning depth, cache usage, and focus."
+      },
+      "exploration": {
+        "title": "Exploration",
+        "description": "Encourages trying more models, tools, projects, and devices."
+      },
+      "social": {
+        "title": "Social",
+        "description": "Public identity, follows, and mutual connections reinforce belonging."
+      }
+    },
+    "notification": {
+      "button": "Open achievement notifications",
+      "title": "Achievement notifications",
+      "description": "Recent unlocks, your current persona, and the nearest milestones all show up here.",
+      "score": "Score",
+      "level": "Level",
+      "streak": "Streak",
+      "persona": "Current persona",
+      "noPersona": "Not enough data yet",
+      "recentUnlocks": "Recent unlocks",
+      "emptyRecent": "No recent unlocks yet. Sync again or stay active for a few more days.",
+      "nextTargets": "Next targets",
+      "viewAll": "View all achievements",
+      "error": "Failed to load achievements. Please try again later.",
+      "emptyNextTargets": "No nearby targets right now. Keep the momentum going."
+    },
+    "items": {
+      "first_sync": {
+        "title": "First Sync",
+        "description": "Successfully sync local usage data into Token Arena for the first time."
+      },
+      "public_profile": {
+        "title": "Public Builder",
+        "description": "Enable your public profile so other builders can discover your track record."
+      },
+      "streak_3": {
+        "title": "3-Day Spark",
+        "description": "Stay active for 3 consecutive days."
+      },
+      "streak_7": {
+        "title": "Weekly Momentum",
+        "description": "Stay active for 7 consecutive days."
+      },
+      "streak_30": {
+        "title": "30-Day Marathon",
+        "description": "Stay active for 30 consecutive days."
+      },
+      "active_days_7": {
+        "title": "Getting Started",
+        "description": "Reach 7 lifetime active days."
+      },
+      "active_days_30": {
+        "title": "Steady Builder",
+        "description": "Reach 30 lifetime active days."
+      },
+      "active_days_100": {
+        "title": "Long-Game Builder",
+        "description": "Reach 100 lifetime active days."
+      },
+      "tokens_100k": {
+        "title": "100K Burn",
+        "description": "Accumulate 100K total tokens."
+      },
+      "tokens_1m": {
+        "title": "Million Fuel",
+        "description": "Accumulate 1M total tokens."
+      },
+      "tokens_10m": {
+        "title": "10M Forge",
+        "description": "Accumulate 10M total tokens."
+      },
+      "sessions_10": {
+        "title": "Multi-Run",
+        "description": "Complete 10 sessions."
+      },
+      "sessions_100": {
+        "title": "Hundred Runs",
+        "description": "Complete 100 sessions."
+      },
+      "sessions_1000": {
+        "title": "Session Commander",
+        "description": "Complete 1000 sessions."
+      },
+      "active_hours_10": {
+        "title": "10 Active Hours",
+        "description": "Reach 10 lifetime active hours."
+      },
+      "active_hours_50": {
+        "title": "50 Active Hours",
+        "description": "Reach 50 lifetime active hours."
+      },
+      "active_hours_200": {
+        "title": "200 Active Hours",
+        "description": "Reach 200 lifetime active hours."
+      },
+      "reasoning_25": {
+        "title": "Reasoning Driven",
+        "description": "At least 25% of your last 30 days of tokens were spent on reasoning."
+      },
+      "cache_15": {
+        "title": "Cache Specialist",
+        "description": "At least 15% of your last 30 days of tokens came from cache hits."
+      },
+      "project_focus_70": {
+        "title": "Deep Focus",
+        "description": "At least 70% of your last 30 days of tokens were concentrated in one project."
+      },
+      "models_3": {
+        "title": "Model Explorer",
+        "description": "Use 3 different models over time."
+      },
+      "tools_2": {
+        "title": "Tool Switcher",
+        "description": "Use 2 different AI tool sources."
+      },
+      "projects_5": {
+        "title": "Project Rover",
+        "description": "Work across 5 projects."
+      },
+      "devices_2": {
+        "title": "Dual Device",
+        "description": "Be active from 2 different devices."
+      },
+      "first_follow": {
+        "title": "First Follow",
+        "description": "Follow your first public builder."
+      },
+      "first_follower": {
+        "title": "First Follower",
+        "description": "Gain your first follower."
+      },
+      "mutual_3": {
+        "title": "Mutual Circle",
+        "description": "Build 3 mutual follow relationships."
       }
     }
   }

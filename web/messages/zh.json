@@ -504,11 +504,15 @@
       "signIn": "登录",
       "register": "注册",
       "leaderboard": "排行榜",
-      "openSourceGitHub": "在 GitHub 上查看开源仓库"
+      "openSourceGitHub": "在 GitHub 上查看开源仓库",
+      "achievements": "成就"
     },
     "profile": {
       "activityTitle": "AI 编程活跃度",
       "activitySubtitle": "过去 365 天",
+      "arenaScore": "Arena Score",
+      "arenaLevel": "等级",
+      "arenaProgressCaption": "当前分数 {score}，距离 Lv.{nextLevel} 还需 {remaining}",
       "totalTokens": "总 Tokens",
       "estimatedCost": "预估费用",
       "activeTime": "活跃时长",
@@ -605,6 +609,192 @@
         "friend": "朋友",
         "peer": "同行",
         "inspiration": "灵感"
+      }
+    }
+  },
+  "achievements": {
+    "page": {
+      "title": "成就中心",
+      "description": "成就徽章与里程碑。",
+      "empty": "还没有解锁成就。先同步一次使用数据，第一页就会开始亮起来。",
+      "overview": {
+        "score": "Arena Score",
+        "level": "等级",
+        "streak": "连续活跃",
+        "activeDays": "活跃天数",
+        "featured": "代表徽章",
+        "recent": "最近解锁",
+        "nextTargets": "即将解锁",
+        "currentPersona": "当前 Persona",
+        "noPersona": "开始同步后自动识别",
+        "unlocked": "已解锁",
+        "noFeatured": "再同步几次，代表徽章会出现在这里。",
+        "noRecent": "还没有最近解锁。",
+        "noNextTargets": "当前没有可追踪的目标。"
+      },
+      "card": {
+        "unlocked": "已解锁",
+        "locked": "未解锁",
+        "unlockedOn": "解锁于",
+        "progress": "进度"
+      },
+      "tiers": {
+        "bronze": "铜",
+        "silver": "银",
+        "gold": "金",
+        "special": "特别"
+      }
+    },
+    "sections": {
+      "activation": {
+        "title": "激活",
+        "description": "完成关键动作，让账号进入成就循环。"
+      },
+      "consistency": {
+        "title": "坚持",
+        "description": "奖励连续活跃与长期稳定输出。"
+      },
+      "volume": {
+        "title": "产量",
+        "description": "累计 token、会话数与活跃时长里程碑。"
+      },
+      "craft": {
+        "title": "技巧",
+        "description": "识别你的工作方式、推理强度与项目专注度。"
+      },
+      "exploration": {
+        "title": "探索",
+        "description": "鼓励你尝试更多模型、工具、项目与设备。"
+      },
+      "social": {
+        "title": "社交",
+        "description": "公开主页、关注关系与互关网络都会形成身份感。"
+      }
+    },
+    "notification": {
+      "button": "打开成就通知",
+      "title": "成就通知",
+      "description": "最近解锁、当前 Persona 与距离最近的目标都会汇总在这里。",
+      "score": "积分",
+      "level": "等级",
+      "streak": "连击",
+      "persona": "当前 Persona",
+      "noPersona": "还没有足够数据",
+      "recentUnlocks": "最近解锁",
+      "emptyRecent": "还没有近期解锁，先去同步或多活跃几天。",
+      "nextTargets": "下一批目标",
+      "viewAll": "查看全部成就",
+      "error": "成就数据加载失败，请稍后再试。",
+      "emptyNextTargets": "当前没有更近的目标了，继续保持节奏。"
+    },
+    "items": {
+      "first_sync": {
+        "title": "首发同步",
+        "description": "第一次把本地使用数据成功同步到 Token Arena。"
+      },
+      "public_profile": {
+        "title": "公开建造者",
+        "description": "开启公开主页，让别人能发现你的 AI 编程轨迹。"
+      },
+      "streak_3": {
+        "title": "三连击",
+        "description": "连续活跃 3 天。"
+      },
+      "streak_7": {
+        "title": "一周热身",
+        "description": "连续活跃 7 天。"
+      },
+      "streak_30": {
+        "title": "月度长跑",
+        "description": "连续活跃 30 天。"
+      },
+      "active_days_7": {
+        "title": "起步稳定",
+        "description": "累计活跃 7 天。"
+      },
+      "active_days_30": {
+        "title": "稳定输出",
+        "description": "累计活跃 30 天。"
+      },
+      "active_days_100": {
+        "title": "长期主义者",
+        "description": "累计活跃 100 天。"
+      },
+      "tokens_100k": {
+        "title": "十万火力",
+        "description": "累计消耗 100K tokens。"
+      },
+      "tokens_1m": {
+        "title": "百万燃料",
+        "description": "累计消耗 1M tokens。"
+      },
+      "tokens_10m": {
+        "title": "千万熔炉",
+        "description": "累计消耗 10M tokens。"
+      },
+      "sessions_10": {
+        "title": "多次出击",
+        "description": "累计完成 10 个会话。"
+      },
+      "sessions_100": {
+        "title": "百战老手",
+        "description": "累计完成 100 个会话。"
+      },
+      "sessions_1000": {
+        "title": "千局指挥官",
+        "description": "累计完成 1000 个会话。"
+      },
+      "active_hours_10": {
+        "title": "沉浸 10 小时",
+        "description": "累计活跃时长达到 10 小时。"
+      },
+      "active_hours_50": {
+        "title": "沉浸 50 小时",
+        "description": "累计活跃时长达到 50 小时。"
+      },
+      "active_hours_200": {
+        "title": "沉浸 200 小时",
+        "description": "累计活跃时长达到 200 小时。"
+      },
+      "reasoning_25": {
+        "title": "推理驱动",
+        "description": "最近 30 天里，至少 25% 的 tokens 用在 reasoning。"
+      },
+      "cache_15": {
+        "title": "缓存高手",
+        "description": "最近 30 天里，至少 15% 的 tokens 来自缓存命中。"
+      },
+      "project_focus_70": {
+        "title": "深潜项目",
+        "description": "最近 30 天里，至少 70% 的 tokens 集中在同一个项目。"
+      },
+      "models_3": {
+        "title": "多模型试炼",
+        "description": "累计使用过 3 个模型。"
+      },
+      "tools_2": {
+        "title": "双工具协同",
+        "description": "累计使用过 2 个 AI 工具来源。"
+      },
+      "projects_5": {
+        "title": "项目巡航",
+        "description": "累计使用过 5 个项目。"
+      },
+      "devices_2": {
+        "title": "双端联动",
+        "description": "累计在 2 台设备上活跃。"
+      },
+      "first_follow": {
+        "title": "第一位关注",
+        "description": "关注第一位公开建造者。"
+      },
+      "first_follower": {
+        "title": "第一位粉丝",
+        "description": "获得第一位粉丝。"
+      },
+      "mutual_3": {
+        "title": "互关小队",
+        "description": "达成 3 个互关关系。"
       }
     }
   }
