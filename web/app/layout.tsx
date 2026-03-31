@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Script from "next/script";
 import { getLocale } from "next-intl/server";
+import { ClarityInit } from "@/components/providers/clarity-init";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemeScript } from "@/components/providers/theme-script";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +21,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const gaSecret = process.env.GA_SECRET;
+  const clarityId = process.env.CLARITY_ID?.trim();
   const cookieStore = await cookies();
   const locale =
     (await getLocale().catch(() => defaultLocale)) ?? defaultLocale;
@@ -45,6 +47,7 @@ gtag('config', '${gaSecret}');`}
             </Script>
           </>
         ) : null}
+        {clarityId ? <ClarityInit projectId={clarityId} /> : null}
         <ThemeProvider initialThemeMode={initialThemeMode}>
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
