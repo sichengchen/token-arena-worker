@@ -49,8 +49,12 @@ function estimateBucketCostUsd(
     reasoningTokens: number;
     cachedTokens: number;
   },
-  catalog: PricingCatalog,
+  catalog: PricingCatalog | null,
 ) {
+  if (!catalog) {
+    return 0;
+  }
+
   const match = resolveOfficialPricingMatch(catalog, bucket.model);
   const estimate = estimateCostUsd(
     {

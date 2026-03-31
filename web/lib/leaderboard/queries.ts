@@ -1006,15 +1006,16 @@ export async function getLeaderboardPageData(input: {
         })
       : Promise.resolve(null),
   ]);
+  const viewerUserId = input.viewerUserId ?? null;
   const viewerGlobalEntry =
-    input.viewerUserId &&
+    viewerUserId &&
     viewerPreference?.publicProfileEnabled &&
-    global.entries.every((entry) => entry.userId !== input.viewerUserId)
+    global.entries.every((entry) => entry.userId !== viewerUserId)
       ? await (async () => {
           const rankedViewer = await getGlobalViewerRankSummary({
             period: input.period,
             metric: input.metric,
-            viewerUserId: input.viewerUserId,
+            viewerUserId,
             now,
           });
 
@@ -1025,7 +1026,7 @@ export async function getLeaderboardPageData(input: {
           const [entry] = await hydrateEntries(
             [rankedViewer.summary],
             rankedViewer.window,
-            input.viewerUserId,
+            viewerUserId,
           );
 
           return entry ?? null;
