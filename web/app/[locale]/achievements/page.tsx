@@ -42,7 +42,6 @@ export default async function AchievementsPage({
   return (
     <AppShell
       locale={locale}
-      mainClassName="bg-zinc-950"
       viewer={{
         id: session.user.id,
         email: session.user.email,
@@ -51,15 +50,15 @@ export default async function AchievementsPage({
         username: session.user.username,
       }}
     >
-      <div className="min-w-0 text-zinc-100">
+      <div className="min-w-0 text-foreground">
         <div className="space-y-10 xl:space-y-12">
           {data.sections.map((section) => (
             <section key={section.category} className="w-full">
               <div className="space-y-2">
-                <h2 className="text-base font-semibold tracking-tight text-zinc-100 sm:text-lg">
+                <h2 className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
                   {tSection(`${section.category}.title`)}
                 </h2>
-                <p className="max-w-3xl break-words text-sm leading-6 text-zinc-400">
+                <p className="max-w-3xl break-words text-sm leading-6 text-muted-foreground">
                   {tSection(`${section.category}.description`)}
                 </p>
               </div>
