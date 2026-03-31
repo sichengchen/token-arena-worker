@@ -15,9 +15,10 @@ export async function generateMetadata({
 }: AchievementsPageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "achievements.page" });
+  const tNav = await getTranslations({ locale, namespace: "social.nav" });
 
   return {
-    title: `${t("title")} | Token Arena`,
+    title: `${tNav("achievements")} | Token Arena`,
     description: t("description"),
   };
 }
@@ -29,7 +30,6 @@ export default async function AchievementsPage({
   const session = await getSessionOrRedirect(locale);
   redirectIfUsernameSetupNeeded(locale, session.user);
   const data = await getAchievementsPageData(session.user.id);
-  const t = await getTranslations({ locale, namespace: "achievements.page" });
   const tSection = await getTranslations({
     locale,
     namespace: "achievements.sections",
@@ -51,14 +51,8 @@ export default async function AchievementsPage({
         username: session.user.username,
       }}
     >
-      <div className="min-w-0 space-y-8 text-zinc-100">
-        <header>
-          <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            {t("title")}
-          </h1>
-        </header>
-
-        <div className="space-y-10 pt-4 xl:space-y-12 xl:pt-6">
+      <div className="min-w-0 text-zinc-100">
+        <div className="space-y-10 xl:space-y-12">
           {data.sections.map((section) => (
             <section key={section.category} className="w-full">
               <div className="space-y-2">
