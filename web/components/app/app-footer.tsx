@@ -15,11 +15,11 @@ export function AppFooter({ actions }: AppFooterProps) {
 
   return (
     <footer className="mt-auto">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-3 px-4 py-6 text-sm text-white sm:grid-cols-3 sm:px-6 lg:px-8">
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-3 px-4 py-6 text-sm text-foreground sm:grid-cols-3 sm:px-6 lg:px-8">
         <p className="self-center text-center sm:text-left">
           {t("footerCopyright", { year })}
         </p>
-        <p className="self-center text-center text-sm text-white/75">
+        <p className="self-center text-center text-sm text-muted-foreground">
           {t("footerVersion", { version: appVersion })}
         </p>
         <div className="flex shrink-0 self-center items-center justify-center gap-2 sm:justify-end">
