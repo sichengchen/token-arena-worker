@@ -17,6 +17,10 @@ services:
       - LINUXDO_CLIENT_SECRET=${LINUXDO_CLIENT_SECRET:-}
       - WATCHA_CLIENT_ID=${WATCHA_CLIENT_ID:-}
       - WATCHA_CLIENT_SECRET=${WATCHA_CLIENT_SECRET:-}
+      - CC98_CLIENT_ID=${CC98_CLIENT_ID:-}
+      - CC98_CLIENT_SECRET=${CC98_CLIENT_SECRET:-}
+      - CLARITY_ID=${CLARITY_ID:-}
+      - GA_SECRET=${GA_SECRET:-}
     depends_on:
       db:
         condition: service_healthy
