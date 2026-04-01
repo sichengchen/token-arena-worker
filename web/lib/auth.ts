@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { APIError, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
@@ -10,10 +9,9 @@ import {
 } from "./auth-providers";
 import {
   normalizeUsername,
-  USERNAME_MAX_LENGTH,
-  USERNAME_MIN_LENGTH,
   USERNAME_TAKEN_ERROR_MESSAGE,
 } from "./auth-username";
+import { resolveCreatedUsername } from "./auth-username.server";
 import { prisma } from "./prisma";
 import { usernameSchema } from "./validators/auth";
 
@@ -29,40 +27,6 @@ function getRequiredEnv(
   }
 
   return value;
-}
-
-function createUsernameCandidateBase(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9_.]+/g, ".")
-    .replace(/[.]{2,}/g, ".")
-    .replace(/^[._]+|[._]+$/g, "");
-}
-
-async function generateUniqueUsername(seed: string) {
-  const fallbackBase = "user";
-  const normalizedBase = createUsernameCandidateBase(seed);
-  const base =
-    normalizedBase.length >= USERNAME_MIN_LENGTH
-      ? normalizedBase
-      : fallbackBase;
-
-  for (let attempt = 0; attempt < 12; attempt += 1) {
-    const suffix = attempt === 0 ? "" : `.${randomUUID().slice(0, 6)}`;
-    const maxBaseLength = USERNAME_MAX_LENGTH - suffix.length;
-    const candidateBase = base.slice(0, Math.max(maxBaseLength, 0)).trim();
-    const candidate = `${candidateBase || fallbackBase}${suffix}`;
-    const existingUser = await prisma.user.findUnique({
-      where: { username: candidate },
-    });
-
-    if (!existingUser) {
-      return candidate;
-    }
-  }
-
-  return `user.${randomUUID().replace(/-/g, "").slice(0, 6)}`;
 }
 
 export const auth = betterAuth({
@@ -94,6 +58,12 @@ export const auth = betterAuth({
         returned: true,
         defaultValue: false,
       },
+      usernameAutoAdjusted: {
+        type: "boolean",
+        required: false,
+        returned: true,
+        defaultValue: false,
+      },
     },
   },
   databaseHooks: {
@@ -101,34 +71,24 @@ export const auth = betterAuth({
       create: {
         before: async (user) => {
           const providedUsername =
-            typeof user.username === "string"
-              ? normalizeUsername(user.username)
-              : "";
-          const usernameNeedsSetup = !providedUsername;
-          const username = providedUsername
-            ? providedUsername
-            : await generateUniqueUsername(
-                user.email?.split("@")[0] || user.name || "user",
-              );
-
-          if (providedUsername) {
-            const existingUser = await prisma.user.findUnique({
-              where: { username },
+            typeof user.username === "string" ? user.username : undefined;
+          const { username, usernameNeedsSetup, usernameAutoAdjusted } =
+            await resolveCreatedUsername({
+              providedUsername,
+              seed: user.email?.split("@")[0] || user.name || "user",
+              findUserByUsername: async (candidate) =>
+                prisma.user.findUnique({
+                  where: { username: candidate },
+                  select: { id: true },
+                }),
             });
-
-            if (existingUser) {
-              throw APIError.from("BAD_REQUEST", {
-                code: "USERNAME_IS_ALREADY_TAKEN",
-                message: USERNAME_TAKEN_ERROR_MESSAGE,
-              });
-            }
-          }
 
           return {
             data: {
               ...user,
               username,
               usernameNeedsSetup,
+              usernameAutoAdjusted,
             },
           };
         },
@@ -157,6 +117,7 @@ export const auth = betterAuth({
               ...user,
               username,
               usernameNeedsSetup: false,
+              usernameAutoAdjusted: false,
             },
           };
         },

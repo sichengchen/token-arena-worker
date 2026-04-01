@@ -11,7 +11,7 @@ describe("usage api keys", () => {
     const key = generateUsageApiKey();
 
     expect(key.raw.startsWith("ta_")).toBe(true);
-    expect(key.prefix).toBe(key.raw.slice(0, 12));
+    expect(key.prefix).toBe(key.raw.slice(0, 11));
   });
 
   it("hashes deterministically", () => {

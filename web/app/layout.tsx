@@ -5,6 +5,7 @@ import { getLocale } from "next-intl/server";
 import { ClarityInit } from "@/components/providers/clarity-init";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ThemeScript } from "@/components/providers/theme-script";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { defaultLocale } from "@/lib/i18n";
 import { getThemeMode, themeCookieName } from "@/lib/theme";
@@ -49,7 +50,10 @@ gtag('config', '${gaSecret}');`}
         ) : null}
         {clarityId ? <ClarityInit projectId={clarityId} /> : null}
         <ThemeProvider initialThemeMode={initialThemeMode}>
-          <TooltipProvider>{children}</TooltipProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster position="top-right" />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

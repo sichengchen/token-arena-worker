@@ -18,11 +18,13 @@ import {
 } from "@/lib/auth-username";
 import { emitPreferenceSavedNotice } from "@/lib/usage/preference-notice";
 import type { ProjectMode } from "@/lib/usage/types";
+import { UsernameAutoAdjustedToast } from "./username-auto-adjusted-toast";
 
 type AccountIdentityCardProps = {
   initialName?: string;
   initialUsername?: string;
   requireUsernameSetup?: boolean;
+  usernameAutoAdjusted?: boolean;
   initialBio: string | null;
   preferenceSnapshot: {
     timezone: string;
@@ -35,6 +37,7 @@ export function AccountIdentityCard({
   initialName = "",
   initialUsername = "",
   requireUsernameSetup = false,
+  usernameAutoAdjusted = false,
   initialBio,
   preferenceSnapshot,
 }: AccountIdentityCardProps) {
@@ -223,6 +226,21 @@ export function AccountIdentityCard({
 
   return (
     <div className="space-y-3">
+      <UsernameAutoAdjustedToast
+        enabled={usernameAutoAdjusted}
+        username={savedUsername || initialUsername}
+      />
+
+      {usernameAutoAdjusted ? (
+        <Alert>
+          <AlertDescription>
+            {t("identity.autoAdjustedNotice", {
+              username: savedUsername || initialUsername,
+            })}
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
       {requireUsernameSetup ? (
         <Alert>
           <AlertDescription>{t("identity.setupNotice")}</AlertDescription>
