@@ -6,7 +6,6 @@ import {
   Folder,
   KeyRound,
   Monitor,
-  RotateCcw,
   SlidersHorizontal,
   Wrench,
   X,
@@ -39,11 +38,7 @@ import type {
   UsageFilters,
 } from "@/lib/usage/types";
 import { buildUsageHref } from "./filter-query";
-import {
-  getActiveFilterChips,
-  getFilterMeta,
-  hasActiveDashboardState,
-} from "./filter-state";
+import { getActiveFilterChips, getFilterMeta } from "./filter-state";
 
 type FiltersBarProps = {
   preset: DashboardPreset;
@@ -153,8 +148,6 @@ export function FiltersBar({
     () => getActiveFilterChips(filters, options),
     [filters, options],
   );
-  const hasActiveState = hasActiveDashboardState(preset, filters);
-
   const updateParams = (updates: Record<string, string | null>) => {
     router.replace(buildUsageHref(searchParams.toString(), updates));
   };
@@ -183,10 +176,6 @@ export function FiltersBar({
       to: customTo,
     });
     setIsCustomOpen(false);
-  };
-
-  const resetAll = () => {
-    router.replace("/usage");
   };
 
   const removeFilter = (key: keyof UsageFilters) => {
@@ -401,13 +390,6 @@ export function FiltersBar({
 
           {activeChips.hiddenCount > 0 ? (
             <Badge variant="secondary">+{activeChips.hiddenCount}</Badge>
-          ) : null}
-
-          {hasActiveState ? (
-            <Button type="button" variant="ghost" size="sm" onClick={resetAll}>
-              <RotateCcw />
-              {t("reset")}
-            </Button>
           ) : null}
         </div>
 

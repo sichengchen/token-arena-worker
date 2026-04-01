@@ -159,12 +159,7 @@ export default async function UsagePage({
         <div className="space-y-4">
           <Card className="bg-card shadow-sm ring-1 ring-border/60">
             <CardHeader className="border-b border-border/50 pb-3 sm:px-6">
-              <CardTitle>
-                {tProfile("activityTitle")}
-                <span className="ml-2 font-normal text-muted-foreground">
-                  {tProfile("activitySubtitle")}
-                </span>
-              </CardTitle>
+              <CardTitle>{tProfile("activityTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-center gap-4 pt-4 sm:px-6">
               {hasActivityHeatmap ? null : (

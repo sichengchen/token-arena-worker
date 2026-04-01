@@ -198,8 +198,7 @@
       "allDevices": "All devices",
       "allTools": "All tools",
       "allModels": "All models",
-      "allProjects": "All projects",
-      "reset": "Reset"
+      "allProjects": "All projects"
     },
     "kpis": {
       "estimatedCost": "Est. Cost",

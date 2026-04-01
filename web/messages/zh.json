@@ -198,8 +198,7 @@
       "allDevices": "全部设备",
       "allTools": "全部工具",
       "allModels": "全部模型",
-      "allProjects": "全部项目",
-      "reset": "重置"
+      "allProjects": "全部项目"
     },
     "kpis": {
       "estimatedCost": "预估费用",
