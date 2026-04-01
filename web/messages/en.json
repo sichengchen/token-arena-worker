@@ -589,8 +589,8 @@
     "leaderboard": {
       "periods": {
         "day": "Today",
-        "week": "7D",
-        "month": "30D",
+        "week": "This week",
+        "month": "This month",
         "allTime": "All time"
       },
       "metricSelectLabel": "Leaderboard metric",

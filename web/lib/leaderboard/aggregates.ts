@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getUtcDateKey, startOfUtcDay } from "./date";
+import { getShanghaiDateKey, startOfShanghaiDay } from "./date";
 
 type LeaderboardAggregateWriteClient = Pick<
   typeof prisma,
@@ -38,21 +38,21 @@ function ensureAccumulator(
   rows: Map<string, LeaderboardAccumulator>,
   statDate: Date,
 ) {
-  const key = getUtcDateKey(statDate);
+  const key = getShanghaiDateKey(statDate);
   const existing = rows.get(key);
 
   if (existing) {
     return existing;
   }
 
-  const next = createAccumulator(startOfUtcDay(statDate));
+  const next = createAccumulator(startOfShanghaiDay(statDate));
   rows.set(key, next);
 
   return next;
 }
 
 function normalizeDate(value: Date | string) {
-  return startOfUtcDay(value instanceof Date ? value : new Date(value));
+  return startOfShanghaiDay(value instanceof Date ? value : new Date(value));
 }
 
 export function collectAffectedLeaderboardDates(input: {
@@ -121,7 +121,7 @@ export async function recomputeLeaderboardUserDays(
   }
 
   const sortedDates = input.dates
-    .map((value) => startOfUtcDay(value))
+    .map((value) => startOfShanghaiDay(value))
     .sort((left, right) => left.getTime() - right.getTime());
   const rangeStart = sortedDates[0];
   const rangeEnd = new Date(sortedDates[sortedDates.length - 1].getTime());
@@ -182,7 +182,7 @@ export async function recomputeLeaderboardUserDays(
   }
 
   for (const statDate of sortedDates) {
-    const key = getUtcDateKey(statDate);
+    const key = getShanghaiDateKey(statDate);
     const row = rows.get(key);
 
     if (!row) {

@@ -6,6 +6,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import type { FollowTagFilter } from "@/lib/social/follow-tags";
 import { resolveLeaderboardWindow, sameLeaderboardWindow } from "./date";
+import { finalizePendingLeaderboardPeriods } from "./finalize";
 import type {
   LeaderboardDataset,
   LeaderboardEntry,
@@ -979,6 +980,7 @@ export async function getLeaderboardPageData(input: {
   now?: Date;
 }): Promise<LeaderboardPageData> {
   const now = input.now ?? new Date();
+  await finalizePendingLeaderboardPeriods(now);
   const [global, following, viewerPreference] = await Promise.all([
     getGlobalLeaderboard({
       period: input.period,

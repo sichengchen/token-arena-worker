@@ -1,3 +1,4 @@
+import { synchronizeAchievementsForUser } from "@/lib/achievements/queries";
 import {
   collectAffectedLeaderboardDates,
   findExistingSessionStartDates,
@@ -280,7 +281,7 @@ export async function ingestUsagePayload(input: IngestUsagePayloadInput) {
   const seenAt = new Date();
   const catalog = await getPricingCatalog();
 
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     await upsertDevice(tx, {
       userId: input.userId,
       apiKeyId: input.apiKeyId,
@@ -330,4 +331,8 @@ export async function ingestUsagePayload(input: IngestUsagePayloadInput) {
       deviceId: input.payload.device.deviceId,
     };
   });
+
+  await synchronizeAchievementsForUser(input.userId, "ingest");
+
+  return result;
 }

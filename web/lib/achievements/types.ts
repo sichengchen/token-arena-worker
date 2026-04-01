@@ -123,7 +123,11 @@ export type AchievementProgressUnit =
 
 export type AchievementStatus = AchievementDefinition & {
   unlocked: boolean;
+  isQualifiedNow: boolean;
   unlockedAt: string | null;
+  firstAwardedAt: string | null;
+  lastAwardedAt: string | null;
+  awardCount: number;
   progress: {
     current: number;
     target: number;

@@ -1,3 +1,4 @@
+import { finalizePendingLeaderboardPeriods } from "@/lib/leaderboard/finalize";
 import { getUserGlobalLeaderboardRanksByTotalTokens } from "@/lib/leaderboard/rank";
 import type { PricingCatalog } from "@/lib/pricing/catalog";
 import { getPricingCatalog } from "@/lib/pricing/catalog";
@@ -10,13 +11,20 @@ import { resolveDashboardRange } from "@/lib/usage/date-range";
 import { formatDateInput } from "@/lib/usage/format";
 import { getUsagePreference } from "@/lib/usage/preferences";
 import type { UsageShareCardPersona } from "@/lib/usage/share-card";
+import type { AchievementAwardSource } from "../../generated/prisma/client";
 import {
   type AchievementDistinctTimelinePoint,
   type AchievementInputMetrics,
   type AchievementTimelinePoint,
   buildAchievementNotificationData,
-  buildAchievementsPageData,
+  buildAchievementStatuses,
+  buildAchievementsPageDataFromStatuses,
 } from "./evaluate";
+import {
+  buildAchievementAwardPlan,
+  mergeAchievementRecords,
+  type StoredAchievementRecord,
+} from "./records";
 import type {
   AchievementNotificationData,
   AchievementsPageData,
@@ -370,6 +378,25 @@ function buildAllTimeMetrics(input: {
   };
 }
 
+function normalizeStoredAchievementRecord(row: {
+  code: string;
+  awardCount: number;
+  firstAwardedAt: Date | null;
+  lastAwardedAt: Date | null;
+  state: unknown;
+}): StoredAchievementRecord | null {
+  return {
+    code: row.code as StoredAchievementRecord["code"],
+    awardCount: row.awardCount,
+    firstAwardedAt: row.firstAwardedAt?.toISOString() ?? null,
+    lastAwardedAt: row.lastAwardedAt?.toISOString() ?? null,
+    state:
+      row.state && typeof row.state === "object"
+        ? (row.state as StoredAchievementRecord["state"])
+        : null,
+  };
+}
+
 async function loadAchievementMetrics(userId: string) {
   const preference = await getUsagePreference(userId);
   const [user, buckets, sessions, following, followers, catalog] =
@@ -459,19 +486,139 @@ async function loadAchievementMetrics(userId: string) {
   });
 }
 
+async function synchronizeUserAchievements(input: {
+  userId: string;
+  metrics: AchievementInputMetrics;
+  source: AchievementAwardSource;
+}) {
+  const existingRows = await prisma.userAchievement.findMany({
+    where: {
+      userId: input.userId,
+    },
+  });
+  const existingRecords = existingRows
+    .map(normalizeStoredAchievementRecord)
+    .filter((record): record is StoredAchievementRecord => Boolean(record));
+  const plan = buildAchievementAwardPlan({
+    userId: input.userId,
+    evaluatedAt: new Date().toISOString(),
+    source: input.source,
+    statuses: buildAchievementStatuses(input.metrics),
+    records: existingRecords,
+  });
+  const existingCodes = new Set(existingRecords.map((record) => record.code));
+
+  if (plan.awards.length > 0 || plan.records.size > 0) {
+    await prisma.$transaction(async (tx) => {
+      if (plan.awards.length > 0) {
+        await tx.achievementAward.createMany({
+          data: plan.awards.map((award) => ({
+            userId: award.userId,
+            code: award.code,
+            awardedAt: new Date(award.awardedAt),
+            source: award.source,
+            dedupeKey: award.dedupeKey,
+            pointsAwarded: award.pointsAwarded,
+            progressValue: award.progressValue,
+            thresholdValue: award.thresholdValue,
+            context: award.context,
+          })),
+          skipDuplicates: true,
+        });
+      }
+
+      for (const record of plan.records.values()) {
+        if (record.awardCount === 0 && !existingCodes.has(record.code)) {
+          continue;
+        }
+
+        await tx.userAchievement.upsert({
+          where: {
+            userId_code: {
+              userId: input.userId,
+              code: record.code,
+            },
+          },
+          update: {
+            awardCount: record.awardCount,
+            firstAwardedAt: record.firstAwardedAt
+              ? new Date(record.firstAwardedAt)
+              : null,
+            lastAwardedAt: record.lastAwardedAt
+              ? new Date(record.lastAwardedAt)
+              : null,
+            ...(record.state ? { state: record.state } : {}),
+          },
+          create: {
+            userId: input.userId,
+            code: record.code,
+            awardCount: record.awardCount,
+            firstAwardedAt: record.firstAwardedAt
+              ? new Date(record.firstAwardedAt)
+              : null,
+            lastAwardedAt: record.lastAwardedAt
+              ? new Date(record.lastAwardedAt)
+              : null,
+            ...(record.state ? { state: record.state } : {}),
+          },
+        });
+      }
+    });
+  }
+
+  return plan.records;
+}
+
+export async function synchronizeAchievementsForUser(
+  userId: string,
+  source: AchievementAwardSource = "manual",
+) {
+  await finalizePendingLeaderboardPeriods();
+  const metrics = await loadAchievementMetrics(userId);
+  return synchronizeUserAchievements({
+    userId,
+    metrics,
+    source,
+  });
+}
+
 export async function getAchievementsPageData(
   userId: string,
 ): Promise<AchievementsPageData> {
+  await finalizePendingLeaderboardPeriods();
   const metrics = await loadAchievementMetrics(userId);
-  return buildAchievementsPageData(metrics);
+  const records = await synchronizeUserAchievements({
+    userId,
+    metrics,
+    source: "manual",
+  });
+  return buildAchievementsPageDataFromStatuses({
+    metrics,
+    achievements: mergeAchievementRecords(
+      buildAchievementStatuses(metrics),
+      records,
+    ),
+  });
 }
 
 export async function getAchievementArenaSummary(userId: string): Promise<{
   score: number;
   level: number;
 }> {
+  await finalizePendingLeaderboardPeriods();
   const metrics = await loadAchievementMetrics(userId);
-  const pageData = buildAchievementsPageData(metrics);
+  const records = await synchronizeUserAchievements({
+    userId,
+    metrics,
+    source: "manual",
+  });
+  const pageData = buildAchievementsPageDataFromStatuses({
+    metrics,
+    achievements: mergeAchievementRecords(
+      buildAchievementStatuses(metrics),
+      records,
+    ),
+  });
   return {
     score: pageData.summary.score,
     level: pageData.summary.level,
@@ -481,6 +628,20 @@ export async function getAchievementArenaSummary(userId: string): Promise<{
 export async function getAchievementNotificationData(
   userId: string,
 ): Promise<AchievementNotificationData> {
+  await finalizePendingLeaderboardPeriods();
   const metrics = await loadAchievementMetrics(userId);
-  return buildAchievementNotificationData(buildAchievementsPageData(metrics));
+  const records = await synchronizeUserAchievements({
+    userId,
+    metrics,
+    source: "manual",
+  });
+  return buildAchievementNotificationData(
+    buildAchievementsPageDataFromStatuses({
+      metrics,
+      achievements: mergeAchievementRecords(
+        buildAchievementStatuses(metrics),
+        records,
+      ),
+    }),
+  );
 }

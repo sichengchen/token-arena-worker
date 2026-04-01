@@ -29,6 +29,7 @@ export function AchievementCard({
           iconKey={achievement.iconKey}
           tier={achievement.tier}
           locked={!achievement.unlocked}
+          count={achievement.awardCount}
         />
         <div className="min-w-0 space-y-1.5">
           <h3 className="w-full max-w-full break-words text-sm font-semibold leading-snug tracking-tight text-foreground">

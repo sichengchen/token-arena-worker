@@ -168,6 +168,7 @@ export function AchievementNotification() {
                       iconKey={achievement.iconKey}
                       tier={achievement.tier}
                       size="sm"
+                      count={achievement.awardCount}
                     />
                     <div className="min-w-0">
                       <div className="truncate text-sm font-medium text-foreground">

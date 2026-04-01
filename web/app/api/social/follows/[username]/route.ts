@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { synchronizeAchievementsForUser } from "@/lib/achievements/queries";
 import { normalizeUsername } from "@/lib/auth-username";
 import { prisma } from "@/lib/prisma";
 import { getOptionalSession } from "@/lib/session";
@@ -59,6 +60,11 @@ export async function POST(
     },
   });
 
+  await Promise.all([
+    synchronizeAchievementsForUser(session.user.id, "social"),
+    synchronizeAchievementsForUser(targetUser.id, "social"),
+  ]);
+
   return NextResponse.json({ success: true });
 }
 
@@ -85,6 +91,11 @@ export async function DELETE(
       followingId: targetUser.id,
     },
   });
+
+  await Promise.all([
+    synchronizeAchievementsForUser(session.user.id, "social"),
+    synchronizeAchievementsForUser(targetUser.id, "social"),
+  ]);
 
   return NextResponse.json({ success: true });
 }

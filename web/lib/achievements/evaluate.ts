@@ -207,7 +207,11 @@ function createStatus(input: {
   return {
     ...definition,
     unlocked,
+    isQualifiedNow: unlocked,
     unlockedAt: unlocked ? input.unlockedAt : null,
+    firstAwardedAt: null,
+    lastAwardedAt: null,
+    awardCount: 0,
     progress: {
       current: input.current,
       target: input.target,
@@ -711,11 +715,21 @@ function compareTargets(left: AchievementStatus, right: AchievementStatus) {
 export function buildAchievementsPageData(
   metrics: AchievementInputMetrics,
 ): AchievementsPageData {
-  const achievements = buildAchievementStatuses(metrics);
+  return buildAchievementsPageDataFromStatuses({
+    metrics,
+    achievements: buildAchievementStatuses(metrics),
+  });
+}
+
+export function buildAchievementsPageDataFromStatuses(input: {
+  metrics: AchievementInputMetrics;
+  achievements: AchievementStatus[];
+}): AchievementsPageData {
+  const { metrics, achievements } = input;
   const unlocked = achievements.filter((achievement) => achievement.unlocked);
   const locked = achievements.filter((achievement) => !achievement.unlocked);
   const score = unlocked.reduce(
-    (sum, achievement) => sum + achievement.points,
+    (sum, achievement) => sum + achievement.points * achievement.awardCount,
     0,
   );
   const level = 1 + Math.floor(score / 100);

@@ -67,6 +67,7 @@ type AchievementBadgeProps = {
   tier: AchievementTier;
   locked?: boolean;
   size?: "sm" | "md" | "lg";
+  count?: number;
 };
 
 const sizeClassNames = {
@@ -95,6 +96,7 @@ export function AchievementBadge({
   tier,
   locked = false,
   size = "md",
+  count = 0,
 }: AchievementBadgeProps) {
   const Icon = iconMap[iconKey];
   const classes = sizeClassNames[size];
@@ -151,6 +153,11 @@ export function AchievementBadge({
           </>
         )}
       </div>
+      {!locked && count > 0 ? (
+        <span className="absolute -right-1 -top-1 z-20 inline-flex min-w-5 items-center justify-center rounded-full bg-background px-1.5 py-0.5 text-[10px] font-semibold leading-none text-foreground shadow-sm ring-1 ring-border">
+          ×{count}
+        </span>
+      ) : null}
     </div>
   );
 }

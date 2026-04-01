@@ -41,6 +41,14 @@ enum LeaderboardSnapshotPeriod {
   all_time
 }
 
+enum AchievementAwardSource {
+  ingest
+  social
+  leaderboard
+  backfill
+  manual
+}
+
 enum FollowTag {
   coworker
   friend
@@ -68,6 +76,9 @@ model User {
   usageSessions              UsageSession[]
   leaderboardDays            LeaderboardUserDay[]
   leaderboardSnapshotEntries LeaderboardSnapshotEntry[]
+  achievementAwards          AchievementAward[]
+  achievements               UserAchievement[]
+  leaderboardPeriodEntries   LeaderboardPeriodEntry[]
   followers                  Follow[]                   @relation("FollowFollowing")
   following                  Follow[]                   @relation("FollowFollower")
 
@@ -297,4 +308,78 @@ model LeaderboardSnapshotEntry {
   @@index([snapshotId, rank])
   @@index([userId, rank])
   @@map("leaderboard_snapshot_entry")
+}
+
+model UserAchievement {
+  userId         String
+  code           String
+  awardCount     Int      @default(0)
+  firstAwardedAt DateTime?
+  lastAwardedAt  DateTime?
+  state          Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, code])
+  @@index([userId, lastAwardedAt])
+  @@map("user_achievement")
+}
+
+model AchievementAward {
+  id             String                 @id @default(cuid())
+  userId         String
+  code           String
+  awardedAt      DateTime               @default(now())
+  source         AchievementAwardSource
+  sourceRef      String?
+  dedupeKey      String                 @unique
+  pointsAwarded  Int
+  progressValue  Float?
+  thresholdValue Float?
+  context        Json?
+  createdAt      DateTime               @default(now())
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, awardedAt(sort: Desc)])
+  @@index([userId, code, awardedAt(sort: Desc)])
+  @@map("achievement_award")
+}
+
+model LeaderboardPeriodResult {
+  id             String                    @id @default(cuid())
+  period         LeaderboardSnapshotPeriod
+  timezone       String                    @default("Asia/Shanghai")
+  windowStart    DateTime?
+  windowEnd      DateTime?
+  finalizedAt    DateTime                  @default(now())
+  badgesIssuedAt DateTime?
+  entries        LeaderboardPeriodEntry[]
+
+  @@unique([period, windowStart, windowEnd])
+  @@index([period, windowEnd])
+  @@map("leaderboard_period_result")
+}
+
+model LeaderboardPeriodEntry {
+  id              String                @id @default(cuid())
+  resultId        String
+  userId          String
+  rank            Int
+  inputTokens     BigInt                @default(0)
+  outputTokens    BigInt                @default(0)
+  reasoningTokens BigInt                @default(0)
+  cachedTokens    BigInt                @default(0)
+  totalTokens     BigInt                @default(0)
+  activeSeconds   Int                   @default(0)
+  sessions        Int                   @default(0)
+  createdAt       DateTime              @default(now())
+  result          LeaderboardPeriodResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([resultId, userId])
+  @@unique([resultId, rank])
+  @@index([resultId, rank])
+  @@index([userId, createdAt])
+  @@map("leaderboard_period_entry")
 }

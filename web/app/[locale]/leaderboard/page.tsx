@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { LeaderboardMetricSelect } from "@/components/social/leaderboard-metric-select";
 import { LeaderboardPublicProfileButton } from "@/components/social/leaderboard-private-notice";
 import { LeaderboardTable } from "@/components/social/leaderboard-table";
+import { LeaderboardWindowBadge } from "@/components/social/leaderboard-window-badge";
 import { SocialShell } from "@/components/social/social-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -134,7 +135,13 @@ export default async function LeaderboardPage({
               </Link>
             ))}
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <LeaderboardWindowBadge
+              locale={locale}
+              period={period}
+              windowStart={data.global.windowStart}
+              windowEnd={data.global.windowEnd}
+            />
             <LeaderboardMetricSelect
               value={metric}
               defaultValue={defaultLeaderboardMetric}
