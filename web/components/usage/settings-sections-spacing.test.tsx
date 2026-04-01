@@ -57,6 +57,15 @@ vi.mock("next-intl", () => ({
     })[key] ?? key,
 }));
 
+vi.mock("@/i18n/navigation", () => ({
+  usePathname: () => "/settings/cli-keys",
+  useRouter: () => ({
+    replace: vi.fn(),
+    push: vi.fn(),
+    refresh: vi.fn(),
+  }),
+}));
+
 describe("settings dialog section spacing", () => {
   it("renders the preferences section without language/theme and keeps key fields on one row", () => {
     const markup = renderToStaticMarkup(

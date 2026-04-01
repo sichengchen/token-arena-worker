@@ -23,6 +23,11 @@ vi.mock("next-intl", () => ({
     })[key] ?? key,
 }));
 
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  usePathname: () => "/settings/account",
+}));
+
 vi.mock("@/components/ui/button", () => ({
   Button: ({
     children,

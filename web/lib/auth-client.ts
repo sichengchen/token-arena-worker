@@ -21,6 +21,11 @@ export const authClient = createAuthClient({
           required: false,
           returned: true,
         },
+        usernameAutoAdjusted: {
+          type: "boolean",
+          required: false,
+          returned: true,
+        },
       },
     }),
   ],

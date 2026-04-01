@@ -7,7 +7,7 @@ export function hashUsageApiKey(raw: string) {
 }
 
 export function splitApiKeyPrefix(raw: string) {
-  return raw.slice(0, 12);
+  return raw.slice(0, 11);
 }
 
 export function generateUsageApiKey() {
