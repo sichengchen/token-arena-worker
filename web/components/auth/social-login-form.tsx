@@ -42,6 +42,16 @@ function renderProviderIcon(providerId: LoginProvider["id"]): ReactNode {
           className="shrink-0"
         />
       );
+    case "cc98":
+      return (
+        <Image
+          src="https://raw.githubusercontent.com/ZJU-CC98/Forum/main/dist/static/images/logo.png"
+          alt="CC98"
+          width={16}
+          height={16}
+          className="shrink-0"
+        />
+      );
   }
 }
 
