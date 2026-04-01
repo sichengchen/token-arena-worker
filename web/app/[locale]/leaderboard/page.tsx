@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { LeaderboardMetricSelect } from "@/components/social/leaderboard-metric-select";
 import { LeaderboardPublicProfileButton } from "@/components/social/leaderboard-private-notice";
 import { LeaderboardTable } from "@/components/social/leaderboard-table";
-import { LeaderboardTagSelect } from "@/components/social/leaderboard-tag-select";
 import { SocialShell } from "@/components/social/social-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,7 +10,6 @@ import { Link } from "@/i18n/navigation";
 import {
   leaderboardMetricSchema,
   leaderboardPeriodSchema,
-  leaderboardTagFilterSchema,
 } from "@/lib/leaderboard/contracts";
 import { getLeaderboardPageData } from "@/lib/leaderboard/queries";
 import {
@@ -20,7 +18,6 @@ import {
   type LeaderboardPeriod,
 } from "@/lib/leaderboard/types";
 import { getOptionalSession } from "@/lib/session";
-import { type FollowTagFilter, followTags } from "@/lib/social/follow-tags";
 import { cn } from "@/lib/utils";
 
 type LeaderboardPageProps = {
@@ -42,15 +39,9 @@ function resolveMetric(value: string | undefined): LeaderboardMetric {
   return parsed.success ? parsed.data : defaultLeaderboardMetric;
 }
 
-function resolveTag(value: string | undefined): FollowTagFilter {
-  const parsed = leaderboardTagFilterSchema.safeParse(value);
-  return parsed.success ? parsed.data : "all";
-}
-
 function buildLeaderboardQuery(input: {
   period: LeaderboardPeriod;
   metric: LeaderboardMetric;
-  tag: FollowTagFilter;
 }) {
   return {
     period: input.period,
@@ -58,11 +49,6 @@ function buildLeaderboardQuery(input: {
       ? {}
       : {
           metric: input.metric,
-        }),
-    ...(input.tag === "all"
-      ? {}
-      : {
-          tag: input.tag,
         }),
   };
 }
@@ -89,19 +75,15 @@ export default async function LeaderboardPage({
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const period = resolvePeriod(firstValue(resolvedSearchParams?.period));
   const metric = resolveMetric(firstValue(resolvedSearchParams?.metric));
-  const followTag = viewer
-    ? resolveTag(firstValue(resolvedSearchParams?.tag))
-    : "all";
   const data = await getLeaderboardPageData({
     period,
     metric,
     viewerUserId: viewer?.user.id ?? null,
-    followTag,
+    followTag: "all",
   });
   const t = await getTranslations({ locale, namespace: "social.leaderboard" });
   const tCard = await getTranslations({ locale, namespace: "social.card" });
   const tNav = await getTranslations({ locale, namespace: "social.nav" });
-  const tTags = await getTranslations({ locale, namespace: "social.tags" });
 
   const periodItems: Array<{ value: LeaderboardPeriod; label: string }> = [
     { value: "day", label: t("periods.day") },
@@ -113,25 +95,6 @@ export default async function LeaderboardPage({
     { value: "total_tokens", label: t("metrics.totalTokens") },
     { value: "estimated_cost", label: t("metrics.estimatedCost") },
   ];
-  const tagItems: Array<{ value: FollowTagFilter; label: string }> = [
-    { value: "all", label: tTags("all") },
-    ...followTags.map((value) => ({
-      value,
-      label: tTags(`options.${value}`),
-    })),
-  ];
-  const followingTitle =
-    followTag === "all"
-      ? t("followingTitle")
-      : t("followingTitleFiltered", {
-          tag: tTags(`options.${followTag}`),
-        });
-  const followingEmptyLabel =
-    followTag === "all"
-      ? t("emptyFollowing")
-      : t("emptyFollowingFiltered", {
-          tag: tTags(`options.${followTag}`),
-        });
 
   return (
     <SocialShell
@@ -159,7 +122,6 @@ export default async function LeaderboardPage({
                   query: buildLeaderboardQuery({
                     period: item.value,
                     metric,
-                    tag: followTag,
                   }),
                 }}
                 aria-current={period === item.value ? "page" : undefined}
@@ -173,14 +135,6 @@ export default async function LeaderboardPage({
             ))}
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            {viewer ? (
-              <LeaderboardTagSelect
-                value={followTag}
-                defaultValue="all"
-                ariaLabel={tTags("filterLabel")}
-                options={tagItems}
-              />
-            ) : null}
             <LeaderboardMetricSelect
               value={metric}
               defaultValue={defaultLeaderboardMetric}
@@ -221,8 +175,8 @@ export default async function LeaderboardPage({
         {data.following ? (
           <LeaderboardTable
             locale={locale}
-            title={followingTitle}
-            emptyLabel={followingEmptyLabel}
+            title={t("followingTitle")}
+            emptyLabel={t("emptyFollowing")}
             entries={data.following.entries}
             labels={{
               rank: t("table.rank"),
