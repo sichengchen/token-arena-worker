@@ -19,7 +19,8 @@
     "check": "pnpm run lint:cli && pnpm run lint:web && pnpm run format:cli && pnpm run format:web",
     "prepare": "husky",
     "publish": "pnpm --filter ./cli publish --access public",
-    "migrate": "pnpm --filter ./web exec prisma migrate deploy"
+    "migrate": "pnpm --filter ./web exec prisma migrate deploy",
+    "db:seed": "pnpm --filter ./web run db:seed"
   },
   "devDependencies": {
     "husky": "^9.1.7"
