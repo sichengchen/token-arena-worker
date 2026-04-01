@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ProfileListItem } from "@/components/social/profile-list-item";
@@ -303,7 +304,9 @@ export default async function PeoplePage({
               placeholder={t("searchPlaceholder")}
               className="w-full sm:w-72"
             />
-            <Button type="submit">{t("search")}</Button>
+            <Button type="submit" size="icon" aria-label={t("search")}>
+              <Search />
+            </Button>
           </form>
         </div>
 
