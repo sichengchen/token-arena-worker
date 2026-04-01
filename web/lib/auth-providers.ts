@@ -9,9 +9,7 @@ type ProviderEnvName =
   | "LINUXDO_CLIENT_ID"
   | "LINUXDO_CLIENT_SECRET"
   | "WATCHA_CLIENT_ID"
-  | "WATCHA_CLIENT_SECRET"
-  | "CC98_CLIENT_ID"
-  | "CC98_CLIENT_SECRET";
+  | "WATCHA_CLIENT_SECRET";
 
 type ProviderCredentials = {
   clientId: ProviderEnvName;
@@ -29,7 +27,7 @@ type SocialProviderDefinition = ProviderBase & {
 };
 
 type OAuth2ProviderDefinition = ProviderBase & {
-  id: "linuxdo" | "watcha" | "cc98";
+  id: "linuxdo" | "watcha";
   kind: "oauth2";
   authorizationUrl: string;
   tokenUrl: string;
@@ -44,30 +42,6 @@ export type LoginProvider = Pick<
   SocialProviderDefinition | OAuth2ProviderDefinition,
   "id" | "kind" | "label"
 >;
-
-async function getCC98UserInfo(tokens: OAuth2Tokens) {
-  const response = await fetch("https://openid.cc98.org/connect/userinfo", {
-    headers: { Authorization: `Bearer ${tokens.accessToken}` },
-  });
-  const data = (await response.json()) as {
-    sub?: string;
-    name?: string;
-    preferred_username?: string;
-    picture?: string;
-  };
-
-  if (!data.sub) {
-    return null;
-  }
-
-  return {
-    id: data.sub,
-    name: data.name || data.preferred_username || data.sub,
-    image: data.picture || undefined,
-    email: `${data.sub}@cc98.org`,
-    emailVerified: true,
-  };
-}
 
 async function getWatchaUserInfo(tokens: OAuth2Tokens) {
   const response = await fetch(
@@ -143,22 +117,6 @@ const oauth2ProviderDefinitions: readonly OAuth2ProviderDefinition[] = [
     userInfoUrl: "https://watcha.cn/oauth/api/userinfo",
     scopes: ["read"],
     getUserInfo: getWatchaUserInfo,
-  },
-  {
-    id: "cc98",
-    kind: "oauth2",
-    label: "CC98",
-    credentials: {
-      clientId: "CC98_CLIENT_ID",
-      clientSecret: "CC98_CLIENT_SECRET",
-    },
-    authorizationUrl: "https://openid.cc98.org/connect/authorize",
-    tokenUrl: "https://openid.cc98.org/connect/token",
-    userInfoUrl: "https://openid.cc98.org/connect/userinfo",
-    scopes: ["openid", "profile"],
-    redirectURI: `${process.env.BETTER_AUTH_URL}/api/auth/callback/cc98`,
-    pkce: true,
-    getUserInfo: getCC98UserInfo,
   },
 ] as const;
 
