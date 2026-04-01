@@ -67,8 +67,26 @@ function PaginationLink({
 function PaginationPrevious({
   className,
   text = "Previous",
+  iconOnly = false,
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string;
+  /** When true, show only the chevron (use `text` for `aria-label`). */
+  iconOnly?: boolean;
+}) {
+  if (iconOnly) {
+    return (
+      <PaginationLink
+        aria-label={text}
+        size="icon"
+        className={cn(className)}
+        {...props}
+      >
+        <ChevronLeftIcon />
+      </PaginationLink>
+    );
+  }
+
   return (
     <PaginationLink
       aria-label="Go to previous page"
@@ -85,8 +103,26 @@ function PaginationPrevious({
 function PaginationNext({
   className,
   text = "Next",
+  iconOnly = false,
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string;
+  /** When true, show only the chevron (use `text` for `aria-label`). */
+  iconOnly?: boolean;
+}) {
+  if (iconOnly) {
+    return (
+      <PaginationLink
+        aria-label={text}
+        size="icon"
+        className={cn(className)}
+        {...props}
+      >
+        <ChevronRightIcon />
+      </PaginationLink>
+    );
+  }
+
   return (
     <PaginationLink
       aria-label="Go to next page"

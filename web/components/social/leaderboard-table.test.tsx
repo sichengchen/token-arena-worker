@@ -56,7 +56,6 @@ describe("LeaderboardTable", () => {
           estimatedCost: "Est. Cost",
           activeTime: "Active Time",
           sessions: "Sessions",
-          followers: "Followers",
           mutual: "Mutual",
           you: "You",
         }}
@@ -152,7 +151,6 @@ describe("LeaderboardTable", () => {
           estimatedCost: "Est. Cost",
           activeTime: "Active Time",
           sessions: "Sessions",
-          followers: "Followers",
           mutual: "Mutual",
           you: "You",
         }}
@@ -224,7 +222,6 @@ describe("LeaderboardTable", () => {
           estimatedCost: "Est. Cost",
           activeTime: "Active Time",
           sessions: "Sessions",
-          followers: "Followers",
           mutual: "Mutual",
           you: "You",
         }}
@@ -278,7 +275,6 @@ describe("LeaderboardTable", () => {
           estimatedCost: "Est. Cost",
           activeTime: "Active Time",
           sessions: "Sessions",
-          followers: "Followers",
           mutual: "Mutual",
           you: "You",
         }}

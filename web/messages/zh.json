@@ -610,8 +610,7 @@
         "totalTokens": "总 Tokens",
         "estimatedCost": "预估费用",
         "activeTime": "活跃时长",
-        "sessions": "会话数",
-        "followers": "粉丝"
+        "sessions": "会话数"
       },
       "followingTitleFiltered": "关注排行榜 · {tag}",
       "emptyFollowingFiltered": "你的 {tag} 分组里在这个窗口内还没有排行榜数据。"

@@ -41,7 +41,6 @@ type LeaderboardTableProps = {
     estimatedCost: string;
     activeTime: string;
     sessions: string;
-    followers: string;
     mutual: string;
     you: string;
   };
@@ -144,9 +143,6 @@ export function LeaderboardTable({
         <TableCell className="text-right text-muted-foreground">
           {entry.sessions.toLocaleString(locale)}
         </TableCell>
-        <TableCell className="text-right text-muted-foreground">
-          {entry.followerCount.toLocaleString(locale)}
-        </TableCell>
       </TableRow>
     );
   }
@@ -177,7 +173,7 @@ export function LeaderboardTable({
           </div>
         </TableCell>
         <TableCell
-          colSpan={5}
+          colSpan={4}
           className="text-right text-sm text-muted-foreground"
         >
           <div className="flex flex-wrap items-center justify-end gap-2">
@@ -194,7 +190,9 @@ export function LeaderboardTable({
       <header className="flex flex-row flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border/60 bg-muted/40 px-4 py-2.5 dark:bg-muted/25">
         <CardTitle className="min-w-0 leading-tight">{title}</CardTitle>
         {headerRight ? (
-          <div className="flex shrink-0 items-center">{headerRight}</div>
+          <div className="flex min-h-8 shrink-0 items-center justify-end">
+            {headerRight}
+          </div>
         ) : null}
       </header>
       <CardContent className="px-4 pb-3 pt-3">
@@ -223,7 +221,6 @@ export function LeaderboardTable({
                   {labels.activeTime}
                 </TableHead>
                 <TableHead className="text-right">{labels.sessions}</TableHead>
-                <TableHead className="text-right">{labels.followers}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -232,7 +229,7 @@ export function LeaderboardTable({
                 <>
                   <TableRow className="hover:bg-transparent">
                     <TableCell
-                      colSpan={7}
+                      colSpan={6}
                       className="py-1 text-center text-muted-foreground"
                     >
                       ...
@@ -249,7 +246,7 @@ export function LeaderboardTable({
                   {entries.length > 0 ? (
                     <TableRow className="hover:bg-transparent">
                       <TableCell
-                        colSpan={7}
+                        colSpan={6}
                         className="py-1 text-center text-muted-foreground"
                       >
                         ...

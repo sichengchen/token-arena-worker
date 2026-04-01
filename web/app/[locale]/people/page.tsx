@@ -341,6 +341,7 @@ export default async function PeoplePage({
                     <PaginationItem>
                       <PaginationPrevious
                         href={buildPageUrl(validPage - 1)}
+                        iconOnly
                         text={t("pagination.previous")}
                         className={
                           validPage <= 1
@@ -368,6 +369,7 @@ export default async function PeoplePage({
                     <PaginationItem>
                       <PaginationNext
                         href={buildPageUrl(validPage + 1)}
+                        iconOnly
                         text={t("pagination.next")}
                         className={
                           validPage >= totalPages

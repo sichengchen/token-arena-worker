@@ -610,8 +610,7 @@
         "totalTokens": "Total Tokens",
         "estimatedCost": "Est. Cost",
         "activeTime": "Active Time",
-        "sessions": "Sessions",
-        "followers": "Followers"
+        "sessions": "Sessions"
       },
       "followingTitleFiltered": "Following leaderboard · {tag}",
       "emptyFollowingFiltered": "No one in the {tag} tag has leaderboard activity in this window yet."

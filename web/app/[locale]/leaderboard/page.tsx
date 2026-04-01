@@ -175,7 +175,6 @@ export default async function LeaderboardPage({
             estimatedCost: t("table.estimatedCost"),
             activeTime: t("table.activeTime"),
             sessions: t("table.sessions"),
-            followers: t("table.followers"),
             mutual: tCard("mutual"),
             you: tCard("you"),
           }}
@@ -203,7 +202,6 @@ export default async function LeaderboardPage({
               estimatedCost: t("table.estimatedCost"),
               activeTime: t("table.activeTime"),
               sessions: t("table.sessions"),
-              followers: t("table.followers"),
               mutual: tCard("mutual"),
               you: tCard("you"),
             }}
