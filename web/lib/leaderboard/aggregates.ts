@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { tokenCountToBigInt } from "@/lib/token-counts";
 import { getShanghaiDateKey, startOfShanghaiDay } from "./date";
 
 type LeaderboardAggregateWriteClient = Pick<
@@ -203,11 +204,11 @@ export async function recomputeLeaderboardUserDays(
         },
       },
       update: {
-        inputTokens: row.inputTokens,
-        outputTokens: row.outputTokens,
-        reasoningTokens: row.reasoningTokens,
-        cachedTokens: row.cachedTokens,
-        totalTokens: row.totalTokens,
+        inputTokens: tokenCountToBigInt(row.inputTokens),
+        outputTokens: tokenCountToBigInt(row.outputTokens),
+        reasoningTokens: tokenCountToBigInt(row.reasoningTokens),
+        cachedTokens: tokenCountToBigInt(row.cachedTokens),
+        totalTokens: tokenCountToBigInt(row.totalTokens),
         activeSeconds: row.activeSeconds,
         sessions: row.sessions,
         messages: row.messages,
@@ -216,11 +217,11 @@ export async function recomputeLeaderboardUserDays(
       create: {
         userId: input.userId,
         statDate,
-        inputTokens: row.inputTokens,
-        outputTokens: row.outputTokens,
-        reasoningTokens: row.reasoningTokens,
-        cachedTokens: row.cachedTokens,
-        totalTokens: row.totalTokens,
+        inputTokens: tokenCountToBigInt(row.inputTokens),
+        outputTokens: tokenCountToBigInt(row.outputTokens),
+        reasoningTokens: tokenCountToBigInt(row.reasoningTokens),
+        cachedTokens: tokenCountToBigInt(row.cachedTokens),
+        totalTokens: tokenCountToBigInt(row.totalTokens),
         activeSeconds: row.activeSeconds,
         sessions: row.sessions,
         messages: row.messages,

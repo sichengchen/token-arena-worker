@@ -1,6 +1,7 @@
 import { achievementDefinitionMap } from "@/lib/achievements/catalog";
 import type { AchievementCode } from "@/lib/achievements/types";
 import { prisma } from "@/lib/prisma";
+import { tokenCountToBigInt, tokenCountToNumber } from "@/lib/token-counts";
 import type { Prisma } from "../../generated/prisma/client";
 import { resolveLatestFinalizableLeaderboardWindow } from "./date";
 import type { LeaderboardPeriod } from "./types";
@@ -155,11 +156,11 @@ export async function finalizePendingLeaderboardPeriods(now = new Date()) {
         (row, index): RankedLeaderboardEntry => ({
           userId: row.userId,
           rank: index + 1,
-          inputTokens: row._sum.inputTokens ?? 0,
-          outputTokens: row._sum.outputTokens ?? 0,
-          reasoningTokens: row._sum.reasoningTokens ?? 0,
-          cachedTokens: row._sum.cachedTokens ?? 0,
-          totalTokens: row._sum.totalTokens ?? 0,
+          inputTokens: tokenCountToNumber(row._sum.inputTokens),
+          outputTokens: tokenCountToNumber(row._sum.outputTokens),
+          reasoningTokens: tokenCountToNumber(row._sum.reasoningTokens),
+          cachedTokens: tokenCountToNumber(row._sum.cachedTokens),
+          totalTokens: tokenCountToNumber(row._sum.totalTokens),
           activeSeconds: row._sum.activeSeconds ?? 0,
           sessions: row._sum.sessions ?? 0,
         }),
@@ -207,11 +208,11 @@ export async function finalizePendingLeaderboardPeriods(now = new Date()) {
             resultId: result.id,
             userId: entry.userId,
             rank: entry.rank,
-            inputTokens: BigInt(entry.inputTokens),
-            outputTokens: BigInt(entry.outputTokens),
-            reasoningTokens: BigInt(entry.reasoningTokens),
-            cachedTokens: BigInt(entry.cachedTokens),
-            totalTokens: BigInt(entry.totalTokens),
+            inputTokens: tokenCountToBigInt(entry.inputTokens),
+            outputTokens: tokenCountToBigInt(entry.outputTokens),
+            reasoningTokens: tokenCountToBigInt(entry.reasoningTokens),
+            cachedTokens: tokenCountToBigInt(entry.cachedTokens),
+            totalTokens: tokenCountToBigInt(entry.totalTokens),
             activeSeconds: entry.activeSeconds,
             sessions: entry.sessions,
           })),

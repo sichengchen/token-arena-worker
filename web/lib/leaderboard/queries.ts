@@ -5,6 +5,7 @@ import {
 } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import type { FollowTagFilter } from "@/lib/social/follow-tags";
+import { tokenCountToBigInt, tokenCountToNumber } from "@/lib/token-counts";
 import { resolveLeaderboardWindow, sameLeaderboardWindow } from "./date";
 import { finalizePendingLeaderboardPeriods } from "./finalize";
 import type {
@@ -76,14 +77,6 @@ type RelationFlags = {
 
 function coerceInt(value: number | null | undefined) {
   return value ?? 0;
-}
-
-function tokenSumToBigInt(value: number | null | undefined) {
-  return BigInt(Math.trunc(value ?? 0));
-}
-
-function snapshotTokensToNumber(value: bigint | number) {
-  return typeof value === "bigint" ? Number(value) : value;
 }
 
 function buildWindowWhere(window: LeaderboardWindow) {
@@ -214,10 +207,10 @@ function estimateGroupedRowCostUsd(
   const match = resolveOfficialPricingMatch(catalog, row.model);
   const estimate = estimateCostUsd(
     {
-      inputTokens: coerceInt(row._sum.inputTokens),
-      outputTokens: coerceInt(row._sum.outputTokens),
-      reasoningTokens: coerceInt(row._sum.reasoningTokens),
-      cachedTokens: coerceInt(row._sum.cachedTokens),
+      inputTokens: tokenCountToNumber(row._sum.inputTokens),
+      outputTokens: tokenCountToNumber(row._sum.outputTokens),
+      reasoningTokens: tokenCountToNumber(row._sum.reasoningTokens),
+      cachedTokens: tokenCountToNumber(row._sum.cachedTokens),
     },
     match?.cost,
   );
@@ -242,11 +235,11 @@ function buildUserUsageAggregates(
       estimatedCostUsd: 0,
     };
 
-    current.inputTokens += coerceInt(row._sum.inputTokens);
-    current.outputTokens += coerceInt(row._sum.outputTokens);
-    current.reasoningTokens += coerceInt(row._sum.reasoningTokens);
-    current.cachedTokens += coerceInt(row._sum.cachedTokens);
-    current.totalTokens += coerceInt(row._sum.totalTokens);
+    current.inputTokens += tokenCountToNumber(row._sum.inputTokens);
+    current.outputTokens += tokenCountToNumber(row._sum.outputTokens);
+    current.reasoningTokens += tokenCountToNumber(row._sum.reasoningTokens);
+    current.cachedTokens += tokenCountToNumber(row._sum.cachedTokens);
+    current.totalTokens += tokenCountToNumber(row._sum.totalTokens);
     current.estimatedCostUsd += estimateGroupedRowCostUsd(row, catalog);
 
     aggregates.set(row.userId, current);
@@ -528,11 +521,11 @@ async function rebuildGlobalSnapshot(period: LeaderboardPeriod, now: Date) {
     .map((row, index) => ({
       rank: index + 1,
       userId: row.userId,
-      inputTokens: coerceInt(row._sum.inputTokens),
-      outputTokens: coerceInt(row._sum.outputTokens),
-      reasoningTokens: coerceInt(row._sum.reasoningTokens),
-      cachedTokens: coerceInt(row._sum.cachedTokens),
-      totalTokens: coerceInt(row._sum.totalTokens),
+      inputTokens: tokenCountToNumber(row._sum.inputTokens),
+      outputTokens: tokenCountToNumber(row._sum.outputTokens),
+      reasoningTokens: tokenCountToNumber(row._sum.reasoningTokens),
+      cachedTokens: tokenCountToNumber(row._sum.cachedTokens),
+      totalTokens: tokenCountToNumber(row._sum.totalTokens),
       estimatedCostUsd: 0,
       activeSeconds: coerceInt(row._sum.activeSeconds),
       sessions: coerceInt(row._sum.sessions),
@@ -569,11 +562,11 @@ async function rebuildGlobalSnapshot(period: LeaderboardPeriod, now: Date) {
           snapshotId: nextSnapshot.id,
           userId: row.userId,
           rank: row.rank,
-          inputTokens: tokenSumToBigInt(row.inputTokens),
-          outputTokens: tokenSumToBigInt(row.outputTokens),
-          reasoningTokens: tokenSumToBigInt(row.reasoningTokens),
-          cachedTokens: tokenSumToBigInt(row.cachedTokens),
-          totalTokens: tokenSumToBigInt(row.totalTokens),
+          inputTokens: tokenCountToBigInt(row.inputTokens),
+          outputTokens: tokenCountToBigInt(row.outputTokens),
+          reasoningTokens: tokenCountToBigInt(row.reasoningTokens),
+          cachedTokens: tokenCountToBigInt(row.cachedTokens),
+          totalTokens: tokenCountToBigInt(row.totalTokens),
           activeSeconds: row.activeSeconds,
           sessions: row.sessions,
         })),
@@ -626,11 +619,11 @@ async function ensureGlobalSnapshot(period: LeaderboardPeriod, now: Date) {
       summaries: rows.map((row) => ({
         rank: row.rank,
         userId: row.userId,
-        inputTokens: snapshotTokensToNumber(row.inputTokens),
-        outputTokens: snapshotTokensToNumber(row.outputTokens),
-        reasoningTokens: snapshotTokensToNumber(row.reasoningTokens),
-        cachedTokens: snapshotTokensToNumber(row.cachedTokens),
-        totalTokens: snapshotTokensToNumber(row.totalTokens),
+        inputTokens: tokenCountToNumber(row.inputTokens),
+        outputTokens: tokenCountToNumber(row.outputTokens),
+        reasoningTokens: tokenCountToNumber(row.reasoningTokens),
+        cachedTokens: tokenCountToNumber(row.cachedTokens),
+        totalTokens: tokenCountToNumber(row.totalTokens),
         estimatedCostUsd: 0,
         activeSeconds: row.activeSeconds,
         sessions: row.sessions,
@@ -805,11 +798,11 @@ async function getGlobalViewerRankSummary(input: {
     rows.map((row) => ({
       rank: 0,
       userId: row.userId,
-      inputTokens: coerceInt(row._sum.inputTokens),
-      outputTokens: coerceInt(row._sum.outputTokens),
-      reasoningTokens: coerceInt(row._sum.reasoningTokens),
-      cachedTokens: coerceInt(row._sum.cachedTokens),
-      totalTokens: coerceInt(row._sum.totalTokens),
+      inputTokens: tokenCountToNumber(row._sum.inputTokens),
+      outputTokens: tokenCountToNumber(row._sum.outputTokens),
+      reasoningTokens: tokenCountToNumber(row._sum.reasoningTokens),
+      cachedTokens: tokenCountToNumber(row._sum.cachedTokens),
+      totalTokens: tokenCountToNumber(row._sum.totalTokens),
       estimatedCostUsd: 0,
       activeSeconds: coerceInt(row._sum.activeSeconds),
       sessions: coerceInt(row._sum.sessions),
@@ -951,11 +944,11 @@ export async function getFollowingLeaderboard(input: {
     .map((row, index) => ({
       rank: index + 1,
       userId: row.userId,
-      inputTokens: coerceInt(row._sum.inputTokens),
-      outputTokens: coerceInt(row._sum.outputTokens),
-      reasoningTokens: coerceInt(row._sum.reasoningTokens),
-      cachedTokens: coerceInt(row._sum.cachedTokens),
-      totalTokens: coerceInt(row._sum.totalTokens),
+      inputTokens: tokenCountToNumber(row._sum.inputTokens),
+      outputTokens: tokenCountToNumber(row._sum.outputTokens),
+      reasoningTokens: tokenCountToNumber(row._sum.reasoningTokens),
+      cachedTokens: tokenCountToNumber(row._sum.cachedTokens),
+      totalTokens: tokenCountToNumber(row._sum.totalTokens),
       estimatedCostUsd: 0,
       activeSeconds: coerceInt(row._sum.activeSeconds),
       sessions: coerceInt(row._sum.sessions),

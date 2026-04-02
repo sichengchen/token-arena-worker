@@ -235,11 +235,11 @@ model UsageSession {
   lastMessageAt    DateTime
   durationSeconds  Int
   activeSeconds    Int
-  inputTokens      Int      @default(0)
-  outputTokens     Int      @default(0)
-  reasoningTokens  Int      @default(0)
-  cachedTokens     Int      @default(0)
-  totalTokens      Int      @default(0)
+  inputTokens      BigInt   @default(0)
+  outputTokens     BigInt   @default(0)
+  reasoningTokens  BigInt   @default(0)
+  cachedTokens     BigInt   @default(0)
+  totalTokens      BigInt   @default(0)
   primaryModel     String   @default("")
   estimatedCostUsd Float?
   messageCount     Int
@@ -256,11 +256,11 @@ model LeaderboardUserDay {
   id              String   @id @default(cuid())
   userId          String
   statDate        DateTime
-  inputTokens     Int      @default(0)
-  outputTokens    Int      @default(0)
-  reasoningTokens Int      @default(0)
-  cachedTokens    Int      @default(0)
-  totalTokens     Int      @default(0)
+  inputTokens     BigInt   @default(0)
+  outputTokens    BigInt   @default(0)
+  reasoningTokens BigInt   @default(0)
+  cachedTokens    BigInt   @default(0)
+  totalTokens     BigInt   @default(0)
   activeSeconds   Int      @default(0)
   sessions        Int      @default(0)
   messages        Int      @default(0)

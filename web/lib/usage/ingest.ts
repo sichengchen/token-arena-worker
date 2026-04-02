@@ -11,6 +11,7 @@ import {
   resolveOfficialPricingMatch,
 } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
+import { tokenCountToBigInt } from "@/lib/token-counts";
 import type { ingestRequestSchema } from "./contracts";
 
 type IngestPayload = ReturnType<typeof ingestRequestSchema.parse>;
@@ -46,6 +47,18 @@ type NormalizedSessionUsage = {
   primaryModel: string;
   estimatedCostUsd: number | null;
 };
+
+function buildUsageSessionWriteInput(input: NormalizedSessionUsage) {
+  return {
+    inputTokens: tokenCountToBigInt(input.inputTokens),
+    outputTokens: tokenCountToBigInt(input.outputTokens),
+    reasoningTokens: tokenCountToBigInt(input.reasoningTokens),
+    cachedTokens: tokenCountToBigInt(input.cachedTokens),
+    totalTokens: tokenCountToBigInt(input.totalTokens),
+    primaryModel: input.primaryModel,
+    estimatedCostUsd: input.estimatedCostUsd,
+  };
+}
 
 function normalizeSessionUsage(
   session: IngestPayload["sessions"][number],
@@ -218,6 +231,10 @@ export async function upsertSessions(
   await Promise.all(
     input.payload.sessions.map((session) => {
       const normalizedUsage = normalizeSessionUsage(session, catalog);
+      const sessionUsageWrite =
+        normalizedUsage == null
+          ? null
+          : buildUsageSessionWriteInput(normalizedUsage);
 
       return db.usageSession.upsert({
         where: {
@@ -238,17 +255,7 @@ export async function upsertSessions(
           activeSeconds: session.activeSeconds,
           messageCount: session.messageCount,
           userMessageCount: session.userMessageCount,
-          ...(normalizedUsage
-            ? {
-                inputTokens: normalizedUsage.inputTokens,
-                outputTokens: normalizedUsage.outputTokens,
-                reasoningTokens: normalizedUsage.reasoningTokens,
-                cachedTokens: normalizedUsage.cachedTokens,
-                totalTokens: normalizedUsage.totalTokens,
-                primaryModel: normalizedUsage.primaryModel,
-                estimatedCostUsd: normalizedUsage.estimatedCostUsd,
-              }
-            : {}),
+          ...(sessionUsageWrite ?? {}),
         },
         create: {
           userId: input.userId,
@@ -264,13 +271,15 @@ export async function upsertSessions(
           activeSeconds: session.activeSeconds,
           messageCount: session.messageCount,
           userMessageCount: session.userMessageCount,
-          inputTokens: normalizedUsage?.inputTokens ?? 0,
-          outputTokens: normalizedUsage?.outputTokens ?? 0,
-          reasoningTokens: normalizedUsage?.reasoningTokens ?? 0,
-          cachedTokens: normalizedUsage?.cachedTokens ?? 0,
-          totalTokens: normalizedUsage?.totalTokens ?? 0,
-          primaryModel: normalizedUsage?.primaryModel ?? "",
-          estimatedCostUsd: normalizedUsage?.estimatedCostUsd ?? null,
+          ...(sessionUsageWrite ?? {
+            inputTokens: tokenCountToBigInt(0),
+            outputTokens: tokenCountToBigInt(0),
+            reasoningTokens: tokenCountToBigInt(0),
+            cachedTokens: tokenCountToBigInt(0),
+            totalTokens: tokenCountToBigInt(0),
+            primaryModel: "",
+            estimatedCostUsd: null,
+          }),
         },
       });
     }),

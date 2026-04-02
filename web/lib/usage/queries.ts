@@ -5,6 +5,7 @@ import {
   resolveOfficialPricingProvider,
 } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
+import { tokenCountToNumber } from "@/lib/token-counts";
 import {
   getPreviousRange,
   groupByHourOrDay,
@@ -703,11 +704,11 @@ export async function getSessionRows(input: {
     messageCount: session.messageCount,
     userMessageCount: session.userMessageCount,
     estimatedCostUsd: session.estimatedCostUsd,
-    totalTokens: session.totalTokens,
-    inputTokens: session.inputTokens,
-    outputTokens: session.outputTokens,
-    reasoningTokens: session.reasoningTokens,
-    cachedTokens: session.cachedTokens,
+    totalTokens: tokenCountToNumber(session.totalTokens),
+    inputTokens: tokenCountToNumber(session.inputTokens),
+    outputTokens: tokenCountToNumber(session.outputTokens),
+    reasoningTokens: tokenCountToNumber(session.reasoningTokens),
+    cachedTokens: tokenCountToNumber(session.cachedTokens),
     primaryModel: session.primaryModel,
   }));
 }
