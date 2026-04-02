@@ -109,6 +109,14 @@ ALTER TABLE "leaderboard_period_entry" ADD CONSTRAINT "leaderboard_period_entry_
 -- Refresh leaderboard aggregates to Shanghai calendar boundaries and invalidate current snapshots.
 TRUNCATE TABLE "leaderboard_snapshot_entry", "leaderboard_snapshot", "leaderboard_user_day";
 
+-- Daily token aggregates can exceed signed 32-bit integer range during backfill.
+ALTER TABLE "leaderboard_user_day"
+  ALTER COLUMN "inputTokens" TYPE BIGINT,
+  ALTER COLUMN "outputTokens" TYPE BIGINT,
+  ALTER COLUMN "reasoningTokens" TYPE BIGINT,
+  ALTER COLUMN "cachedTokens" TYPE BIGINT,
+  ALTER COLUMN "totalTokens" TYPE BIGINT;
+
 WITH bucket_rows AS (
     SELECT
         "userId",
@@ -116,11 +124,11 @@ WITH bucket_rows AS (
             'UTC',
             date_trunc('day', timezone('Asia/Shanghai', "bucketStart")) AT TIME ZONE 'Asia/Shanghai'
         ) AS "statDate",
-        SUM("inputTokens")::INTEGER AS "inputTokens",
-        SUM("outputTokens")::INTEGER AS "outputTokens",
-        SUM("reasoningTokens")::INTEGER AS "reasoningTokens",
-        SUM("cachedTokens")::INTEGER AS "cachedTokens",
-        SUM("totalTokens")::INTEGER AS "totalTokens"
+        SUM("inputTokens")::BIGINT AS "inputTokens",
+        SUM("outputTokens")::BIGINT AS "outputTokens",
+        SUM("reasoningTokens")::BIGINT AS "reasoningTokens",
+        SUM("cachedTokens")::BIGINT AS "cachedTokens",
+        SUM("totalTokens")::BIGINT AS "totalTokens"
     FROM "UsageBucket"
     GROUP BY "userId", "statDate"
 ),
