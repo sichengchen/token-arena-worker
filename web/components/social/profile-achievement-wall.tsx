@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getAchievementCountBadgeValue } from "@/lib/achievements/catalog";
 import type { ProfileAchievementWallItem } from "@/lib/achievements/profile-wall";
 
 type ProfileAchievementWallProps = {
@@ -33,7 +34,10 @@ export function ProfileAchievementWall({ items }: ProfileAchievementWallProps) {
                     iconKey={item.iconKey}
                     tier={item.tier}
                     size="xs"
-                    count={item.awardCount > 1 ? item.awardCount : 0}
+                    count={getAchievementCountBadgeValue(
+                      item.code,
+                      item.awardCount,
+                    )}
                   />
                 </span>
               </TooltipTrigger>

@@ -20,6 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Link } from "@/i18n/navigation";
+import { getAchievementCountBadgeValue } from "@/lib/achievements/catalog";
 import { formatAchievementProgress } from "@/lib/achievements/format";
 import type { AchievementNotificationData } from "@/lib/achievements/types";
 import { formatTokenCount } from "@/lib/usage/format";
@@ -168,7 +169,10 @@ export function AchievementNotification() {
                       iconKey={achievement.iconKey}
                       tier={achievement.tier}
                       size="sm"
-                      count={achievement.awardCount}
+                      count={getAchievementCountBadgeValue(
+                        achievement.code,
+                        achievement.awardCount,
+                      )}
                     />
                     <div className="min-w-0">
                       <div className="truncate text-sm font-medium text-foreground">

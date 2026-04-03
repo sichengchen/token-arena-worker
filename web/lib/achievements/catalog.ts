@@ -428,3 +428,27 @@ export const achievementDefinitionMap = new Map<
   AchievementCode,
   AchievementDefinition
 >(achievementDefinitions.map((definition) => [definition.code, definition]));
+
+const repeatableAchievementCodes = new Set<AchievementCode>([
+  "streak_3",
+  "streak_7",
+  "streak_14",
+  "streak_30",
+  "leaderboard_day_top50",
+  "leaderboard_week_top50",
+  "leaderboard_month_top50",
+  "leaderboard_all_time_top100",
+  "leaderboard_all_time_top10",
+  "leaderboard_all_time_first",
+]);
+
+export function getAchievementCountBadgeValue(
+  code: AchievementCode,
+  awardCount: number,
+) {
+  if (!repeatableAchievementCodes.has(code) || awardCount <= 1) {
+    return 0;
+  }
+
+  return awardCount;
+}

@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { getAchievementCountBadgeValue } from "@/lib/achievements/catalog";
 import type { AchievementStatus } from "@/lib/achievements/types";
 import { AchievementBadge } from "./achievement-badge";
 
@@ -29,7 +30,10 @@ export function AchievementCard({
           iconKey={achievement.iconKey}
           tier={achievement.tier}
           locked={!achievement.unlocked}
-          count={achievement.awardCount}
+          count={getAchievementCountBadgeValue(
+            achievement.code,
+            achievement.awardCount,
+          )}
         />
         <div className="min-w-0 space-y-1.5">
           <h3 className="w-full max-w-full break-words text-sm font-semibold leading-snug tracking-tight text-foreground">
