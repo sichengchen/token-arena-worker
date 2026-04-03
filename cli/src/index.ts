@@ -5,6 +5,10 @@ import "./parsers/gemini-cli.js";
 import "./parsers/copilot-cli.js";
 import "./parsers/opencode.js";
 import "./parsers/openclaw.js";
+import "./parsers/qwen-code.js";
+import "./parsers/kimi-code.js";
+import "./parsers/droid.js";
+import "./parsers/pi-coding-agent.js";
 
 import { createCli } from "./cli.js";
 import { isMainModule } from "./infrastructure/runtime/main-module.js";
