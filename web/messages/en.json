@@ -565,6 +565,23 @@
         "linuxdo": "Open Linux.do profile",
         "watcha": "Open Watcha profile"
       },
+      "wechatShare": {
+        "button": "Share to WeChat",
+        "description": "Send your public profile link to PC WeChat.",
+        "sendToFriend": "Send to chat",
+        "shareToTimeline": "Share to Moments",
+        "copyLink": "Copy profile link",
+        "copySuccess": "Profile link copied.",
+        "copyFailed": "Could not copy the link. Please copy it from the address bar.",
+        "friendSuccess": "WeChat chat share started.",
+        "timelineSuccess": "WeChat Moments share started.",
+        "failed": "WeChat share failed. Please try again.",
+        "desktopOnly": "WeChat sharing only works in a signed-in PC WeChat desktop environment; copying the link instead.",
+        "httpsRequired": "WeChat sharing requires an HTTPS page.",
+        "profilePrivate": "Turn on your public profile in settings before sharing.",
+        "rateLimited": "Please wait a moment before trying again.",
+        "imageAlt": "Token Arena profile share image"
+      },
       "copyHeatmapMarkdown": "Copy Markdown",
       "copiedHeatmapMarkdown": "Copied"
     },

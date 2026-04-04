@@ -8,6 +8,7 @@ import { ThemeScript } from "@/components/providers/theme-script";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { defaultLocale } from "@/lib/i18n";
+import { getAppOrigin } from "@/lib/site-url";
 import { getThemeMode, themeCookieName } from "@/lib/theme";
 import "./globals.css";
 
@@ -23,6 +24,9 @@ export default async function RootLayout({
 }>) {
   const gaSecret = process.env.GA_SECRET;
   const clarityId = process.env.CLARITY_ID?.trim();
+  const wechatShareEnabled = Boolean(
+    process.env.WECHAT_OPEN_APP_ID?.trim() && getAppOrigin(),
+  );
   const cookieStore = await cookies();
   const locale =
     (await getLocale().catch(() => defaultLocale)) ?? defaultLocale;
@@ -49,6 +53,12 @@ gtag('config', '${gaSecret}');`}
           </>
         ) : null}
         {clarityId ? <ClarityInit projectId={clarityId} /> : null}
+        {wechatShareEnabled ? (
+          <Script
+            src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxopensdk.js"
+            strategy="afterInteractive"
+          />
+        ) : null}
         <ThemeProvider initialThemeMode={initialThemeMode}>
           <TooltipProvider>
             {children}

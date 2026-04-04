@@ -9,13 +9,14 @@ import { ProfileHeatmap } from "@/components/social/profile-heatmap";
 import { ProfileHeatmapMarkdownButton } from "@/components/social/profile-heatmap-markdown-button";
 import { ProfileLinkedIdentityLink } from "@/components/social/profile-linked-identity";
 import { ProfileTopList } from "@/components/social/profile-top-list";
+import { ProfileWechatShareButton } from "@/components/social/profile-wechat-share-button";
 import { SocialShell } from "@/components/social/social-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 import { getOptionalSession } from "@/lib/session";
-import { getAppOrigin } from "@/lib/site-url";
+import { buildAbsoluteUrl, getAppOrigin } from "@/lib/site-url";
 import { buildActivitySvgUrl } from "@/lib/social/heatmap-svg";
 import { getPublicProfilePageData } from "@/lib/social/queries";
 import {
@@ -23,6 +24,7 @@ import {
   formatTokenCount,
   formatUsdAmount,
 } from "@/lib/usage/format";
+import { isWechatShareConfigured } from "@/lib/wechat/share-server";
 
 type PublicProfilePageProps = {
   params: Promise<{
@@ -45,10 +47,48 @@ function getInitial(value: string) {
 export async function generateMetadata({
   params,
 }: PublicProfilePageProps): Promise<Metadata> {
-  const { username } = await params;
+  const { locale, username } = await params;
+  const t = await getTranslations({ locale, namespace: "social.profile" });
+  const profile = await getPublicProfilePageData({ username });
+  const description =
+    profile?.bio?.trim() ||
+    (locale === "zh"
+      ? "查看 ta 的 AI 使用数据与活跃记录"
+      : "See their AI usage stats and activity on Token Arena.");
+  const pageUrl = buildAbsoluteUrl(
+    `/${locale}/u/${encodeURIComponent(username)}`,
+  );
+  const imageUrl = buildAbsoluteUrl("/logo_green.svg");
 
   return {
     title: `@${username} | Token Arena`,
+    description,
+    openGraph: pageUrl
+      ? {
+          title: `@${username} | Token Arena`,
+          description,
+          url: pageUrl,
+          siteName: "Token Arena",
+          locale,
+          type: "profile",
+          images: imageUrl
+            ? [
+                {
+                  url: imageUrl,
+                  alt: t("wechatShare.imageAlt"),
+                },
+              ]
+            : undefined,
+        }
+      : undefined,
+    twitter: imageUrl
+      ? {
+          card: "summary_large_image",
+          title: `@${username} | Token Arena`,
+          description,
+          images: [imageUrl],
+        }
+      : undefined,
   };
 }
 
@@ -67,6 +107,7 @@ export default async function PublicProfilePage({
     notFound();
   }
 
+  const wechatShareEnabled = isWechatShareConfigured();
   const baseUrl = getAppOrigin() ?? "";
   const compactSvgUrl =
     profile.isSelf && profile.publicProfileEnabled && baseUrl
@@ -159,7 +200,19 @@ export default async function PublicProfilePage({
                 >
                   <Link href="/settings/account">{t("editProfile")}</Link>
                 </Button>
-              ) : (
+              ) : null}
+
+              {profile.isSelf &&
+              profile.publicProfileEnabled &&
+              wechatShareEnabled ? (
+                <ProfileWechatShareButton
+                  shareUrl={
+                    buildAbsoluteUrl(
+                      `/${locale}/u/${encodeURIComponent(profile.username)}`,
+                    ) ?? `/${locale}/u/${encodeURIComponent(profile.username)}`
+                  }
+                />
+              ) : !profile.isSelf ? (
                 <ProfileFollowAction
                   locale={locale}
                   username={profile.username}
@@ -168,7 +221,7 @@ export default async function PublicProfilePage({
                   isAuthenticated={Boolean(viewer)}
                   canFollow={profile.publicProfileEnabled}
                 />
-              )}
+              ) : null}
 
               <div className="flex flex-wrap items-center gap-x-1.5 text-sm">
                 <Users
