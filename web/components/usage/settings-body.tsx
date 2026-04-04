@@ -37,7 +37,6 @@ export type SettingsBodyProps = {
   initialName?: string;
   initialUsername?: string;
   requireUsernameSetup?: boolean;
-  usernameAutoAdjusted?: boolean;
   initialTimezone: string;
   initialProjectMode: ProjectMode;
   initialPublicProfileEnabled: boolean;
@@ -65,7 +64,6 @@ export function SettingsBody({
   initialName = "",
   initialUsername = "",
   requireUsernameSetup = false,
-  usernameAutoAdjusted = false,
   initialTimezone,
   initialProjectMode,
   initialPublicProfileEnabled,
@@ -266,7 +264,6 @@ export function SettingsBody({
                 initialUsername={initialUsername}
                 initialBio={preferences.bio}
                 requireUsernameSetup={requireUsernameSetup}
-                usernameAutoAdjusted={usernameAutoAdjusted}
                 preferenceSnapshot={preferenceSnapshot}
               />
             ) : null}

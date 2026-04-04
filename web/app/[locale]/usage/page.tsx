@@ -166,6 +166,7 @@ export default async function UsagePage({
         name: session.user.name,
         image: session.user.image,
         username: session.user.username,
+        usernameAutoAdjusted: session.user.usernameAutoAdjusted,
       }}
     >
       <UsagePageShell>

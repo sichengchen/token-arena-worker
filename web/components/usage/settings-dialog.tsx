@@ -21,7 +21,6 @@ type SettingsDialogProps = {
   initialName?: string;
   initialUsername?: string;
   requireUsernameSetup?: boolean;
-  usernameAutoAdjusted?: boolean;
   initialTimezone: string;
   initialProjectMode: ProjectMode;
   initialPublicProfileEnabled: boolean;
@@ -47,7 +46,6 @@ export function SettingsDialog({
   initialName = "",
   initialUsername = "",
   requireUsernameSetup = false,
-  usernameAutoAdjusted = false,
   initialTimezone,
   initialProjectMode,
   initialPublicProfileEnabled,
@@ -108,7 +106,6 @@ export function SettingsDialog({
             initialName={initialName}
             initialUsername={initialUsername}
             requireUsernameSetup={requireUsernameSetup}
-            usernameAutoAdjusted={usernameAutoAdjusted}
             initialTimezone={initialTimezone}
             initialProjectMode={initialProjectMode}
             initialPublicProfileEnabled={initialPublicProfileEnabled}

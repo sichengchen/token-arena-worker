@@ -132,6 +132,7 @@ export default async function PublicProfilePage({
               name: viewer.user.name,
               image: viewer.user.image,
               username: viewer.user.username,
+              usernameAutoAdjusted: viewer.user.usernameAutoAdjusted,
             }
           : null
       }

@@ -48,6 +48,7 @@ export default async function AchievementsPage({
         name: session.user.name,
         image: session.user.image,
         username: session.user.username,
+        usernameAutoAdjusted: session.user.usernameAutoAdjusted,
       }}
     >
       <div className="min-w-0 text-foreground">

@@ -30,9 +30,7 @@ export function UsernameAutoAdjustedToast({
       return;
     }
 
-    toast.info(t("autoAdjustedToastTitle"), {
-      description: t("autoAdjustedToastDescription", { username }),
-    });
+    toast.info(t("autoAdjustedNotice", { username }));
     window.sessionStorage.setItem(storageKey, "1");
   }, [enabled, t, username]);
 

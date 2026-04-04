@@ -9,6 +9,7 @@ type SocialShellProps = {
     name?: string | null;
     image?: string | null;
     username?: string | null;
+    usernameAutoAdjusted?: boolean | null;
   } | null;
   children: ReactNode;
 };

@@ -11,9 +11,9 @@ const { toastInfo } = vi.hoisted(() => ({
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string, values?: Record<string, string>) =>
-    key === "autoAdjustedToastTitle"
-      ? "Username updated automatically"
-      : `Current username: @${values?.username ?? ""}`,
+    key === "autoAdjustedNotice"
+      ? `This username was already taken, so we changed it to @${values?.username ?? ""}. You can keep it or update it here.`
+      : key,
 }));
 
 vi.mock("sonner", () => ({
@@ -61,9 +61,9 @@ describe("UsernameAutoAdjustedToast", () => {
     });
 
     expect(toastInfo).toHaveBeenCalledTimes(1);
-    expect(toastInfo).toHaveBeenCalledWith("Username updated automatically", {
-      description: "Current username: @alice.abcdef",
-    });
+    expect(toastInfo).toHaveBeenCalledWith(
+      "This username was already taken, so we changed it to @alice.abcdef. You can keep it or update it here.",
+    );
 
     act(() => {
       root.render(

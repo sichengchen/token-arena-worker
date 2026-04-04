@@ -65,7 +65,6 @@ export default async function SettingsSectionPage({
     initialName: session.user.name,
     initialUsername: session.user.username,
     requireUsernameSetup: session.user.usernameNeedsSetup ?? false,
-    usernameAutoAdjusted: session.user.usernameAutoAdjusted ?? false,
     initialTimezone: preference.timezone,
     initialProjectMode: preference.projectMode,
     initialPublicProfileEnabled: preference.publicProfileEnabled,
@@ -98,6 +97,7 @@ export default async function SettingsSectionPage({
         name: session.user.name,
         image: session.user.image,
         username: session.user.username,
+        usernameAutoAdjusted: session.user.usernameAutoAdjusted,
       }}
     >
       <SettingsBody

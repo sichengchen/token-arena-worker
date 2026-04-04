@@ -268,6 +268,7 @@ export default async function PeoplePage({
               name: viewer.user.name,
               image: viewer.user.image,
               username: viewer.user.username,
+              usernameAutoAdjusted: viewer.user.usernameAutoAdjusted,
             }
           : null
       }

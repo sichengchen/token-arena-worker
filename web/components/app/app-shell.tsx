@@ -8,6 +8,7 @@ import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { AccountMenu } from "@/components/usage/account-menu";
+import { UsernameAutoAdjustedToast } from "@/components/usage/username-auto-adjusted-toast";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ type AppShellProps = {
     name?: string | null;
     image?: string | null;
     username?: string | null;
+    usernameAutoAdjusted?: boolean | null;
   } | null;
   mainClassName?: string;
   children: ReactNode;
@@ -47,6 +49,13 @@ export async function AppShell({
     <main
       className={cn("flex min-h-screen flex-col bg-muted/30", mainClassName)}
     >
+      {viewer?.username ? (
+        <UsernameAutoAdjustedToast
+          enabled={viewer.usernameAutoAdjusted ?? false}
+          username={viewer.username}
+        />
+      ) : null}
+
       <header className="border-b border-border/60 bg-background/95 supports-[backdrop-filter]:bg-background/85">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2">
