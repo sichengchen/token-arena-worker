@@ -86,6 +86,16 @@ export type ProfileHeatmapDay = {
   level: 0 | 1 | 2 | 3 | 4;
 };
 
+export type PublicProfileActivityShareData = {
+  username: string;
+  timezone: string;
+  heatmap: ProfileHeatmapDay[];
+  summary: {
+    activeDays: number;
+    activeSeconds: number;
+  };
+};
+
 export type PublicProfilePageData = {
   id: string;
   name: string;
@@ -447,6 +457,73 @@ function normalizeUsageBucketTokenFields<
     ...(bucket.cachedTokens === undefined
       ? {}
       : { cachedTokens: tokenCountToNumber(bucket.cachedTokens) }),
+  };
+}
+
+export async function getPublicProfileActivityShareData(input: {
+  username: string;
+}): Promise<PublicProfileActivityShareData | null> {
+  const user = await prisma.user.findUnique({
+    where: {
+      username: normalizeUsername(input.username),
+    },
+    select: profileUserSelect,
+  });
+
+  if (!user || !user.usagePreference?.publicProfileEnabled) {
+    return null;
+  }
+
+  const timezone = user.usagePreference?.timezone ?? "UTC";
+  const range365 = createDailyRange(timezone, 365);
+  const [sessions365, rawBuckets365] = await Promise.all([
+    prisma.usageSession.findMany({
+      where: {
+        userId: user.id,
+        firstMessageAt: {
+          gte: range365.from,
+          lte: range365.to,
+        },
+      },
+      select: {
+        firstMessageAt: true,
+        activeSeconds: true,
+      },
+      orderBy: { firstMessageAt: "asc" },
+    }),
+    prisma.usageBucket.findMany({
+      where: {
+        userId: user.id,
+        bucketStart: {
+          gte: range365.from,
+          lte: range365.to,
+        },
+      },
+      select: {
+        bucketStart: true,
+        totalTokens: true,
+      },
+      orderBy: { bucketStart: "asc" },
+    }),
+  ]);
+
+  const heatmap = buildHeatmap(
+    timezone,
+    sessions365,
+    rawBuckets365.map(normalizeUsageBucketTokenFields),
+  );
+
+  return {
+    username: user.username,
+    timezone,
+    heatmap,
+    summary: {
+      activeDays: heatmap.filter((day) => day.activeSeconds > 0).length,
+      activeSeconds: sessions365.reduce(
+        (sum, session) => sum + session.activeSeconds,
+        0,
+      ),
+    },
   };
 }
 

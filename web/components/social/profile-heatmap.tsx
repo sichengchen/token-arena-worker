@@ -159,10 +159,11 @@ export function ProfileHeatmap({
               gridTemplateColumns: weeksGridTemplate,
             }}
           >
-            {monthLabels.map((item) => (
+            {monthLabels.map((item, monthIndex) => (
               <div
-                key={item.key}
+                key={`${item.key}-m-${monthIndex}`}
                 className={cn(styles.monthLabel, "text-muted-foreground")}
+                suppressHydrationWarning
               >
                 {item.label}
               </div>

@@ -66,6 +66,13 @@ const mocks = vi.hoisted(() => ({
   ShareBadgesDialog: vi.fn(() =>
     React.createElement("div", { "data-slot": "share-badges-dialog" }),
   ),
+  ProfileHeatmapMarkdownButton: vi.fn(({ markdown }: { markdown: string }) =>
+    React.createElement("button", {
+      type: "button",
+      "data-slot": "profile-heatmap-markdown-button",
+      "data-markdown": markdown,
+    }),
+  ),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -95,6 +102,10 @@ vi.mock("@/components/social/profile-heatmap", () => ({
 
 vi.mock("@/components/social/share-badges-dialog", () => ({
   ShareBadgesDialog: mocks.ShareBadgesDialog,
+}));
+
+vi.mock("@/components/social/profile-heatmap-markdown-button", () => ({
+  ProfileHeatmapMarkdownButton: mocks.ProfileHeatmapMarkdownButton,
 }));
 
 vi.mock("@/lib/social/queries", () => ({
@@ -283,6 +294,14 @@ describe("UsagePage", () => {
       undefined,
     );
     expect(markup).toContain('data-slot="profile-heatmap"');
+    expect(mocks.ProfileHeatmapMarkdownButton).toHaveBeenCalledWith(
+      expect.objectContaining({
+        markdown:
+          "![TokenArena Activity](https://token.poco-ai.com/en/u/test_user/activity.svg)",
+      }),
+      undefined,
+    );
+    expect(markup).toContain('data-slot="profile-heatmap-markdown-button"');
     expect(markup).toContain('data-slot="share-badges-dialog"');
     expect(markup).toContain('data-slot="token-trend-card"');
     expect(markup).toContain('data-slot="sessions-section"');

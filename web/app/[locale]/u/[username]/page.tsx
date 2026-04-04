@@ -6,6 +6,7 @@ import { ProfileAchievementWall } from "@/components/social/profile-achievement-
 import { ProfileArenaLevelBar } from "@/components/social/profile-arena-level";
 import { ProfileFollowAction } from "@/components/social/profile-follow-action";
 import { ProfileHeatmap } from "@/components/social/profile-heatmap";
+import { ProfileHeatmapMarkdownButton } from "@/components/social/profile-heatmap-markdown-button";
 import { ProfileLinkedIdentityLink } from "@/components/social/profile-linked-identity";
 import { ProfileTopList } from "@/components/social/profile-top-list";
 import { SocialShell } from "@/components/social/social-shell";
@@ -14,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 import { getOptionalSession } from "@/lib/session";
+import { getAppOrigin } from "@/lib/site-url";
+import { buildActivitySvgUrl } from "@/lib/social/heatmap-svg";
 import { getPublicProfilePageData } from "@/lib/social/queries";
 import {
   formatDuration,
@@ -64,7 +67,18 @@ export default async function PublicProfilePage({
     notFound();
   }
 
-  const hasActivity = profile.heatmap.some((day) => day.activeSeconds > 0);
+  const baseUrl = getAppOrigin() ?? "";
+  const compactSvgUrl =
+    profile.isSelf && profile.publicProfileEnabled && baseUrl
+      ? buildActivitySvgUrl({
+          baseUrl,
+          locale,
+          username: profile.username,
+        })
+      : null;
+  const heatmapMarkdown = compactSvgUrl
+    ? `![TokenArena Activity](${compactSvgUrl})`
+    : null;
 
   return (
     <SocialShell
@@ -197,19 +211,13 @@ export default async function PublicProfilePage({
                   {t("activityTitle")}
                 </CardTitle>
               </div>
-              <div className="flex shrink-0 items-baseline gap-1 text-sm">
-                <span className="font-semibold tabular-nums text-foreground">
-                  {profile.overview.activeDays.toLocaleString(locale)}
-                </span>
-                <span className="text-muted-foreground">{t("activeDays")}</span>
-              </div>
+              {heatmapMarkdown ? (
+                <div className="shrink-0">
+                  <ProfileHeatmapMarkdownButton markdown={heatmapMarkdown} />
+                </div>
+              ) : null}
             </header>
             <CardContent className="flex flex-col gap-4 px-4 pb-4 pt-4">
-              {hasActivity ? null : (
-                <p className="text-sm text-muted-foreground">
-                  {t("noActivity")}
-                </p>
-              )}
               <ProfileHeatmap
                 locale={locale}
                 days={profile.heatmap}

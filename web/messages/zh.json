@@ -555,7 +555,6 @@
       "privateBannerTitle": "你的主页当前未公开",
       "privateBannerDescription": "你可以在仪表盘的设置中开启公开主页，让其他人发现并关注你。",
       "goToDashboard": "打开仪表盘",
-      "noActivity": "还没有公开活动数据。",
       "noTopTools": "还没有工具使用记录。",
       "noTopModels": "还没有模型使用记录。",
       "less": "少",
@@ -565,7 +564,9 @@
         "github": "在 GitHub 上查看主页",
         "linuxdo": "在 Linux.do 上查看主页",
         "watcha": "在观猹（Watcha）上查看主页"
-      }
+      },
+      "copyHeatmapMarkdown": "复制 Markdown",
+      "copiedHeatmapMarkdown": "已复制"
     },
     "people": {
       "title": "用户",

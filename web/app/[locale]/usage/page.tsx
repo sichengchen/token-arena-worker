@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { AppShell } from "@/components/app/app-shell";
 import { ProfileHeatmap } from "@/components/social/profile-heatmap";
+import { ProfileHeatmapMarkdownButton } from "@/components/social/profile-heatmap-markdown-button";
 import { ShareBadgesDialog } from "@/components/social/share-badges-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import { Link } from "@/i18n/navigation";
 import { redirectIfUsernameSetupNeeded } from "@/lib/account-setup";
 import { getSessionOrRedirect } from "@/lib/session";
 import { getAppOrigin } from "@/lib/site-url";
+import { buildActivitySvgUrl } from "@/lib/social/heatmap-svg";
 import { getActivityHeatmap365 } from "@/lib/social/queries";
 import { dashboardQuerySchema } from "@/lib/usage/contracts";
 import { resolveDashboardRange } from "@/lib/usage/date-range";
@@ -136,9 +138,6 @@ export default async function UsagePage({
 
   const hasData =
     overview.totalTokens.current > 0 || overview.sessions.current > 0;
-  const hasActivityHeatmap = activityHeatmap.some(
-    (day) => day.activeSeconds > 0,
-  );
   const lastSyncedText = lastSyncedAt
     ? t("lastSynced", {
         value: formatDateTime(lastSyncedAt, preference.timezone, locale),
@@ -146,6 +145,17 @@ export default async function UsagePage({
     : t("noSyncYet");
   const hasKeys = filterOptions.apiKeys.length > 0;
   const appUrl = getAppOrigin() ?? "http://localhost:3000";
+  const compactSvgUrl =
+    preference.publicProfileEnabled && session.user.username
+      ? buildActivitySvgUrl({
+          baseUrl: appUrl,
+          locale,
+          username: session.user.username,
+        })
+      : null;
+  const heatmapMarkdown = compactSvgUrl
+    ? `![TokenArena Activity](${compactSvgUrl})`
+    : null;
 
   return (
     <AppShell
@@ -161,15 +171,17 @@ export default async function UsagePage({
       <UsagePageShell>
         <div className="space-y-4">
           <Card className="bg-card shadow-sm ring-1 ring-border/60">
-            <CardHeader className="border-b border-border/50 pb-3 sm:px-6">
-              <CardTitle>{tProfile("activityTitle")}</CardTitle>
+            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border/50 pb-3 sm:px-6">
+              <div className="min-w-0">
+                <CardTitle>{tProfile("activityTitle")}</CardTitle>
+              </div>
+              {heatmapMarkdown ? (
+                <div className="shrink-0">
+                  <ProfileHeatmapMarkdownButton markdown={heatmapMarkdown} />
+                </div>
+              ) : null}
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-center gap-4 pt-4 sm:px-6">
-              {hasActivityHeatmap ? null : (
-                <p className="text-sm text-muted-foreground">
-                  {tProfile("noActivity")}
-                </p>
-              )}
               <ProfileHeatmap
                 locale={locale}
                 days={activityHeatmap}

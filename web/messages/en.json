@@ -555,7 +555,6 @@
       "privateBannerTitle": "Your profile is private",
       "privateBannerDescription": "Enable Public profile in Settings on the dashboard to let other people discover this page.",
       "goToDashboard": "Open dashboard",
-      "noActivity": "No public activity yet.",
       "noTopTools": "No tool usage yet.",
       "noTopModels": "No model usage yet.",
       "less": "Less",
@@ -565,7 +564,9 @@
         "github": "Open GitHub profile",
         "linuxdo": "Open Linux.do profile",
         "watcha": "Open Watcha profile"
-      }
+      },
+      "copyHeatmapMarkdown": "Copy Markdown",
+      "copiedHeatmapMarkdown": "Copied"
     },
     "people": {
       "title": "People",
