@@ -3,7 +3,7 @@ import { handleConfig } from "./commands/config";
 import { runDaemon } from "./commands/daemon";
 import { runHome } from "./commands/home";
 import { runInit } from "./commands/init";
-import { runInstallService } from "./commands/install-service";
+import { runInstallService } from "./commands/service";
 import { runStatus } from "./commands/status";
 import { runSyncCommand } from "./commands/sync";
 import { runUninstall } from "./commands/uninstall";
@@ -63,9 +63,9 @@ export function createCli(): Command {
       await runDaemon(opts);
     });
 
-  // install-service command
+  // service command
   program
-    .command("install-service [action]")
+    .command("service [action]")
     .description(
       "Manage systemd user service (setup|start|stop|restart|status|uninstall)",
     )

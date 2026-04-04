@@ -357,7 +357,7 @@ async function setupSystemdService(): Promise<void> {
     return;
   }
 
-  const { runInstallService } = await import("./install-service");
+  const { runInstallService } = await import("./service");
   await runInstallService({ action: "setup", skipPrompt: true });
 }
 

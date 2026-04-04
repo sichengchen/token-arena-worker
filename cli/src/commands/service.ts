@@ -115,7 +115,7 @@ async function startService(): Promise<void> {
   if (!existsSync(serviceFile)) {
     logger.info(
       formatBullet(
-        "服务文件不存在。请先运行 'tokenarena install-service setup'。",
+        "服务文件不存在。请先运行 'tokenarena service setup'。",
         "warning",
       ),
     );
@@ -137,7 +137,7 @@ async function stopService(): Promise<void> {
   if (!existsSync(serviceFile)) {
     logger.info(
       formatBullet(
-        "服务文件不存在。请先运行 'tokenarena install-service setup'。",
+        "服务文件不存在。请先运行 'tokenarena service setup'。",
         "warning",
       ),
     );
@@ -159,7 +159,7 @@ async function restartService(): Promise<void> {
   if (!existsSync(serviceFile)) {
     logger.info(
       formatBullet(
-        "服务文件不存在。请先运行 'tokenarena install-service setup'。",
+        "服务文件不存在。请先运行 'tokenarena service setup'。",
         "warning",
       ),
     );
@@ -181,7 +181,7 @@ async function statusService(): Promise<void> {
   if (!existsSync(serviceFile)) {
     logger.info(
       formatBullet(
-        "服务文件不存在。请先运行 'tokenarena install-service setup'。",
+        "服务文件不存在。请先运行 'tokenarena service setup'。",
         "warning",
       ),
     );
