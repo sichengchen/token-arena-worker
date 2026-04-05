@@ -2,11 +2,6 @@ import type { ProfileAchievementWallItem } from "@/lib/achievements/profile-wall
 import { getProfileAchievementWall } from "@/lib/achievements/profile-wall";
 import { getAchievementArenaSummary } from "@/lib/achievements/queries";
 import { normalizeUsername } from "@/lib/auth-username";
-import { getPricingCatalog } from "@/lib/pricing/catalog";
-import {
-  estimateCostUsd,
-  resolveOfficialPricingMatch,
-} from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import {
   LINKED_PROFILE_PROVIDER_IDS,
@@ -407,30 +402,6 @@ function buildTopModels(
     .slice(0, 5);
 }
 
-function estimateBucketCostUsd(
-  bucket: {
-    model: string;
-    inputTokens: number;
-    outputTokens: number;
-    reasoningTokens: number;
-    cachedTokens: number;
-  },
-  catalog: Awaited<ReturnType<typeof getPricingCatalog>>,
-) {
-  const match = resolveOfficialPricingMatch(catalog, bucket.model);
-  const estimate = estimateCostUsd(
-    {
-      inputTokens: bucket.inputTokens,
-      outputTokens: bucket.outputTokens,
-      reasoningTokens: bucket.reasoningTokens,
-      cachedTokens: bucket.cachedTokens,
-    },
-    match?.cost,
-  );
-
-  return estimate?.totalUsd ?? 0;
-}
-
 function normalizeUsageBucketTokenFields<
   T extends {
     totalTokens?: number | bigint | null;
@@ -555,17 +526,14 @@ export async function getPublicProfilePageData(input: {
   const range30 = createDailyRange(timezone, 30);
 
   const [
-    catalog,
     relationFlags,
     linkedAccounts,
     sessions365,
     rawBuckets365,
-    sessions30,
     rawBuckets30,
     arenaSummary,
     achievementWall,
   ] = await Promise.all([
-    getPricingCatalog(),
     getRelationFlags(input.viewerUserId, user.id),
     prisma.account.findMany({
       where: {
@@ -601,18 +569,6 @@ export async function getPublicProfilePageData(input: {
         totalTokens: true,
       },
       orderBy: { bucketStart: "asc" },
-    }),
-    prisma.usageSession.findMany({
-      where: {
-        userId: user.id,
-        firstMessageAt: {
-          gte: range30.from,
-          lte: range30.to,
-        },
-      },
-      select: {
-        activeSeconds: true,
-      },
     }),
     prisma.usageBucket.findMany({
       where: {
@@ -655,9 +611,6 @@ export async function getPublicProfilePageData(input: {
   }
 
   const heatmap = buildHeatmap(timezone, sessions365, buckets365);
-  const activeDays = heatmap
-    .slice(-30)
-    .filter((day) => day.activeSeconds > 0).length;
 
   return {
     id: user.id,
@@ -677,20 +630,11 @@ export async function getPublicProfilePageData(input: {
     overview: {
       arenaScore: arenaSummary.score,
       arenaLevel: arenaSummary.level,
-      totalTokens: buckets30.reduce(
-        (sum, bucket) => sum + bucket.totalTokens,
-        0,
-      ),
-      estimatedCostUsd: buckets30.reduce(
-        (sum, bucket) => sum + estimateBucketCostUsd(bucket, catalog),
-        0,
-      ),
-      activeSeconds: sessions30.reduce(
-        (sum, session) => sum + session.activeSeconds,
-        0,
-      ),
-      sessions: sessions30.length,
-      activeDays,
+      totalTokens: arenaSummary.totalTokens,
+      estimatedCostUsd: arenaSummary.totalEstimatedCostUsd,
+      activeSeconds: arenaSummary.totalActiveSeconds,
+      sessions: arenaSummary.totalSessions,
+      activeDays: arenaSummary.totalActiveDays,
     },
     heatmap,
     topTools: buildTopTools(buckets30),

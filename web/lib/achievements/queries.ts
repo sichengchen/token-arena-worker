@@ -635,6 +635,11 @@ export async function getAchievementsPageData(
 export async function getAchievementArenaSummary(userId: string): Promise<{
   score: number;
   level: number;
+  totalTokens: number;
+  totalEstimatedCostUsd: number;
+  totalActiveSeconds: number;
+  totalSessions: number;
+  totalActiveDays: number;
 }> {
   await finalizePendingLeaderboardPeriods();
   const metrics = await loadAchievementMetrics(userId);
@@ -653,6 +658,11 @@ export async function getAchievementArenaSummary(userId: string): Promise<{
   return {
     score: pageData.summary.score,
     level: pageData.summary.level,
+    totalTokens: metrics.totalTokens,
+    totalEstimatedCostUsd: metrics.totalEstimatedCostUsd,
+    totalActiveSeconds: metrics.totalActiveSeconds,
+    totalSessions: metrics.totalSessions,
+    totalActiveDays: pageData.summary.totalActiveDays,
   };
 }
 
