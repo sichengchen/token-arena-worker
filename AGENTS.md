@@ -22,6 +22,8 @@ Use TypeScript + ESM throughout. Biome enforces 2-space indentation, double quot
 
 There is no committed test runner yet. Until one is added, treat `pnpm check` and `pnpm build` as required gates. For CLI changes, include a manual smoke test such as `pnpm --filter ./cli dev -- status` or `pnpm --filter ./cli dev -- --help`. When adding automated tests, place `*.test.ts` or `*.test.tsx` beside the code they cover and add the matching workspace script in the same PR.
 
+If there are any new imported environment variables, add them to the `.env.example`, `docker-compose.yml` and `README.md` files.
+
 ## Commit & Pull Request Guidelines
 
 Follow the Conventional Commit style used in history: `feat: ...`, `feat(cli): ...`, `chore(web): ...`. Keep scopes tied to the workspace you changed. PRs should include a short summary, touched areas (`cli`, `web`, or both), validation commands, linked issues, and screenshots for UI updates.
