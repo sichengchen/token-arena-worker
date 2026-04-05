@@ -93,12 +93,11 @@ docker compose down -v           # 停止并删除数据
 
 ```bash
 pnpm install
-pnpm dev:web    # 启动 Web 仪表盘
-pnpm dev:cli    # 启动 CLI 工具
 pnpm migrate    # 迁移数据库
-pnpm --filter ./cli dev -- init # 测试初始化 CLI
-node cli/dist/index.js init
 pnpm db:seed # 生成一些 mock user 数据，用于开发
+pnpm dev:web    # 启动 Web 仪表盘
+pnpm build:cli    # 启动 CLI 工具
+TOKEN_ARENA_API_URL=http://localhost:3000 node cli/dist/index.js init
 ```
 
 Docker Compose 启动时，根目录 `.env` 里的 `DATABASE_URL` 应使用 `db` 作为主机名，例如：
