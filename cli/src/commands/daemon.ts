@@ -21,6 +21,11 @@ function sleep(ms: number): Promise<void> {
 
 export interface DaemonOptions {
   interval?: number;
+  service?: boolean;
+}
+
+export function getDaemonExitCode(opts: DaemonOptions = {}): number {
+  return opts.service ? 0 : 1;
 }
 
 export async function runDaemon(opts: DaemonOptions = {}): Promise<void> {
@@ -45,14 +50,18 @@ export async function runDaemon(opts: DaemonOptions = {}): Promise<void> {
       return;
     }
 
-    logger.error("Not configured. Run `tokenarena init` first.");
-    process.exit(1);
+    const message = opts.service
+      ? "Not configured. Exiting service mode."
+      : "Not configured. Run `tokenarena init` first.";
+    logger.error(message);
+    process.exit(getDaemonExitCode(opts));
   }
 
   const interval = opts.interval || config.syncInterval || DEFAULT_INTERVAL;
   const intervalMin = Math.round(interval / 60000);
+  const stopHint = opts.service ? "service mode" : "Ctrl+C to stop";
 
-  log(`Daemon started (sync every ${intervalMin}m, Ctrl+C to stop)`);
+  log(`Daemon started (sync every ${intervalMin}m, ${stopHint})`);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -64,8 +73,11 @@ export async function runDaemon(opts: DaemonOptions = {}): Promise<void> {
       });
     } catch (err) {
       if ((err as Error).message === "UNAUTHORIZED") {
-        log("API key invalid. Exiting.");
-        process.exit(1);
+        const message = opts.service
+          ? "API key invalid. Exiting service mode."
+          : "API key invalid. Exiting.";
+        log(message);
+        process.exit(getDaemonExitCode(opts));
       }
       log(`Sync error: ${(err as Error).message}`);
     }

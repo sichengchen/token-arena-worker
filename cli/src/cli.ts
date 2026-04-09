@@ -3,7 +3,7 @@ import { handleConfig } from "./commands/config";
 import { runDaemon } from "./commands/daemon";
 import { runHome } from "./commands/home";
 import { runInit } from "./commands/init";
-import { runInstallService } from "./commands/service";
+import { runServiceCommand } from "./commands/service";
 import { runStatus } from "./commands/status";
 import { runSyncCommand } from "./commands/sync";
 import { runUninstall } from "./commands/uninstall";
@@ -59,6 +59,7 @@ export function createCli(): Command {
     .command("daemon")
     .description("Run continuous sync (every 5 minutes by default)")
     .option("--interval <ms>", "Sync interval in milliseconds", parseInt)
+    .addOption(new Option("--service").hideHelp())
     .action(async (opts) => {
       await runDaemon(opts);
     });
@@ -67,10 +68,10 @@ export function createCli(): Command {
   program
     .command("service [action]")
     .description(
-      "Manage systemd user service (setup|start|stop|restart|status|uninstall)",
+      "Manage background service (setup|start|stop|restart|status|uninstall)",
     )
     .action(async (action) => {
-      await runInstallService({ action });
+      await runServiceCommand({ action });
     });
 
   // status command

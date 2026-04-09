@@ -10,6 +10,7 @@ import {
   getRuntimeDirPath,
   getStateDir,
 } from "../infrastructure/runtime/paths";
+import { getServiceBackend } from "../infrastructure/service";
 import {
   formatBullet,
   formatHeader,
@@ -88,8 +89,18 @@ function removeShellAlias(): void {
 export async function runUninstall(): Promise<void> {
   const configPath = getConfigPath();
   const configDir = getConfigDir();
+  const stateDir = getStateDir();
+  const runtimeDir = getRuntimeDirPath();
+  const serviceBackend = getServiceBackend();
+  const hasInstalledService = serviceBackend?.isInstalled() ?? false;
+  const hasLocalArtifacts =
+    existsSync(configPath) ||
+    existsSync(configDir) ||
+    existsSync(stateDir) ||
+    existsSync(runtimeDir) ||
+    hasInstalledService;
 
-  if (!existsSync(configPath)) {
+  if (!hasLocalArtifacts) {
     logger.info(formatHeader("卸载 TokenArena"));
     logger.info(formatBullet("未发现本地配置，无需卸载。"));
     return;
@@ -106,8 +117,11 @@ export async function runUninstall(): Promise<void> {
     logger.info(formatKeyValue("API Key", maskSecret(config.apiKey)));
   }
   logger.info(formatKeyValue("配置目录", configDir));
-  logger.info(formatKeyValue("状态目录", getStateDir()));
-  logger.info(formatKeyValue("运行目录", getRuntimeDirPath()));
+  logger.info(formatKeyValue("状态目录", stateDir));
+  logger.info(formatKeyValue("运行目录", runtimeDir));
+  if (hasInstalledService && serviceBackend) {
+    logger.info(formatKeyValue("后台服务", serviceBackend.getDefinitionPath()));
+  }
 
   const shouldUninstall = await promptConfirm({
     message: "确认继续卸载本地 TokenArena 数据？",
@@ -118,10 +132,27 @@ export async function runUninstall(): Promise<void> {
     return;
   }
 
+  if (hasInstalledService && serviceBackend) {
+    const shouldRemoveService = await promptConfirm({
+      message: `检测到已安装 ${serviceBackend.displayName}，是否一并卸载？`,
+      defaultValue: true,
+    });
+
+    if (shouldRemoveService) {
+      try {
+        await serviceBackend.uninstall(true);
+      } catch (err) {
+        logger.warn(`后台服务卸载失败: ${(err as Error).message}`);
+      }
+    }
+  }
+
   // 1. Delete config file
-  deleteConfig();
   logger.info(formatSection("执行结果"));
-  logger.info(formatBullet("已删除配置文件。", "success"));
+  if (existsSync(configPath)) {
+    deleteConfig();
+    logger.info(formatBullet("已删除配置文件。", "success"));
+  }
 
   // 2. Remove config directory if empty
   if (existsSync(configDir)) {
@@ -134,20 +165,18 @@ export async function runUninstall(): Promise<void> {
   }
 
   // 3. Delete state directory (status.json, etc.)
-  const stateDir = getStateDir();
   if (existsSync(stateDir)) {
     rmSync(stateDir, { recursive: true, force: true });
     logger.info(formatBullet("已删除状态数据。", "success"));
   }
 
   // 4. Delete runtime directory (sync.lock, etc.)
-  const runtimeDir = getRuntimeDirPath();
   if (existsSync(runtimeDir)) {
     rmSync(runtimeDir, { recursive: true, force: true });
     logger.info(formatBullet("已删除运行时数据。", "success"));
   }
 
-  // 4. Clean up shell alias
+  // 5. Clean up shell alias
   removeShellAlias();
 
   logger.info(formatSection("完成"));

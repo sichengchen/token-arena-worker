@@ -12,6 +12,7 @@ import {
   saveConfig,
   validateApiKey,
 } from "../infrastructure/config/manager";
+import { getServiceBackend } from "../infrastructure/service";
 import {
   formatBullet,
   formatHeader,
@@ -23,7 +24,6 @@ import {
 import { promptConfirm, promptPassword } from "../infrastructure/ui/prompts";
 import { getDetectedTools } from "../services/parser-service";
 import { runSync } from "../services/sync-service";
-import { isCommandAvailable } from "../utils/command";
 import { logger } from "../utils/logger";
 
 interface BrowserLaunchCommand {
@@ -334,34 +334,34 @@ export async function runInit(opts: InitOptions = {}): Promise<void> {
   logger.info(formatKeyValue("控制台", `${apiUrl}/usage`));
 
   await setupShellAlias();
-  await setupSystemdService();
+  await setupBackgroundService();
 }
 
-async function setupSystemdService(): Promise<void> {
-  const currentPlatform = platform();
-  if (currentPlatform !== "linux") {
+async function setupBackgroundService(): Promise<void> {
+  const backend = getServiceBackend();
+  if (!backend) {
     return;
   }
 
-  if (!isCommandAvailable("systemctl")) {
+  const support = backend.canSetup();
+  if (!support.ok) {
     return;
   }
 
   const shouldSetup = await promptConfirm({
-    message: "是否设置 systemd 服务以自动运行 daemon？",
+    message: `是否设置 ${backend.displayName} 以自动运行 daemon？`,
     defaultValue: true,
   });
 
   if (!shouldSetup) {
-    logger.info(formatBullet("已跳过 systemd 服务设置。"));
+    logger.info(formatBullet("已跳过后台服务设置。"));
     return;
   }
 
   try {
-    const { runInstallService } = await import("./service");
-    await runInstallService({ action: "setup", skipPrompt: true });
+    await backend.setup(true);
   } catch (err) {
-    logger.warn(`systemd 服务设置失败: ${(err as Error).message}`);
+    logger.warn(`${backend.displayName} 设置失败: ${(err as Error).message}`);
   }
 }
 

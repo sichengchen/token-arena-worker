@@ -40,9 +40,9 @@
 >
 > - **手动同步**：运行 `tokenarena sync`，手动将本地数据上传至 Web 端。
 > - **持续同步**：运行 `tokenarena daemon`，保持 CLI 运行，实现数据定时自动同步（默认每 5 分钟）。
-> - **后台服务（Linux）**：运行 `tokenarena service setup`，将 daemon 注册为 systemd 用户服务，开机自启、崩溃自动重启。
+> - **后台服务（Linux / macOS）**：运行 `tokenarena service setup`，将 daemon 注册为用户级后台服务，登录后自动启动、异常退出自动拉起。
 
-**systemd 服务管理（仅 Linux）**
+**后台服务管理（Linux / macOS）**
 
 ```bash
 tokenarena service setup      # 创建并启用服务
@@ -54,7 +54,10 @@ tokenarena service uninstall  # 卸载服务
 ```
 
 > [!NOTE]
-> `service` 仅在 Linux 且系统存在 `systemctl` 时可用。服务以用户级 systemd 单元运行（`~/.config/systemd/user/tokenarena.service`），无需 root 权限。`tokenarena init` 在 Linux 上会自动询问是否设置此服务。
+> `service` 仅在 Linux / macOS 上可用，无需 root 权限。
+> - Linux 使用用户级 `systemd` 单元：`~/.config/systemd/user/tokenarena.service`
+> - macOS 使用用户级 `launchd` Agent：`~/Library/LaunchAgents/com.poco-ai.tokenarena.plist`
+> `tokenarena init` 在支持的环境中会自动询问是否设置此服务。
 
 ## 本地部署
 
