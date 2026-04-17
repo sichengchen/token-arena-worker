@@ -15,11 +15,7 @@
     "check": "pnpm --filter ./api check && pnpm --filter ./web check",
     "check:api": "pnpm --filter ./api check",
     "check:web": "pnpm --filter ./web check",
-    "prepare": "husky",
     "deploy:api": "pnpm --filter ./api deploy",
     "deploy:web": "pnpm --filter ./web deploy"
-  },
-  "devDependencies": {
-    "husky": "^9.1.7"
   }
 }
