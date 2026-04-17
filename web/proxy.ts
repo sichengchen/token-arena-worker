@@ -2,11 +2,7 @@ import { getSessionCookie } from "better-auth/cookies";
 import { type NextRequest, NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
-import {
-  getPreferredLocale,
-  localeCookieName,
-  stripLocalePrefix,
-} from "./lib/i18n";
+import { getPreferredLocale, localeCookieName, stripLocalePrefix } from "./lib/i18n";
 
 const PROTECTED_PREFIXES = ["/usage", "/settings", "/following", "/followers"];
 const AUTH_PAGES = ["/login", "/register"];
@@ -23,9 +19,7 @@ export function proxy(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const pathname = stripLocalePrefix(request.nextUrl.pathname);
   const hasSessionCookie = Boolean(getSessionCookie(request));
-  const isProtectedPath = PROTECTED_PREFIXES.some((prefix) =>
-    pathname.startsWith(prefix),
-  );
+  const isProtectedPath = PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
   const isAuthPage = AUTH_PAGES.includes(pathname);
   const isInvalidSessionBounce = searchParams.get("invalid") === "1";
 

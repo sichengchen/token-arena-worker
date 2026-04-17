@@ -4,10 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import type { FollowTag, FollowTagSelectValue } from "@/lib/social/follow-tags";
-import {
-  fromFollowTagSelectValue,
-  toFollowTagSelectValue,
-} from "@/lib/social/follow-tags";
+import { fromFollowTagSelectValue, toFollowTagSelectValue } from "@/lib/social/follow-tags";
 
 type UseSocialFollowArgs = {
   locale: string;
@@ -43,12 +40,9 @@ export function useSocialFollow({
       setError(null);
 
       try {
-        const response = await fetch(
-          `/api/social/follows/${encodeURIComponent(username)}`,
-          {
-            method: following ? "DELETE" : "POST",
-          },
-        );
+        const response = await fetch(`/api/social/follows/${encodeURIComponent(username)}`, {
+          method: following ? "DELETE" : "POST",
+        });
 
         if (response.status === 401) {
           router.push(`/${locale}/login`);
@@ -85,18 +79,15 @@ export function useSocialFollow({
       const nextTag = fromFollowTagSelectValue(nextValue);
 
       try {
-        const response = await fetch(
-          `/api/social/follows/${encodeURIComponent(username)}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              tag: nextTag,
-            }),
+        const response = await fetch(`/api/social/follows/${encodeURIComponent(username)}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            tag: nextTag,
+          }),
+        });
 
         if (response.status === 401) {
           router.push(`/${locale}/login`);

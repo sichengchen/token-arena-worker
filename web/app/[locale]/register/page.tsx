@@ -23,11 +23,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function RegisterPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+export default async function RegisterPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const session = await getOptionalSession();
   const t = await getTranslations("auth.register");

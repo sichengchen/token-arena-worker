@@ -18,11 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -32,11 +28,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "@/i18n/navigation";
 import { formatDateInput } from "@/lib/usage/format";
-import type {
-  DashboardPreset,
-  UsageFilterOptions,
-  UsageFilters,
-} from "@/lib/usage/types";
+import type { DashboardPreset, UsageFilterOptions, UsageFilters } from "@/lib/usage/types";
 import { buildUsageHref } from "./filter-query";
 import { getActiveFilterChips, getFilterMeta } from "./filter-state";
 
@@ -140,17 +132,10 @@ export function FiltersBar({
   const searchParams = useSearchParams();
   const [isCustomOpen, setIsCustomOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [customFrom, setCustomFrom] = useState(
-    buildDateValue(range.from, range.timezone),
-  );
-  const [customTo, setCustomTo] = useState(
-    buildDateValue(range.to, range.timezone),
-  );
+  const [customFrom, setCustomFrom] = useState(buildDateValue(range.from, range.timezone));
+  const [customTo, setCustomTo] = useState(buildDateValue(range.to, range.timezone));
 
-  const activeChips = useMemo(
-    () => getActiveFilterChips(filters, options),
-    [filters, options],
-  );
+  const activeChips = useMemo(() => getActiveFilterChips(filters, options), [filters, options]);
   const updateParams = (updates: Record<string, string | null>) => {
     router.replace(buildUsageHref(searchParams.toString(), updates));
   };
@@ -261,11 +246,7 @@ export function FiltersBar({
                 }}
               >
                 <PopoverTrigger asChild>
-                  <Button
-                    type="button"
-                    variant={preset === item ? "default" : "outline"}
-                    size="sm"
-                  >
+                  <Button type="button" variant={preset === item ? "default" : "outline"} size="sm">
                     <CalendarDays />
                     {getPresetLabel(item, t)}
                   </Button>
@@ -287,9 +268,7 @@ export function FiltersBar({
                           id="custom-from"
                           type="date"
                           value={customFrom}
-                          onChange={(event) =>
-                            setCustomFrom(event.target.value)
-                          }
+                          onChange={(event) => setCustomFrom(event.target.value)}
                         />
                       </div>
                       <div className="space-y-2">
@@ -399,9 +378,7 @@ export function FiltersBar({
         {lastSyncedText || badgesSlot ? (
           <div className="flex shrink-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
             {lastSyncedText ? (
-              <p className="text-sm text-muted-foreground sm:text-right">
-                {lastSyncedText}
-              </p>
+              <p className="text-sm text-muted-foreground sm:text-right">{lastSyncedText}</p>
             ) : null}
             {badgesSlot}
           </div>

@@ -1,8 +1,4 @@
-export type SettingsSectionId =
-  | "account"
-  | "preferences"
-  | "authentication"
-  | "cliKeys";
+export type SettingsSectionId = "account" | "preferences" | "authentication" | "cliKeys";
 
 /** URL segment under `/settings/…` for each settings section. */
 export function settingsSectionToPath(section: SettingsSectionId): string {
@@ -21,9 +17,7 @@ const PATH_TO_SECTION: Record<string, SettingsSectionId> = {
   "cli-keys": "cliKeys",
 };
 
-export function parseSettingsSectionParam(
-  segment: string,
-): SettingsSectionId | null {
+export function parseSettingsSectionParam(segment: string): SettingsSectionId | null {
   return PATH_TO_SECTION[segment] ?? null;
 }
 

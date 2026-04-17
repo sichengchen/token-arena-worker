@@ -6,11 +6,7 @@ import {
 } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import { tokenCountToNumber } from "@/lib/token-counts";
-import {
-  getPreviousRange,
-  groupByHourOrDay,
-  listRangeBuckets,
-} from "./date-range";
+import { getPreviousRange, groupByHourOrDay, listRangeBuckets } from "./date-range";
 import type {
   ActivityTrendPoint,
   BreakdownRow,
@@ -27,10 +23,7 @@ import type {
   UsageSessionRow,
 } from "./types";
 
-function applyBucketFilters<T extends Record<string, unknown>>(
-  input: T,
-  filters: UsageFilters,
-) {
+function applyBucketFilters<T extends Record<string, unknown>>(input: T, filters: UsageFilters) {
   return {
     ...input,
     ...(filters.apiKeyId ? { apiKeyId: filters.apiKeyId } : {}),
@@ -41,10 +34,7 @@ function applyBucketFilters<T extends Record<string, unknown>>(
   };
 }
 
-function applySessionFilters<T extends Record<string, unknown>>(
-  input: T,
-  filters: UsageFilters,
-) {
+function applySessionFilters<T extends Record<string, unknown>>(input: T, filters: UsageFilters) {
   // Note: UsageSession doesn't have a `model` field, so we exclude it here
   return {
     ...input,
@@ -109,11 +99,7 @@ type UsageBucketRecord = Awaited<ReturnType<typeof loadBuckets>>[number];
 function estimateBucketCostUsd(
   bucket: Pick<
     UsageBucketRecord,
-    | "model"
-    | "inputTokens"
-    | "outputTokens"
-    | "reasoningTokens"
-    | "cachedTokens"
+    "model" | "inputTokens" | "outputTokens" | "reasoningTokens" | "cachedTokens"
   >,
   catalog: Awaited<ReturnType<typeof getPricingCatalog>>,
 ) {
@@ -172,10 +158,7 @@ function summarizeTotals(input: {
   return totals;
 }
 
-function toOverview(
-  current: UsageMetricTotals,
-  previous: UsageMetricTotals,
-): UsageOverviewMetrics {
+function toOverview(current: UsageMetricTotals, previous: UsageMetricTotals): UsageOverviewMetrics {
   return {
     totalTokens: {
       current: current.totalTokens,
@@ -236,13 +219,12 @@ export async function getOverviewMetrics(input: {
   filters: UsageFilters;
 }) {
   const previousRange = getPreviousRange(input.range);
-  const [currentBuckets, currentSessions, previousBuckets, previousSessions] =
-    await Promise.all([
-      loadBuckets(input),
-      loadSessions(input),
-      loadBuckets({ ...input, range: previousRange }),
-      loadSessions({ ...input, range: previousRange }),
-    ]);
+  const [currentBuckets, currentSessions, previousBuckets, previousSessions] = await Promise.all([
+    loadBuckets(input),
+    loadSessions(input),
+    loadBuckets({ ...input, range: previousRange }),
+    loadSessions({ ...input, range: previousRange }),
+  ]);
 
   return toOverview(
     summarizeTotals({ buckets: currentBuckets, sessions: currentSessions }),
@@ -392,16 +374,11 @@ function ensureBreakdownRow(
   return next;
 }
 
-function buildDeviceDisplayLabels(
-  devices: Array<{ deviceId: string; hostname: string }>,
-) {
+function buildDeviceDisplayLabels(devices: Array<{ deviceId: string; hostname: string }>) {
   const hostnameCounts = new Map<string, number>();
 
   for (const device of devices) {
-    hostnameCounts.set(
-      device.hostname,
-      (hostnameCounts.get(device.hostname) ?? 0) + 1,
-    );
+    hostnameCounts.set(device.hostname, (hostnameCounts.get(device.hostname) ?? 0) + 1);
   }
 
   return new Map(
@@ -444,11 +421,7 @@ export async function getBreakdowns(input: {
     );
     const toolRow = ensureBreakdownRow(byTool, bucket.source, bucket.source);
     const modelRow = ensureBreakdownRow(byModel, bucket.model, bucket.model);
-    const projectRow = ensureBreakdownRow(
-      byProject,
-      bucket.projectKey,
-      bucket.projectLabel,
-    );
+    const projectRow = ensureBreakdownRow(byProject, bucket.projectKey, bucket.projectLabel);
     const estimatedCostUsd = estimateBucketCostUsd(bucket, catalog);
 
     for (const row of [deviceRow, toolRow, modelRow, projectRow]) {
@@ -468,11 +441,7 @@ export async function getBreakdowns(input: {
       deviceLabels.get(session.deviceId) ?? session.deviceId,
     );
     const toolRow = ensureBreakdownRow(byTool, session.source, session.source);
-    const projectRow = ensureBreakdownRow(
-      byProject,
-      session.projectKey,
-      session.projectLabel,
-    );
+    const projectRow = ensureBreakdownRow(byProject, session.projectKey, session.projectLabel);
 
     for (const row of [deviceRow, toolRow, projectRow]) {
       row.activeSeconds += session.activeSeconds;
@@ -590,25 +559,14 @@ function summarizePricingRows(
   currentRows: ModelPricingRow[],
   previousRows: ModelPricingRow[],
 ): UsagePricingSummary {
-  const currentUsd = currentRows.reduce(
-    (sum, row) => sum + (row.estimatedCostUsd ?? 0),
-    0,
-  );
-  const previousUsd = previousRows.reduce(
-    (sum, row) => sum + (row.estimatedCostUsd ?? 0),
-    0,
-  );
+  const currentUsd = currentRows.reduce((sum, row) => sum + (row.estimatedCostUsd ?? 0), 0);
+  const previousUsd = previousRows.reduce((sum, row) => sum + (row.estimatedCostUsd ?? 0), 0);
   const pricedTokens = currentRows.reduce(
     (sum, row) => sum + (row.estimatedCostUsd == null ? 0 : row.totalTokens),
     0,
   );
-  const totalTokens = currentRows.reduce(
-    (sum, row) => sum + row.totalTokens,
-    0,
-  );
-  const pricedModels = currentRows.filter(
-    (row) => row.estimatedCostUsd != null,
-  ).length;
+  const totalTokens = currentRows.reduce((sum, row) => sum + row.totalTokens, 0);
+  const pricedModels = currentRows.filter((row) => row.estimatedCostUsd != null).length;
 
   return {
     currentUsd,
@@ -722,9 +680,7 @@ export async function getSessionRows(input: {
   }));
 }
 
-export async function getFilterOptions(
-  userId: string,
-): Promise<UsageFilterOptions> {
+export async function getFilterOptions(userId: string): Promise<UsageFilterOptions> {
   const [apiKeys, devices, usageBuckets] = await Promise.all([
     prisma.usageApiKey.findMany({
       where: { userId },

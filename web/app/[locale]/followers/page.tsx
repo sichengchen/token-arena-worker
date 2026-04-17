@@ -7,9 +7,7 @@ type FollowersPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: FollowersPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: FollowersPageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "social.network" });
 

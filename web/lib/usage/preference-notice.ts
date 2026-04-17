@@ -16,9 +16,7 @@ export type PreferenceNoticeDetail = {
   preference: PreferenceNoticeSnapshot;
 };
 
-export function emitPreferenceSavedNotice(
-  preference: PreferenceNoticeSnapshot,
-) {
+export function emitPreferenceSavedNotice(preference: PreferenceNoticeSnapshot) {
   window.dispatchEvent(
     new CustomEvent<PreferenceNoticeDetail>(preferenceNoticeEventName, {
       detail: { type: "saved", preference },

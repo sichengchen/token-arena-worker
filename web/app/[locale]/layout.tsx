@@ -18,9 +18,5 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
 
-  return (
-    <NextIntlClientProvider messages={await getMessages()}>
-      {children}
-    </NextIntlClientProvider>
-  );
+  return <NextIntlClientProvider messages={await getMessages()}>{children}</NextIntlClientProvider>;
 }

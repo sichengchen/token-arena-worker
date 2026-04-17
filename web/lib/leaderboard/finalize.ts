@@ -230,12 +230,8 @@ export async function finalizePendingLeaderboardPeriods(now = new Date()) {
             dedupeKey: true,
           },
         });
-        const existingKeys = new Set(
-          existingAwards.map((award) => award.dedupeKey),
-        );
-        const nextAwards = awards.filter(
-          (award) => !existingKeys.has(award.dedupeKey),
-        );
+        const existingKeys = new Set(existingAwards.map((award) => award.dedupeKey));
+        const nextAwards = awards.filter((award) => !existingKeys.has(award.dedupeKey));
 
         if (nextAwards.length > 0) {
           await tx.achievementAward.createMany({

@@ -38,12 +38,7 @@ vi.mock("@/lib/pricing/resolve", () => ({
   estimateCostUsd: mocks.estimateCostUsd,
 }));
 
-import {
-  getBreakdowns,
-  getFilterOptions,
-  getSessionRows,
-  getTokenTrend,
-} from "./queries";
+import { getBreakdowns, getFilterOptions, getSessionRows, getTokenTrend } from "./queries";
 
 const range = {
   from: new Date("2026-03-19T00:00:00.000Z"),

@@ -1,8 +1,5 @@
 import { getPricingCatalog } from "@/lib/pricing/catalog";
-import {
-  estimateCostUsd,
-  resolveOfficialPricingMatch,
-} from "@/lib/pricing/resolve";
+import { estimateCostUsd, resolveOfficialPricingMatch } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import type { FollowTagFilter } from "@/lib/social/follow-tags";
 import { tokenCountToBigInt, tokenCountToNumber } from "@/lib/token-counts";
@@ -141,10 +138,7 @@ function mapRelationFlags(
   );
 }
 
-async function getRelationMap(
-  viewerUserId: string | null | undefined,
-  ids: string[],
-) {
+async function getRelationMap(viewerUserId: string | null | undefined, ids: string[]) {
   if (!viewerUserId || ids.length === 0) {
     return new Map<string, RelationFlags>();
   }
@@ -177,10 +171,7 @@ async function getRelationMap(
   return mapRelationFlags(ids, following, followers);
 }
 
-async function getFollowingNetworkIds(
-  viewerUserId: string,
-  followTag: FollowTagFilter,
-) {
+async function getFollowingNetworkIds(viewerUserId: string, followTag: FollowTagFilter) {
   const following = await prisma.follow.findMany({
     where: {
       followerId: viewerUserId,
@@ -195,9 +186,7 @@ async function getFollowingNetworkIds(
     },
   });
 
-  return Array.from(
-    new Set([viewerUserId, ...following.map((row) => row.followingId)]),
-  );
+  return Array.from(new Set([viewerUserId, ...following.map((row) => row.followingId)]));
 }
 
 function estimateGroupedRowCostUsd(
@@ -252,20 +241,12 @@ function hasMetricValue(
   summary: Pick<LeaderboardEntrySummary, "estimatedCostUsd" | "totalTokens">,
   metric: LeaderboardMetric,
 ) {
-  return metric === "estimated_cost"
-    ? summary.estimatedCostUsd > 0
-    : summary.totalTokens > 0;
+  return metric === "estimated_cost" ? summary.estimatedCostUsd > 0 : summary.totalTokens > 0;
 }
 
 function compareLeaderboardSummaries(
-  left: Pick<
-    LeaderboardEntrySummary,
-    "estimatedCostUsd" | "totalTokens" | "userId"
-  >,
-  right: Pick<
-    LeaderboardEntrySummary,
-    "estimatedCostUsd" | "totalTokens" | "userId"
-  >,
+  left: Pick<LeaderboardEntrySummary, "estimatedCostUsd" | "totalTokens" | "userId">,
+  right: Pick<LeaderboardEntrySummary, "estimatedCostUsd" | "totalTokens" | "userId">,
   metric: LeaderboardMetric,
 ) {
   const metricDiff =
@@ -299,10 +280,7 @@ function rankLeaderboardSummaries(
     }));
 }
 
-async function getEstimatedCostMapForUsers(
-  userIds: string[],
-  window: LeaderboardWindow,
-) {
+async function getEstimatedCostMapForUsers(userIds: string[], window: LeaderboardWindow) {
   if (userIds.length === 0) {
     return new Map<string, number>();
   }
@@ -335,15 +313,9 @@ async function getEstimatedCostMapForUsers(
   );
 }
 
-async function getLeaderboardDayStatsMap(
-  userIds: string[],
-  window: LeaderboardWindow,
-) {
+async function getLeaderboardDayStatsMap(userIds: string[], window: LeaderboardWindow) {
   if (userIds.length === 0) {
-    return new Map<
-      string,
-      Pick<LeaderboardEntrySummary, "activeSeconds" | "sessions">
-    >();
+    return new Map<string, Pick<LeaderboardEntrySummary, "activeSeconds" | "sessions">>();
   }
 
   const rows = await prisma.leaderboardUserDay.groupBy({
@@ -373,10 +345,7 @@ async function getLeaderboardDayStatsMap(
 
 function rankSummaries(
   aggregates: Iterable<LeaderboardUserUsageAggregate>,
-  statsMap: Map<
-    string,
-    Pick<LeaderboardEntrySummary, "activeSeconds" | "sessions">
-  >,
+  statsMap: Map<string, Pick<LeaderboardEntrySummary, "activeSeconds" | "sessions">>,
   metric: LeaderboardMetric,
   limit: number,
 ) {
@@ -406,9 +375,7 @@ async function hydrateEntries(
   }
 
   const ids = summaries.map((entry) => entry.userId);
-  const needsEstimatedCost = summaries.every(
-    (summary) => summary.estimatedCostUsd === 0,
-  );
+  const needsEstimatedCost = summaries.every((summary) => summary.estimatedCostUsd === 0);
   const [users, relationMap, estimatedCostMap] = await Promise.all([
     prisma.user.findMany({
       where: {
@@ -476,8 +443,7 @@ function isSnapshotFresh(input: {
 }) {
   return (
     sameLeaderboardWindow(input.snapshotWindow, input.requestedWindow) &&
-    input.now.getTime() - input.generatedAt.getTime() <
-      LEADERBOARD_SNAPSHOT_TTL_MS
+    input.now.getTime() - input.generatedAt.getTime() < LEADERBOARD_SNAPSHOT_TTL_MS
   );
 }
 
@@ -665,20 +631,12 @@ async function getGlobalCostRankedSummaries(
   ]);
 
   const aggregates = buildUserUsageAggregates(groupedRows, catalog);
-  const statsMap = await getLeaderboardDayStatsMap(
-    Array.from(aggregates.keys()),
-    window,
-  );
+  const statsMap = await getLeaderboardDayStatsMap(Array.from(aggregates.keys()), window);
 
   return {
     generatedAt: now,
     window,
-    summaries: rankSummaries(
-      aggregates.values(),
-      statsMap,
-      "estimated_cost",
-      limit,
-    ),
+    summaries: rankSummaries(aggregates.values(), statsMap, "estimated_cost", limit),
   };
 }
 
@@ -734,10 +692,7 @@ async function getFollowingCostRankedSummaries(input: {
   ]);
 
   const aggregates = buildUserUsageAggregates(groupedRows, catalog);
-  const statsMap = await getLeaderboardDayStatsMap(
-    Array.from(aggregates.keys()),
-    window,
-  );
+  const statsMap = await getLeaderboardDayStatsMap(Array.from(aggregates.keys()), window);
 
   return {
     generatedAt: input.now,
@@ -763,9 +718,7 @@ async function getGlobalViewerRankSummary(input: {
       input.now,
       Number.MAX_SAFE_INTEGER,
     );
-    const summary = summaries.find(
-      (entry) => entry.userId === input.viewerUserId,
-    );
+    const summary = summaries.find((entry) => entry.userId === input.viewerUserId);
 
     return summary ? { summary, window } : null;
   }
@@ -810,9 +763,7 @@ async function getGlobalViewerRankSummary(input: {
     "total_tokens",
     Number.MAX_SAFE_INTEGER,
   );
-  const summary = summaries.find(
-    (entry) => entry.userId === input.viewerUserId,
-  );
+  const summary = summaries.find((entry) => entry.userId === input.viewerUserId);
 
   return summary ? { summary, window } : null;
 }
@@ -826,8 +777,10 @@ export async function getGlobalLeaderboard(input: {
   const now = input.now ?? new Date();
 
   if (input.metric === "estimated_cost") {
-    const { generatedAt, summaries, window } =
-      await getGlobalCostRankedSummaries(input.period, now);
+    const { generatedAt, summaries, window } = await getGlobalCostRankedSummaries(
+      input.period,
+      now,
+    );
     const entries = await hydrateEntries(summaries, window, input.viewerUserId);
 
     return toDataset({
@@ -839,10 +792,7 @@ export async function getGlobalLeaderboard(input: {
     });
   }
 
-  const { snapshot, summaries, window } = await ensureGlobalSnapshot(
-    input.period,
-    now,
-  );
+  const { snapshot, summaries, window } = await ensureGlobalSnapshot(input.period, now);
   const entries = await hydrateEntries(summaries, window, input.viewerUserId);
 
   return toDataset({
@@ -865,13 +815,12 @@ export async function getFollowingLeaderboard(input: {
   const followTag = input.followTag ?? "all";
 
   if (input.metric === "estimated_cost") {
-    const { generatedAt, summaries, window } =
-      await getFollowingCostRankedSummaries({
-        period: input.period,
-        viewerUserId: input.viewerUserId,
-        followTag,
-        now,
-      });
+    const { generatedAt, summaries, window } = await getFollowingCostRankedSummaries({
+      period: input.period,
+      viewerUserId: input.viewerUserId,
+      followTag,
+      now,
+    });
     const entries = await hydrateEntries(summaries, window, input.viewerUserId);
 
     return toDataset({

@@ -39,14 +39,12 @@ describe("usage format helpers", () => {
   });
 
   it("formats date-only filter values in the account timezone", () => {
-    expect(
-      formatDateInput(new Date("2026-03-25T16:00:00.000Z"), "Asia/Shanghai"),
-    ).toBe("2026-03-26");
+    expect(formatDateInput(new Date("2026-03-25T16:00:00.000Z"), "Asia/Shanghai")).toBe(
+      "2026-03-26",
+    );
   });
 
   it("formats date-times in the account timezone", () => {
-    expect(
-      formatDateTime(new Date("2026-03-25T16:00:00.000Z"), "Asia/Shanghai"),
-    ).toContain("2026");
+    expect(formatDateTime(new Date("2026-03-25T16:00:00.000Z"), "Asia/Shanghai")).toContain("2026");
   });
 });

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ArrowLeftRight,
-  Cog,
-  Home,
-  LayoutDashboard,
-  LogOut,
-  Users,
-} from "lucide-react";
+import { ArrowLeftRight, Cog, Home, LayoutDashboard, LogOut, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
@@ -26,11 +19,7 @@ function getInitial(value: string) {
   return value.trim().charAt(0).toUpperCase() || "?";
 }
 
-function getIdentityLines(
-  email: string,
-  name?: string | null,
-  username?: string | null,
-) {
+function getIdentityLines(email: string, name?: string | null, username?: string | null) {
   const trimmedName = name?.trim();
 
   if (trimmedName) {
@@ -91,12 +80,7 @@ function AccountAvatar({
   );
 }
 
-export function AccountMenu({
-  email,
-  name,
-  image,
-  username,
-}: AccountMenuProps) {
+export function AccountMenu({ email, name, image, username }: AccountMenuProps) {
   const t = useTranslations("common");
   const tUsage = useTranslations("usage.accountMenu");
   const tSocial = useTranslations("social.nav");
@@ -107,9 +91,7 @@ export function AccountMenu({
   const closeTimeoutRef = useRef<number | null>(null);
 
   const links: MenuLink[] = [
-    ...(username
-      ? [{ href: `/u/${username}`, label: tSocial("profile"), icon: Home }]
-      : []),
+    ...(username ? [{ href: `/u/${username}`, label: tSocial("profile"), icon: Home }] : []),
     {
       href: "/usage",
       label: tSocial("dashboard"),
@@ -169,9 +151,7 @@ export function AccountMenu({
         onPointerLeave={closeMenu}
         onFocus={openMenu}
         onBlur={(event) => {
-          if (
-            !containerRef.current?.contains(event.relatedTarget as Node | null)
-          ) {
+          if (!containerRef.current?.contains(event.relatedTarget as Node | null)) {
             setOpen(false);
           }
         }}
@@ -193,19 +173,12 @@ export function AccountMenu({
           onPointerEnter={openMenu}
           onPointerLeave={closeMenu}
           onBlur={(event) => {
-            if (
-              !containerRef.current?.contains(
-                event.relatedTarget as Node | null,
-              )
-            ) {
+            if (!containerRef.current?.contains(event.relatedTarget as Node | null)) {
               setOpen(false);
             }
           }}
         >
-          <div
-            className="flex items-center gap-3 rounded-lg bg-muted/40 px-2 py-2"
-            role="none"
-          >
+          <div className="flex items-center gap-3 rounded-lg bg-muted/40 px-2 py-2" role="none">
             <AccountAvatar
               image={image}
               identity={identity}
@@ -213,9 +186,7 @@ export function AccountMenu({
               textClassName="text-sm"
             />
             <div className="min-w-0 flex-1">
-              <div className="truncate font-semibold leading-tight text-foreground">
-                {primary}
-              </div>
+              <div className="truncate font-semibold leading-tight text-foreground">{primary}</div>
               <div className="truncate text-xs leading-tight text-muted-foreground">
                 {secondary}
               </div>
@@ -247,10 +218,7 @@ export function AccountMenu({
                   className="flex items-center gap-2 rounded-md px-2 py-1.5 text-foreground transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                   onClick={() => setOpen(false)}
                 >
-                  <Icon
-                    className="size-4 shrink-0 text-muted-foreground"
-                    aria-hidden
-                  />
+                  <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                   <span>{link.label}</span>
                 </Link>
               );
@@ -264,10 +232,7 @@ export function AccountMenu({
               size="sm"
               className="h-auto w-full justify-start gap-2 px-2 py-1.5 font-normal text-foreground hover:bg-muted"
             >
-              <LogOut
-                className="size-4 shrink-0 text-muted-foreground"
-                aria-hidden
-              />
+              <LogOut className="size-4 shrink-0 text-muted-foreground" aria-hidden />
               {t("signOut")}
             </LogoutButton>
           </div>

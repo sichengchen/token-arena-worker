@@ -5,11 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -19,10 +15,7 @@ import {
 } from "@/components/ui/select";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import type { AppLocale } from "@/lib/i18n";
-import {
-  persistClientLocale,
-  persistServerPreference,
-} from "@/lib/preferences-client";
+import { persistClientLocale, persistServerPreference } from "@/lib/preferences-client";
 import { cn, FOOTER_ICON_BUTTON_CLASS } from "@/lib/utils";
 
 const locales: AppLocale[] = ["en", "zh"];
@@ -86,12 +79,7 @@ export function LanguageSwitcher({
             <Languages className="size-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          align="end"
-          side="top"
-          sideOffset={8}
-          className="w-auto min-w-[10rem] p-1"
-        >
+        <PopoverContent align="end" side="top" sideOffset={8} className="w-auto min-w-[10rem] p-1">
           <div className="flex flex-col gap-0.5" role="listbox">
             {locales.map((code) => (
               <button
@@ -137,10 +125,7 @@ export function LanguageSwitcher({
   }
 
   return (
-    <Select
-      value={locale}
-      onValueChange={(value) => handleChange(value as AppLocale)}
-    >
+    <Select value={locale} onValueChange={(value) => handleChange(value as AppLocale)}>
       <SelectTrigger
         aria-label={t("language")}
         size="default"

@@ -1,8 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import {
-  generateUniqueUsername,
-  resolveCreatedUsername,
-} from "./auth-username.server";
+import { generateUniqueUsername, resolveCreatedUsername } from "./auth-username.server";
 
 describe("generateUniqueUsername", () => {
   it("returns the provided seed when the username is available", async () => {

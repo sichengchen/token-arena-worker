@@ -27,12 +27,7 @@ export function GitHubRepoLink() {
   const t = useTranslations("social.nav");
 
   return (
-    <Button
-      asChild
-      variant="ghost"
-      size="icon"
-      className={FOOTER_ICON_BUTTON_CLASS}
-    >
+    <Button asChild variant="ghost" size="icon" className={FOOTER_ICON_BUTTON_CLASS}>
       <a
         href={REPO_URL}
         target="_blank"

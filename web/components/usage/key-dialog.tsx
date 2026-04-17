@@ -45,13 +45,9 @@ export function KeyDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border border-border/70 bg-card shadow-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {mode === "create" ? t("createTitle") : t("renameTitle")}
-          </DialogTitle>
+          <DialogTitle>{mode === "create" ? t("createTitle") : t("renameTitle")}</DialogTitle>
           <DialogDescription>
-            {mode === "create"
-              ? t("createDescription")
-              : t("renameDescription")}
+            {mode === "create" ? t("createDescription") : t("renameDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -63,9 +59,7 @@ export function KeyDialog({
           }}
         >
           <div className="space-y-2">
-            {mode === "rename" ? (
-              <Label htmlFor="key-name">{t("name")}</Label>
-            ) : null}
+            {mode === "rename" ? <Label htmlFor="key-name">{t("name")}</Label> : null}
             <Input
               id="key-name"
               value={name}
@@ -83,11 +77,7 @@ export function KeyDialog({
               className="border-border/60 bg-background hover:bg-muted/40"
               disabled={pending || name.trim().length === 0}
             >
-              {pending
-                ? t("saving")
-                : mode === "create"
-                  ? t("createKey")
-                  : t("saveChanges")}
+              {pending ? t("saving") : mode === "create" ? t("createKey") : t("saveChanges")}
             </Button>
           </DialogFooter>
         </form>

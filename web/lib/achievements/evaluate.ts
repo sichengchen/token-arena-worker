@@ -140,11 +140,7 @@ function nthTimelineIso(timeline: string[], count: number) {
   return timeline[count - 1];
 }
 
-function streakUnlockedAt(
-  activeDayKeys: string[],
-  streak: number,
-  target: number,
-) {
+function streakUnlockedAt(activeDayKeys: string[], streak: number, target: number) {
   if (streak < target || activeDayKeys.length < target) {
     return null;
   }
@@ -152,10 +148,7 @@ function streakUnlockedAt(
   return startOfDayIso(activeDayKeys[activeDayKeys.length - target]);
 }
 
-function cumulativeThresholdDate(
-  timeline: AchievementTimelinePoint[],
-  threshold: number,
-) {
+function cumulativeThresholdDate(timeline: AchievementTimelinePoint[], threshold: number) {
   let total = 0;
 
   for (const point of timeline) {
@@ -169,10 +162,7 @@ function cumulativeThresholdDate(
   return null;
 }
 
-function distinctThresholdDate(
-  timeline: AchievementDistinctTimelinePoint[],
-  threshold: number,
-) {
+function distinctThresholdDate(timeline: AchievementDistinctTimelinePoint[], threshold: number) {
   const seen = new Set<string>();
 
   for (const point of timeline) {
@@ -222,9 +212,7 @@ function createStatus(input: {
   } satisfies AchievementStatus;
 }
 
-export function buildAchievementStatuses(
-  metrics: AchievementInputMetrics,
-): AchievementStatus[] {
+export function buildAchievementStatuses(metrics: AchievementInputMetrics): AchievementStatus[] {
   const currentStreak = computeCurrentStreak(metrics);
   const activeDayCount = metrics.activeDayKeys.length;
 
@@ -395,136 +383,98 @@ export function buildAchievementStatuses(
       current: metrics.totalTokens,
       target: 10_000_000_000,
       unit: "tokens",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.tokenTimeline,
-        10_000_000_000,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.tokenTimeline, 10_000_000_000),
     }),
     createStatus({
       code: "tokens_10b",
       current: metrics.totalTokens,
       target: 100_000_000_000,
       unit: "tokens",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.tokenTimeline,
-        100_000_000_000,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.tokenTimeline, 100_000_000_000),
     }),
     createStatus({
       code: "tokens_100b",
       current: metrics.totalTokens,
       target: 1_000_000_000_000,
       unit: "tokens",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.tokenTimeline,
-        1_000_000_000_000,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.tokenTimeline, 1_000_000_000_000),
     }),
     createStatus({
       code: "active_hours_10",
       current: metrics.totalActiveSeconds,
       target: 10 * 60 * 60,
       unit: "seconds",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.activeSecondsTimeline,
-        10 * 60 * 60,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.activeSecondsTimeline, 10 * 60 * 60),
     }),
     createStatus({
       code: "active_hours_100",
       current: metrics.totalActiveSeconds,
       target: 100 * 60 * 60,
       unit: "seconds",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.activeSecondsTimeline,
-        100 * 60 * 60,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.activeSecondsTimeline, 100 * 60 * 60),
     }),
     createStatus({
       code: "active_hours_200",
       current: metrics.totalActiveSeconds,
       target: 200 * 60 * 60,
       unit: "seconds",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.activeSecondsTimeline,
-        200 * 60 * 60,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.activeSecondsTimeline, 200 * 60 * 60),
     }),
     createStatus({
       code: "active_hours_500",
       current: metrics.totalActiveSeconds,
       target: 500 * 60 * 60,
       unit: "seconds",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.activeSecondsTimeline,
-        500 * 60 * 60,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.activeSecondsTimeline, 500 * 60 * 60),
     }),
     createStatus({
       code: "active_hours_2000",
       current: metrics.totalActiveSeconds,
       target: 2000 * 60 * 60,
       unit: "seconds",
-      unlockedAt: cumulativeThresholdDate(
-        metrics.activeSecondsTimeline,
-        2000 * 60 * 60,
-      ),
+      unlockedAt: cumulativeThresholdDate(metrics.activeSecondsTimeline, 2000 * 60 * 60),
     }),
     createStatus({
       code: "reasoning_25",
       current: metrics.reasoningShare30d,
       target: 0.25,
       unit: "percent",
-      unlockedAt:
-        metrics.reasoningShare30d >= 0.25
-          ? metrics.recentWindowUnlockedAt
-          : null,
+      unlockedAt: metrics.reasoningShare30d >= 0.25 ? metrics.recentWindowUnlockedAt : null,
     }),
     createStatus({
       code: "reasoning_40",
       current: metrics.reasoningShare30d,
       target: 0.4,
       unit: "percent",
-      unlockedAt:
-        metrics.reasoningShare30d >= 0.4
-          ? metrics.recentWindowUnlockedAt
-          : null,
+      unlockedAt: metrics.reasoningShare30d >= 0.4 ? metrics.recentWindowUnlockedAt : null,
     }),
     createStatus({
       code: "cache_15",
       current: metrics.cacheShare30d,
       target: 0.9,
       unit: "percent",
-      unlockedAt:
-        metrics.cacheShare30d >= 0.9 ? metrics.recentWindowUnlockedAt : null,
+      unlockedAt: metrics.cacheShare30d >= 0.9 ? metrics.recentWindowUnlockedAt : null,
     }),
     createStatus({
       code: "cache_30",
       current: metrics.cacheShare30d,
       target: 0.95,
       unit: "percent",
-      unlockedAt:
-        metrics.cacheShare30d >= 0.95 ? metrics.recentWindowUnlockedAt : null,
+      unlockedAt: metrics.cacheShare30d >= 0.95 ? metrics.recentWindowUnlockedAt : null,
     }),
     createStatus({
       code: "project_focus_70",
       current: metrics.topProjectShare30d,
       target: 0.7,
       unit: "percent",
-      unlockedAt:
-        metrics.topProjectShare30d >= 0.7
-          ? metrics.recentWindowUnlockedAt
-          : null,
+      unlockedAt: metrics.topProjectShare30d >= 0.7 ? metrics.recentWindowUnlockedAt : null,
     }),
     createStatus({
       code: "project_focus_90",
       current: metrics.topProjectShare30d,
       target: 0.9,
       unit: "percent",
-      unlockedAt:
-        metrics.topProjectShare30d >= 0.9
-          ? metrics.recentWindowUnlockedAt
-          : null,
+      unlockedAt: metrics.topProjectShare30d >= 0.9 ? metrics.recentWindowUnlockedAt : null,
     }),
     createStatus({
       code: "models_3",
@@ -645,8 +595,7 @@ export function buildAchievementStatuses(
       ...rankTierProgress(metrics.leaderboardWeekRank, 50),
       unit: "count",
       unlockedAt:
-        metrics.leaderboardWeekRank !== null &&
-        metrics.leaderboardWeekRank <= 50
+        metrics.leaderboardWeekRank !== null && metrics.leaderboardWeekRank <= 50
           ? metrics.recentWindowUnlockedAt
           : null,
     }),
@@ -655,8 +604,7 @@ export function buildAchievementStatuses(
       ...rankTierProgress(metrics.leaderboardMonthRank, 50),
       unit: "count",
       unlockedAt:
-        metrics.leaderboardMonthRank !== null &&
-        metrics.leaderboardMonthRank <= 50
+        metrics.leaderboardMonthRank !== null && metrics.leaderboardMonthRank <= 50
           ? metrics.recentWindowUnlockedAt
           : null,
     }),
@@ -665,8 +613,7 @@ export function buildAchievementStatuses(
       ...rankTierProgress(metrics.leaderboardAllTimeRank, 100),
       unit: "count",
       unlockedAt:
-        metrics.leaderboardAllTimeRank !== null &&
-        metrics.leaderboardAllTimeRank <= 100
+        metrics.leaderboardAllTimeRank !== null && metrics.leaderboardAllTimeRank <= 100
           ? metrics.recentWindowUnlockedAt
           : null,
     }),
@@ -675,8 +622,7 @@ export function buildAchievementStatuses(
       ...rankTierProgress(metrics.leaderboardAllTimeRank, 10),
       unit: "count",
       unlockedAt:
-        metrics.leaderboardAllTimeRank !== null &&
-        metrics.leaderboardAllTimeRank <= 10
+        metrics.leaderboardAllTimeRank !== null && metrics.leaderboardAllTimeRank <= 10
           ? metrics.recentWindowUnlockedAt
           : null,
     }),
@@ -684,10 +630,7 @@ export function buildAchievementStatuses(
       code: "leaderboard_all_time_first",
       ...rankTierProgress(metrics.leaderboardAllTimeRank, 1),
       unit: "count",
-      unlockedAt:
-        metrics.leaderboardAllTimeRank === 1
-          ? metrics.recentWindowUnlockedAt
-          : null,
+      unlockedAt: metrics.leaderboardAllTimeRank === 1 ? metrics.recentWindowUnlockedAt : null,
     }),
   ].sort((left, right) => left.order - right.order);
 }
@@ -720,9 +663,7 @@ function compareTargets(left: AchievementStatus, right: AchievementStatus) {
   );
 }
 
-export function buildAchievementsPageData(
-  metrics: AchievementInputMetrics,
-): AchievementsPageData {
+export function buildAchievementsPageData(metrics: AchievementInputMetrics): AchievementsPageData {
   return buildAchievementsPageDataFromStatuses({
     metrics,
     achievements: buildAchievementStatuses(metrics),
@@ -741,21 +682,16 @@ export function buildAchievementsPageDataFromStatuses(input: {
     0,
   );
   const level = getArenaLevelFromScore(score);
-  const sections: AchievementCategorySection[] = achievementCategories.map(
-    (category) => {
-      const rows = achievements.filter(
-        (achievement) => achievement.category === category,
-      );
+  const sections: AchievementCategorySection[] = achievementCategories.map((category) => {
+    const rows = achievements.filter((achievement) => achievement.category === category);
 
-      return {
-        category,
-        unlockedCount: rows.filter((achievement) => achievement.unlocked)
-          .length,
-        totalCount: rows.length,
-        achievements: rows,
-      };
-    },
-  );
+    return {
+      category,
+      unlockedCount: rows.filter((achievement) => achievement.unlocked).length,
+      totalCount: rows.length,
+      achievements: rows,
+    };
+  });
 
   return {
     timezone: metrics.timezone,

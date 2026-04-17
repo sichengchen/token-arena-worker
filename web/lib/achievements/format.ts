@@ -1,8 +1,4 @@
-import {
-  formatDuration,
-  formatPercentage,
-  formatTokenCount,
-} from "@/lib/usage/format";
+import { formatDuration, formatPercentage, formatTokenCount } from "@/lib/usage/format";
 import type { AchievementProgressUnit, AchievementTier } from "./types";
 
 export function formatAchievementMetric(input: {
@@ -45,11 +41,7 @@ export function formatAchievementProgress(input: {
   })}`;
 }
 
-export function formatAchievementDate(input: {
-  value: string;
-  locale: string;
-  timezone: string;
-}) {
+export function formatAchievementDate(input: { value: string; locale: string; timezone: string }) {
   return new Intl.DateTimeFormat(input.locale, {
     timeZone: input.timezone,
     year: "numeric",

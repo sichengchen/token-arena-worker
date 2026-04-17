@@ -15,11 +15,7 @@ type AchievementCardProps = {
   description: string;
 };
 
-export function AchievementCard({
-  achievement,
-  title,
-  description,
-}: AchievementCardProps) {
+export function AchievementCard({ achievement, title, description }: AchievementCardProps) {
   return (
     <Card
       size="sm"
@@ -30,10 +26,7 @@ export function AchievementCard({
           iconKey={achievement.iconKey}
           tier={achievement.tier}
           locked={!achievement.unlocked}
-          count={getAchievementCountBadgeValue(
-            achievement.code,
-            achievement.awardCount,
-          )}
+          count={getAchievementCountBadgeValue(achievement.code, achievement.awardCount)}
         />
         <div className="min-w-0 space-y-1.5">
           <h3 className="w-full max-w-full break-words text-sm font-semibold leading-snug tracking-tight text-foreground">

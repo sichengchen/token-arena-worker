@@ -1,7 +1,4 @@
-import type {
-  AchievementAwardSource,
-  Prisma,
-} from "../../generated/prisma/client";
+import type { AchievementAwardSource, Prisma } from "../../generated/prisma/client";
 import type { AchievementCode, AchievementStatus } from "./types";
 
 type RepeatRule =
@@ -167,20 +164,12 @@ export function buildAchievementAwardPlan(input: {
     }
 
     if (rule.mode === "threshold_step") {
-      const currentStep = Math.floor(
-        status.progress.current / status.progress.target,
-      );
+      const currentStep = Math.floor(status.progress.current / status.progress.target);
 
       if (currentStep > record.awardCount) {
-        for (
-          let stepIndex = record.awardCount + 1;
-          stepIndex <= currentStep;
-          stepIndex += 1
-        ) {
+        for (let stepIndex = record.awardCount + 1; stepIndex <= currentStep; stepIndex += 1) {
           const awardedAt =
-            stepIndex === 1 && status.unlockedAt
-              ? status.unlockedAt
-              : input.evaluatedAt;
+            stepIndex === 1 && status.unlockedAt ? status.unlockedAt : input.evaluatedAt;
           awards.push(
             createAward({
               userId: input.userId,
@@ -193,16 +182,14 @@ export function buildAchievementAwardPlan(input: {
           );
         }
         record.awardCount = currentStep;
-        record.firstAwardedAt =
-          record.firstAwardedAt ?? status.unlockedAt ?? input.evaluatedAt;
+        record.firstAwardedAt = record.firstAwardedAt ?? status.unlockedAt ?? input.evaluatedAt;
         record.lastAwardedAt = input.evaluatedAt;
       }
     }
 
     if (rule.mode === "recross") {
       const lastQualified =
-        record.state?.lastQualified ??
-        (record.awardCount > 0 && status.isQualifiedNow);
+        record.state?.lastQualified ?? (record.awardCount > 0 && status.isQualifiedNow);
 
       if (status.isQualifiedNow && !lastQualified) {
         const nextIndex = record.awardCount + 1;

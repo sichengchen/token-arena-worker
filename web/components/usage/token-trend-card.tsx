@@ -2,23 +2,11 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  formatDuration,
-  formatTokenCount,
-  formatUsdAmount,
-} from "@/lib/usage/format";
+import { formatDuration, formatTokenCount, formatUsdAmount } from "@/lib/usage/format";
 import type { TokenTrendPoint } from "@/lib/usage/types";
 
 type TrendMetricView = "tokens" | "cost" | "totalTime";
@@ -119,11 +107,7 @@ type TokenTrendTooltipRow = {
   value: number;
 };
 
-function formatTrendMetricValue(
-  value: number,
-  view: TrendMetricView,
-  locale: string,
-) {
+function formatTrendMetricValue(value: number, view: TrendMetricView, locale: string) {
   if (view === "cost") {
     return formatUsdAmount(value, locale, { compact: true });
   }
@@ -135,10 +119,7 @@ function formatTrendMetricValue(
   return formatTokenCount(value);
 }
 
-function formatTooltipRowValue(
-  row: TokenTrendTooltipRow,
-  locale: string,
-): string {
+function formatTooltipRowValue(row: TokenTrendTooltipRow, locale: string): string {
   switch (row.kind) {
     case "currency":
       return formatUsdAmount(row.value, locale);
@@ -149,10 +130,7 @@ function formatTooltipRowValue(
   }
 }
 
-function getTooltipRows(
-  point: TokenTrendPoint,
-  view: TrendMetricView,
-): TokenTrendTooltipRow[] {
+function getTooltipRows(point: TokenTrendPoint, view: TrendMetricView): TokenTrendTooltipRow[] {
   if (view === "cost") {
     return [
       { labelKey: "cost", kind: "currency", value: point.estimatedCostUsd },
@@ -196,15 +174,10 @@ export function TokenTrendTooltipContent({
 
   return (
     <div className="min-w-48 rounded-lg border bg-background/95 p-3 shadow-md">
-      <div className="mb-3 text-sm font-medium text-foreground">
-        {String(label ?? point.label)}
-      </div>
+      <div className="mb-3 text-sm font-medium text-foreground">{String(label ?? point.label)}</div>
       <div className="space-y-1.5">
         {getTooltipRows(point, view).map((row) => (
-          <div
-            key={row.labelKey}
-            className="flex items-center justify-between gap-6 text-sm"
-          >
+          <div key={row.labelKey} className="flex items-center justify-between gap-6 text-sm">
             <div className="flex items-center gap-2">
               <span
                 className="size-2 rounded-full"
@@ -222,14 +195,10 @@ export function TokenTrendTooltipContent({
   );
 }
 
-export function TokenTrendCard({
-  data,
-  defaultMetricView = "tokens",
-}: TokenTrendCardProps) {
+export function TokenTrendCard({ data, defaultMetricView = "tokens" }: TokenTrendCardProps) {
   const locale = useLocale();
   const t = useTranslations("usage.trend");
-  const [metricView, setMetricView] =
-    useState<TrendMetricView>(defaultMetricView);
+  const [metricView, setMetricView] = useState<TrendMetricView>(defaultMetricView);
   const hasCostData = data.some((point) => point.estimatedCostUsd > 0);
 
   return (
@@ -269,18 +238,12 @@ export function TokenTrendCard({
             </div>
           ) : metricView === "totalTime" ? (
             <div className="flex shrink-0 items-center gap-2 text-sm text-muted-foreground">
-              <span
-                className="size-3 rounded-sm"
-                style={{ backgroundColor: "var(--chart-3)" }}
-              />
+              <span className="size-3 rounded-sm" style={{ backgroundColor: "var(--chart-3)" }} />
               <span>{t("totalTime")}</span>
             </div>
           ) : (
             <div className="flex shrink-0 items-center gap-2 text-sm text-muted-foreground">
-              <span
-                className="size-3 rounded-sm"
-                style={{ backgroundColor: "var(--chart-2)" }}
-              />
+              <span className="size-3 rounded-sm" style={{ backgroundColor: "var(--chart-2)" }} />
               <span>{t("cost")}</span>
             </div>
           )}
@@ -305,25 +268,15 @@ export function TokenTrendCard({
                 barCategoryGap="8%"
               >
                 <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis
-                  dataKey="label"
-                  minTickGap={24}
-                  tick={{ fontSize: 12 }}
-                />
+                <XAxis dataKey="label" minTickGap={24} tick={{ fontSize: 12 }} />
                 <YAxis
                   tick={{ fontSize: 12 }}
-                  tickFormatter={(value) =>
-                    formatTrendMetricValue(value, metricView, locale)
-                  }
+                  tickFormatter={(value) => formatTrendMetricValue(value, metricView, locale)}
                 />
                 <Tooltip
                   cursor={{ fill: "var(--muted)", opacity: 0.45 }}
                   content={(props) => (
-                    <TokenTrendTooltipContent
-                      {...props}
-                      view={metricView}
-                      locale={locale}
-                    />
+                    <TokenTrendTooltipContent {...props} view={metricView} locale={locale} />
                   )}
                 />
                 {metricView === "tokens" ? (

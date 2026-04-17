@@ -1,8 +1,4 @@
-import type {
-  AchievementCode,
-  AchievementDefinition,
-  AchievementTier,
-} from "./types";
+import type { AchievementCode, AchievementDefinition, AchievementTier } from "./types";
 
 const tierPoints: Record<AchievementTier, number> = {
   bronze: 10,
@@ -431,10 +427,9 @@ export const achievementDefinitions: AchievementDefinition[] = [
   }),
 ];
 
-export const achievementDefinitionMap = new Map<
-  AchievementCode,
-  AchievementDefinition
->(achievementDefinitions.map((definition) => [definition.code, definition]));
+export const achievementDefinitionMap = new Map<AchievementCode, AchievementDefinition>(
+  achievementDefinitions.map((definition) => [definition.code, definition]),
+);
 
 const repeatableAchievementCodes = new Set<AchievementCode>([
   "streak_3",
@@ -449,10 +444,7 @@ const repeatableAchievementCodes = new Set<AchievementCode>([
   "leaderboard_all_time_first",
 ]);
 
-export function getAchievementCountBadgeValue(
-  code: AchievementCode,
-  awardCount: number,
-) {
+export function getAchievementCountBadgeValue(code: AchievementCode, awardCount: number) {
   if (!repeatableAchievementCodes.has(code) || awardCount <= 1) {
     return 0;
   }

@@ -1,17 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { buildUsageShareCardData } from "@/lib/usage/share-card";
-import type {
-  TokenTrendPoint,
-  UsageBreakdowns,
-  UsageOverviewMetrics,
-} from "@/lib/usage/types";
+import type { TokenTrendPoint, UsageBreakdowns, UsageOverviewMetrics } from "@/lib/usage/types";
 
 function createOverview(
   overrides?: Partial<
-    Record<
-      keyof UsageOverviewMetrics,
-      { current: number; previous: number; delta: number }
-    >
+    Record<keyof UsageOverviewMetrics, { current: number; previous: number; delta: number }>
   >,
 ): UsageOverviewMetrics {
   const base = {
@@ -35,9 +28,7 @@ function createOverview(
   };
 }
 
-function createBreakdowns(
-  overrides?: Partial<UsageBreakdowns>,
-): UsageBreakdowns {
+function createBreakdowns(overrides?: Partial<UsageBreakdowns>): UsageBreakdowns {
   return {
     devices: [],
     tools: [],

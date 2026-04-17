@@ -35,8 +35,7 @@ function createStatus(
 }
 
 function createRecord(
-  overrides: Partial<StoredAchievementRecord> &
-    Pick<StoredAchievementRecord, "code">,
+  overrides: Partial<StoredAchievementRecord> & Pick<StoredAchievementRecord, "code">,
 ): StoredAchievementRecord {
   return {
     code: overrides.code,
@@ -68,9 +67,7 @@ describe("buildAchievementAwardPlan", () => {
       records: [createRecord({ code: "sessions_200", awardCount: 1 })],
     });
 
-    expect(plan.awards.map((award) => award.dedupeKey)).toEqual([
-      "user_1:sessions_200:step:2",
-    ]);
+    expect(plan.awards.map((award) => award.dedupeKey)).toEqual(["user_1:sessions_200:step:2"]);
     expect(plan.records.get("sessions_200")).toMatchObject({
       awardCount: 2,
       lastAwardedAt: "2026-04-01T00:00:00.000Z",
@@ -126,14 +123,10 @@ describe("buildAchievementAwardPlan", () => {
           unlockedAt: "2026-04-02T00:00:00.000Z",
         }),
       ],
-      records: [
-        dropped.records.get("streak_7") ?? createRecord({ code: "streak_7" }),
-      ],
+      records: [dropped.records.get("streak_7") ?? createRecord({ code: "streak_7" })],
     });
 
-    expect(requalified.awards.map((award) => award.dedupeKey)).toEqual([
-      "user_1:streak_7:award:2",
-    ]);
+    expect(requalified.awards.map((award) => award.dedupeKey)).toEqual(["user_1:streak_7:award:2"]);
     expect(requalified.records.get("streak_7")).toMatchObject({
       awardCount: 2,
       state: { lastQualified: true },

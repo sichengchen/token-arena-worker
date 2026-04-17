@@ -1,15 +1,7 @@
 "use client";
 
 import { toPng } from "html-to-image";
-import {
-  Copy,
-  DollarSign,
-  Download,
-  FolderLock,
-  Share2,
-  Sparkles,
-  UserRoundX,
-} from "lucide-react";
+import { Copy, DollarSign, Download, FolderLock, Share2, Sparkles, UserRoundX } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -24,10 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type {
-  UsageShareCardData,
-  UsageShareCardTemplate,
-} from "@/lib/usage/share-card";
+import type { UsageShareCardData, UsageShareCardTemplate } from "@/lib/usage/share-card";
 import { cn } from "@/lib/utils";
 import {
   buildUsageShareCardCaption,
@@ -194,8 +183,7 @@ export function UsageShareDialog({ data }: UsageShareDialogProps) {
       setIsExporting(true);
       const dataUrl = await exportImage();
       const link = document.createElement("a");
-      const safeRange =
-        data.range.preset === "custom" ? "custom" : data.range.preset;
+      const safeRange = data.range.preset === "custom" ? "custom" : data.range.preset;
       link.download = `tokenarena-${template}-${safeRange}.png`;
       link.href = dataUrl;
       link.click();
@@ -294,9 +282,7 @@ export function UsageShareDialog({ data }: UsageShareDialogProps) {
                   <Sparkles className="size-4 text-muted-foreground" />
                   {t("sourceTitle")}
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {t("sourceDescription")}
-                </p>
+                <p className="mt-2 text-sm text-muted-foreground">{t("sourceDescription")}</p>
               </div>
             </div>
 
@@ -338,11 +324,7 @@ export function UsageShareDialog({ data }: UsageShareDialogProps) {
               <Copy />
               {t("actions.copyImage")}
             </Button>
-            <Button
-              type="button"
-              disabled={isExporting}
-              onClick={handleDownload}
-            >
+            <Button type="button" disabled={isExporting} onClick={handleDownload}>
               <Download />
               {t("actions.download")}
             </Button>
@@ -350,10 +332,7 @@ export function UsageShareDialog({ data }: UsageShareDialogProps) {
         </DialogContent>
       </Dialog>
 
-      <div
-        className="pointer-events-none fixed top-0 left-[-10000px] opacity-0"
-        aria-hidden="true"
-      >
+      <div className="pointer-events-none fixed top-0 left-[-10000px] opacity-0" aria-hidden="true">
         <div ref={exportRef}>
           <UsageShareCardPreview
             data={data}

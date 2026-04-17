@@ -35,10 +35,7 @@ function createAccumulator(statDate: Date): LeaderboardAccumulator {
   };
 }
 
-function ensureAccumulator(
-  rows: Map<string, LeaderboardAccumulator>,
-  statDate: Date,
-) {
+function ensureAccumulator(rows: Map<string, LeaderboardAccumulator>, statDate: Date) {
   const key = getShanghaiDateKey(statDate);
   const existing = rows.get(key);
 
@@ -67,9 +64,9 @@ export function collectAffectedLeaderboardDates(input: {
     ...(input.existingSessionStarts ?? []),
   ].map(normalizeDate);
 
-  return Array.from(
-    new Map(rows.map((value) => [value.toISOString(), value])).values(),
-  ).sort((left, right) => left.getTime() - right.getTime());
+  return Array.from(new Map(rows.map((value) => [value.toISOString(), value])).values()).sort(
+    (left, right) => left.getTime() - right.getTime(),
+  );
 }
 
 export async function findExistingSessionStartDates(

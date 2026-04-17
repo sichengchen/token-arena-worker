@@ -3,27 +3,17 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { genericOAuth } from "better-auth/plugins/generic-oauth";
 import { isProduction, isSelfHosted } from "./auth-config";
-import {
-  getEnabledOAuth2ProviderConfigs,
-  isSocialProviderEnabled,
-} from "./auth-providers";
-import {
-  normalizeUsername,
-  USERNAME_TAKEN_ERROR_MESSAGE,
-} from "./auth-username";
+import { getEnabledOAuth2ProviderConfigs, isSocialProviderEnabled } from "./auth-providers";
+import { normalizeUsername, USERNAME_TAKEN_ERROR_MESSAGE } from "./auth-username";
 import { resolveCreatedUsername } from "./auth-username.server";
 import { prisma } from "./prisma";
 import { usernameSchema } from "./validators/auth";
 
-function getRequiredEnv(
-  name: "BETTER_AUTH_SECRET" | "BETTER_AUTH_URL",
-): string {
+function getRequiredEnv(name: "BETTER_AUTH_SECRET" | "BETTER_AUTH_URL"): string {
   const value = process.env[name];
 
   if (!value) {
-    throw new Error(
-      `Missing required environment variable: ${name}. Add it to web/.env.`,
-    );
+    throw new Error(`Missing required environment variable: ${name}. Add it to web/.env.`);
   }
 
   return value;
@@ -70,8 +60,7 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user) => {
-          const providedUsername =
-            typeof user.username === "string" ? user.username : undefined;
+          const providedUsername = typeof user.username === "string" ? user.username : undefined;
           const { username, usernameNeedsSetup, usernameAutoAdjusted } =
             await resolveCreatedUsername({
               providedUsername,

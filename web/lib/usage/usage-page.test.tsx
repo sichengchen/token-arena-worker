@@ -16,53 +16,30 @@ const mocks = vi.hoisted(() => ({
   getFilterOptions: vi.fn(),
   getLastSyncedAt: vi.fn(),
   resolveDashboardRange: vi.fn(),
-  getTranslations: vi.fn(
-    async () => (key: string, values?: Record<string, string>) => {
-      if (key === "overviewTitle") return "Overview";
-      if (key === "noSyncYet") return "No sync yet";
-      if (key === "lastSynced")
-        return `Last synced ${values?.value ?? ""}`.trim();
-      return key;
-    },
-  ),
+  getTranslations: vi.fn(async () => (key: string, values?: Record<string, string>) => {
+    if (key === "overviewTitle") return "Overview";
+    if (key === "noSyncYet") return "No sync yet";
+    if (key === "lastSynced") return `Last synced ${values?.value ?? ""}`.trim();
+    return key;
+  }),
   AppShell: vi.fn(({ children }: { children: React.ReactNode }) =>
     React.createElement("div", { "data-slot": "app-shell" }, children),
   ),
-  AccountMenu: vi.fn(() =>
-    React.createElement("div", { "data-slot": "account-menu" }),
-  ),
-  BreakdownGrid: vi.fn(() =>
-    React.createElement("div", { "data-slot": "breakdown-grid" }),
-  ),
-  EmptyState: vi.fn(() =>
-    React.createElement("div", { "data-slot": "empty-state" }),
-  ),
+  AccountMenu: vi.fn(() => React.createElement("div", { "data-slot": "account-menu" })),
+  BreakdownGrid: vi.fn(() => React.createElement("div", { "data-slot": "breakdown-grid" })),
+  EmptyState: vi.fn(() => React.createElement("div", { "data-slot": "empty-state" })),
   FiltersBar: vi.fn(({ badgesSlot }: { badgesSlot?: React.ReactNode }) =>
-    React.createElement(
-      "div",
-      { "data-slot": "filters-bar" },
-      badgesSlot ?? null,
-    ),
+    React.createElement("div", { "data-slot": "filters-bar" }, badgesSlot ?? null),
   ),
   KpiGrid: vi.fn(() => React.createElement("div", { "data-slot": "kpi-grid" })),
   UsagePageShell: vi.fn(({ children }: { children: React.ReactNode }) =>
     React.createElement("div", { "data-slot": "page-shell" }, children),
   ),
-  SessionsSection: vi.fn(() =>
-    React.createElement("div", { "data-slot": "sessions-section" }),
-  ),
-  LanguageSwitcher: vi.fn(() =>
-    React.createElement("div", { "data-slot": "language-switcher" }),
-  ),
-  ThemeSwitcher: vi.fn(() =>
-    React.createElement("div", { "data-slot": "theme-switcher" }),
-  ),
-  TokenTrendCard: vi.fn(() =>
-    React.createElement("div", { "data-slot": "token-trend-card" }),
-  ),
-  ProfileHeatmap: vi.fn(() =>
-    React.createElement("div", { "data-slot": "profile-heatmap" }),
-  ),
+  SessionsSection: vi.fn(() => React.createElement("div", { "data-slot": "sessions-section" })),
+  LanguageSwitcher: vi.fn(() => React.createElement("div", { "data-slot": "language-switcher" })),
+  ThemeSwitcher: vi.fn(() => React.createElement("div", { "data-slot": "theme-switcher" })),
+  TokenTrendCard: vi.fn(() => React.createElement("div", { "data-slot": "token-trend-card" })),
+  ProfileHeatmap: vi.fn(() => React.createElement("div", { "data-slot": "profile-heatmap" })),
   ShareBadgesDialog: vi.fn(() =>
     React.createElement("div", { "data-slot": "share-badges-dialog" }),
   ),
@@ -255,9 +232,7 @@ describe("UsagePage", () => {
       models: [],
       projects: [],
     });
-    mocks.getLastSyncedAt.mockResolvedValue(
-      new Date("2026-03-25T16:00:00.000Z"),
-    );
+    mocks.getLastSyncedAt.mockResolvedValue(new Date("2026-03-25T16:00:00.000Z"));
     mocks.formatDateTime.mockReturnValue("2026-03-26 00:00");
   });
 
@@ -296,8 +271,7 @@ describe("UsagePage", () => {
     expect(markup).toContain('data-slot="profile-heatmap"');
     expect(mocks.ProfileHeatmapMarkdownButton).toHaveBeenCalledWith(
       expect.objectContaining({
-        markdown:
-          "![TokenArena Activity](https://token.poco-ai.com/en/u/test_user/activity.svg)",
+        markdown: "![TokenArena Activity](https://token.poco-ai.com/en/u/test_user/activity.svg)",
       }),
       undefined,
     );

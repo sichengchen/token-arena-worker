@@ -1,7 +1,4 @@
-export function getAuthErrorMessage(
-  error: unknown,
-  fallbackMessage: string,
-): string {
+export function getAuthErrorMessage(error: unknown, fallbackMessage: string): string {
   if (typeof error === "string") {
     return error;
   }

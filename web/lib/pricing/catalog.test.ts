@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  createPricingCatalogSnapshot,
-  hydratePricingCatalogSnapshot,
-} from "./catalog";
+import { createPricingCatalogSnapshot, hydratePricingCatalogSnapshot } from "./catalog";
 
 describe("pricing catalog snapshot", () => {
   it("compacts the upstream payload and hydrates the lookup maps back", () => {
@@ -73,9 +70,7 @@ describe("pricing catalog snapshot", () => {
       ],
     ]);
 
-    expect(JSON.stringify(snapshot).length).toBeLessThan(
-      JSON.stringify(rawPayload).length,
-    );
+    expect(JSON.stringify(snapshot).length).toBeLessThan(JSON.stringify(rawPayload).length);
 
     const catalog = hydratePricingCatalogSnapshot(snapshot);
 

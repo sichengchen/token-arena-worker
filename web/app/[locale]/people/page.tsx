@@ -45,18 +45,13 @@ function buildPageRange(
       value: i + 1,
     }));
   }
-  const pages: (
-    | { type: "ellipsis"; key: string }
-    | { type: "page"; value: number }
-  )[] = [{ type: "page", value: 1 }];
+  const pages: ({ type: "ellipsis"; key: string } | { type: "page"; value: number })[] = [
+    { type: "page", value: 1 },
+  ];
   if (current > 3) {
     pages.push({ type: "ellipsis", key: "start" });
   }
-  for (
-    let i = Math.max(2, current - 1);
-    i <= Math.min(total - 1, current + 1);
-    i++
-  ) {
+  for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
     pages.push({ type: "page", value: i });
   }
   if (current < total - 2) {
@@ -80,10 +75,7 @@ function normalizePositiveInteger(value: string | undefined, fallback: number) {
   return parsed;
 }
 
-function normalizePeopleTab(
-  value: string | undefined,
-  authenticated: boolean,
-): PeopleTab {
+function normalizePeopleTab(value: string | undefined, authenticated: boolean): PeopleTab {
   if (!authenticated) {
     return "all";
   }
@@ -103,9 +95,7 @@ function filterProfiles(profiles: SocialListProfile[], query: string) {
   const normalized = query.toLowerCase();
 
   return profiles.filter((profile) => {
-    const haystack = [profile.username, profile.name, profile.bio ?? ""]
-      .join(" ")
-      .toLowerCase();
+    const haystack = [profile.username, profile.name, profile.bio ?? ""].join(" ").toLowerCase();
 
     return haystack.includes(normalized);
   });
@@ -125,10 +115,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PeoplePage({
-  params,
-  searchParams,
-}: PeoplePageProps) {
+export default async function PeoplePage({ params, searchParams }: PeoplePageProps) {
   const { locale } = await params;
   const viewer = await getOptionalSession();
   const t = await getTranslations({ locale, namespace: "social.people" });
@@ -140,20 +127,14 @@ export default async function PeoplePage({
   const tTags = await getTranslations({ locale, namespace: "social.tags" });
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const query = firstValue(resolvedSearchParams?.query)?.trim() ?? "";
-  const tab = normalizePeopleTab(
-    firstValue(resolvedSearchParams?.tab),
-    Boolean(viewer),
-  );
+  const tab = normalizePeopleTab(firstValue(resolvedSearchParams?.tab), Boolean(viewer));
   const pageSize = PEOPLE_PAGE_SIZE;
   const pageParam = firstValue(resolvedSearchParams?.page);
   const currentPage = normalizePositiveInteger(pageParam, 1);
 
   const peopleData = await (async () => {
     if (tab === "following" && viewer) {
-      const allProfiles = filterProfiles(
-        await listFollowingProfiles(viewer.user.id),
-        query,
-      );
+      const allProfiles = filterProfiles(await listFollowingProfiles(viewer.user.id), query);
 
       return {
         totalCount: allProfiles.length,
@@ -162,10 +143,7 @@ export default async function PeoplePage({
     }
 
     if (tab === "followers" && viewer) {
-      const allProfiles = filterProfiles(
-        await listFollowerProfiles(viewer.user.id),
-        query,
-      );
+      const allProfiles = filterProfiles(await listFollowerProfiles(viewer.user.id), query);
 
       return {
         totalCount: allProfiles.length,
@@ -197,10 +175,7 @@ export default async function PeoplePage({
   const profiles =
     tab === "all"
       ? peopleData.profiles
-      : peopleData.profiles.slice(
-          (validPage - 1) * pageSize,
-          validPage * pageSize,
-        );
+      : peopleData.profiles.slice((validPage - 1) * pageSize, validPage * pageSize);
 
   const tabs: Array<{ value: PeopleTab; label: string }> = [
     { value: "all", label: t("title") },
@@ -275,10 +250,7 @@ export default async function PeoplePage({
     >
       <div className="space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <nav
-            aria-label={t("title")}
-            className="flex flex-wrap items-center gap-x-5 gap-y-2"
-          >
+          <nav aria-label={t("title")} className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {tabs.map((item) => (
               <Link
                 key={item.value}
@@ -295,9 +267,7 @@ export default async function PeoplePage({
           </nav>
 
           <form className="flex flex-col gap-2 sm:flex-row">
-            {tab !== "all" ? (
-              <input type="hidden" name="tab" value={tab} />
-            ) : null}
+            {tab !== "all" ? <input type="hidden" name="tab" value={tab} /> : null}
             <Input
               type="search"
               name="query"
@@ -344,11 +314,7 @@ export default async function PeoplePage({
                         href={buildPageUrl(validPage - 1)}
                         iconOnly
                         text={t("pagination.previous")}
-                        className={
-                          validPage <= 1
-                            ? "pointer-events-none opacity-50"
-                            : undefined
-                        }
+                        className={validPage <= 1 ? "pointer-events-none opacity-50" : undefined}
                       />
                     </PaginationItem>
                     {pages.map((p) =>
@@ -373,9 +339,7 @@ export default async function PeoplePage({
                         iconOnly
                         text={t("pagination.next")}
                         className={
-                          validPage >= totalPages
-                            ? "pointer-events-none opacity-50"
-                            : undefined
+                          validPage >= totalPages ? "pointer-events-none opacity-50" : undefined
                         }
                       />
                     </PaginationItem>
@@ -394,9 +358,7 @@ export default async function PeoplePage({
                 {emptyText}
               </CardContent>
             ) : (
-              <CardContent className="py-6 text-sm text-muted-foreground">
-                {emptyText}
-              </CardContent>
+              <CardContent className="py-6 text-sm text-muted-foreground">{emptyText}</CardContent>
             )}
           </Card>
         )}

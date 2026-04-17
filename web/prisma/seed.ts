@@ -4,10 +4,7 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client";
 import { FollowTag } from "../generated/prisma/enums";
-import {
-  resolveLeaderboardWindow,
-  startOfShanghaiDay,
-} from "../lib/leaderboard/date";
+import { resolveLeaderboardWindow, startOfShanghaiDay } from "../lib/leaderboard/date";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -84,9 +81,7 @@ function buildMockUsers(rng: () => number): MockUser[] {
 function buildWeeklyTotals(rng: () => number, count: number) {
   const min = 150_000;
   const max = 2_800_000;
-  return Array.from({ length: count }, () =>
-    Math.floor(rng() * (max - min + 1) + min),
-  );
+  return Array.from({ length: count }, () => Math.floor(rng() * (max - min + 1) + min));
 }
 
 function buildRandomFollowEdges(
@@ -130,9 +125,7 @@ function randomProjectHashSalt() {
 function splitWeeklyTotalAcrossDays(weeklyTotal: number, dayCount: number) {
   const base = Math.floor(weeklyTotal / dayCount);
   const remainder = weeklyTotal - base * dayCount;
-  return Array.from({ length: dayCount }, (_, index) =>
-    index === 0 ? base + remainder : base,
-  );
+  return Array.from({ length: dayCount }, (_, index) => (index === 0 ? base + remainder : base));
 }
 
 function distributeTokens(total: number) {
@@ -141,10 +134,7 @@ function distributeTokens(total: number) {
   return { inputTokens, outputTokens };
 }
 
-async function seedLeaderboardDaysAndBuckets(
-  userIds: string[],
-  weeklyTotals: number[],
-) {
+async function seedLeaderboardDaysAndBuckets(userIds: string[], weeklyTotals: number[]) {
   const now = new Date();
   const week = resolveLeaderboardWindow("week", now);
   if (!week.start || !week.end) {
@@ -167,10 +157,7 @@ async function seedLeaderboardDaysAndBuckets(
   for (let userIndex = 0; userIndex < userIds.length; userIndex++) {
     const userId = userIds[userIndex];
     const weeklyTotal = weeklyTotals[userIndex] ?? 100_000;
-    const perDayTotals = splitWeeklyTotalAcrossDays(
-      weeklyTotal,
-      weekDays.length,
-    );
+    const perDayTotals = splitWeeklyTotalAcrossDays(weeklyTotal, weekDays.length);
 
     for (let d = 0; d < weekDays.length; d++) {
       const statDate = weekDays[d];

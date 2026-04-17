@@ -171,10 +171,7 @@ export function formatTokenCount(value: number, locale = "en"): string {
   })}B`;
 }
 
-export function formatDuration(
-  seconds: number,
-  options?: { compact?: boolean },
-) {
+export function formatDuration(seconds: number, options?: { compact?: boolean }) {
   if (seconds <= 0) {
     return "0s";
   }
@@ -201,11 +198,7 @@ export function formatPercentage(value: number, locale = "en") {
   return getPercentageFormatter(locale).format(value);
 }
 
-export function formatUsdAmount(
-  value: number,
-  locale = "en",
-  options?: { compact?: boolean },
-) {
+export function formatUsdAmount(value: number, locale = "en", options?: { compact?: boolean }) {
   const absValue = Math.abs(value);
 
   if (options?.compact && absValue >= 1000) {
@@ -232,11 +225,7 @@ export function formatDateInput(value: Date | string, timezone: string) {
   return getDatePartsFormatter(timezone).format(normalizeDate(value));
 }
 
-export function formatDateTime(
-  value: Date | string,
-  timezone: string,
-  locale = "en",
-) {
+export function formatDateTime(value: Date | string, timezone: string, locale = "en") {
   const date = normalizeDate(value);
   const datePart = getDateFormatter(timezone, locale).format(date);
   const timePart = getTimeFormatter(timezone, locale).format(date);

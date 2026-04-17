@@ -1,0 +1,19 @@
+{
+  "$schema": "https://vp.dev/schema.json",
+  "build": {
+    "outDir": "dist"
+  },
+  "dev": {
+    "port": 5173,
+    "cloudflare": {
+      "dev": true
+    }
+  },
+  "check": {
+    "targets": ["src/**/*.ts", "src/**/*.tsx"]
+  },
+  "test": {
+    "runner": "vitest",
+    "environment": "jsdom"
+  }
+}

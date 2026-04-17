@@ -9,19 +9,13 @@ import {
   type PreferenceNoticeDetail,
   preferenceNoticeEventName,
 } from "@/lib/usage/preference-notice";
-import {
-  type SettingsSectionId,
-  settingsSectionToPath,
-} from "@/lib/usage/settings-routes";
+import { type SettingsSectionId, settingsSectionToPath } from "@/lib/usage/settings-routes";
 import type { ProjectMode } from "@/lib/usage/types";
 import { cn } from "@/lib/utils";
 import { AccountIdentityCard } from "./account-identity-card";
 import { ConnectedAccountsCard } from "./connected-accounts-card";
 import { KeyManager, type UsageKeyRecord } from "./key-manager";
-import {
-  SettingsPageHeader,
-  type SettingsPageHeaderViewer,
-} from "./settings-page-header";
+import { SettingsPageHeader, type SettingsPageHeaderViewer } from "./settings-page-header";
 import { SettingsPreferences } from "./settings-preferences";
 
 type SettingsPreferenceState = {
@@ -99,12 +93,7 @@ export function SettingsBody({
       publicProfileEnabled: initialPublicProfileEnabled,
       bio: initialBio,
     });
-  }, [
-    initialBio,
-    initialProjectMode,
-    initialPublicProfileEnabled,
-    initialTimezone,
-  ]);
+  }, [initialBio, initialProjectMode, initialPublicProfileEnabled, initialTimezone]);
 
   useEffect(() => {
     const handlePreferenceSaved = (event: Event) => {
@@ -117,16 +106,10 @@ export function SettingsBody({
       setPreferences(customEvent.detail.preference);
     };
 
-    window.addEventListener(
-      preferenceNoticeEventName,
-      handlePreferenceSaved as EventListener,
-    );
+    window.addEventListener(preferenceNoticeEventName, handlePreferenceSaved as EventListener);
 
     return () => {
-      window.removeEventListener(
-        preferenceNoticeEventName,
-        handlePreferenceSaved as EventListener,
-      );
+      window.removeEventListener(preferenceNoticeEventName, handlePreferenceSaved as EventListener);
     };
   }, []);
 
@@ -141,10 +124,7 @@ export function SettingsBody({
     { id: "cliKeys", label: t("navCliKeys"), icon: Key },
   ];
 
-  const panelCopy: Record<
-    SettingsSectionId,
-    { title: string; description: string }
-  > = {
+  const panelCopy: Record<SettingsSectionId, { title: string; description: string }> = {
     account: {
       title: t("navAccount"),
       description: t("panelAccountDescription"),
@@ -165,8 +145,7 @@ export function SettingsBody({
 
   const activePanel = panelCopy[section];
 
-  const hrefForSection = (id: SettingsSectionId) =>
-    `/settings/${settingsSectionToPath(id)}`;
+  const hrefForSection = (id: SettingsSectionId) => `/settings/${settingsSectionToPath(id)}`;
 
   const isNavActive = (id: SettingsSectionId) => {
     if (navigateWithUrl) {
@@ -211,10 +190,7 @@ export function SettingsBody({
                       className={navClassName}
                       aria-current={isActive ? "page" : undefined}
                     >
-                      <Icon
-                        className="size-4 shrink-0 opacity-80"
-                        aria-hidden
-                      />
+                      <Icon className="size-4 shrink-0 opacity-80" aria-hidden />
                       <span className="min-w-0 truncate">{item.label}</span>
                     </Link>
                   ) : (
@@ -224,10 +200,7 @@ export function SettingsBody({
                       className={navClassName}
                       aria-current={isActive ? "page" : undefined}
                     >
-                      <Icon
-                        className="size-4 shrink-0 opacity-80"
-                        aria-hidden
-                      />
+                      <Icon className="size-4 shrink-0 opacity-80" aria-hidden />
                       <span className="min-w-0 truncate">{item.label}</span>
                     </button>
                   )}
@@ -243,9 +216,7 @@ export function SettingsBody({
               <h2 className="text-xl font-semibold tracking-tight text-foreground">
                 {activePanel.title}
               </h2>
-              <p className="text-sm text-muted-foreground">
-                {activePanel.description}
-              </p>
+              <p className="text-sm text-muted-foreground">{activePanel.description}</p>
             </div>
           ) : null}
 

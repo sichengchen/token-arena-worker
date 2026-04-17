@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  generateUsageApiKey,
-  hashUsageApiKey,
-  splitApiKeyPrefix,
-} from "./api-keys";
+import { generateUsageApiKey, hashUsageApiKey, splitApiKeyPrefix } from "./api-keys";
 
 describe("usage api keys", () => {
   it("generates ta_ prefixed keys", () => {

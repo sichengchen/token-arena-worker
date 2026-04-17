@@ -50,12 +50,9 @@ describe("activity svg route", () => {
   });
 
   it("returns a compact svg image for public users", async () => {
-    const response = await GET(
-      new Request("https://token.poco-ai.com/zh/u/poco/activity.svg"),
-      {
-        params: Promise.resolve({ locale: "zh", username: "poco" }),
-      },
-    );
+    const response = await GET(new Request("https://token.poco-ai.com/zh/u/poco/activity.svg"), {
+      params: Promise.resolve({ locale: "zh", username: "poco" }),
+    });
 
     expect(response.headers.get("Content-Type")).toContain("image/svg+xml");
     expect(await response.text()).toContain("<svg");
@@ -66,9 +63,7 @@ describe("activity svg route", () => {
 
   it("supports the optional theme query", async () => {
     const response = await GET(
-      new Request(
-        "https://token.poco-ai.com/zh/u/poco/activity.svg?theme=light",
-      ),
+      new Request("https://token.poco-ai.com/zh/u/poco/activity.svg?theme=light"),
       {
         params: Promise.resolve({ locale: "zh", username: "poco" }),
       },

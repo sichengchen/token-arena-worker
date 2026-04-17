@@ -10,9 +10,7 @@ type AchievementsPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: AchievementsPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: AchievementsPageProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "achievements.page" });
   const tNav = await getTranslations({ locale, namespace: "social.nav" });
@@ -23,9 +21,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function AchievementsPage({
-  params,
-}: AchievementsPageProps) {
+export default async function AchievementsPage({ params }: AchievementsPageProps) {
   const { locale } = await params;
   const session = await getSessionOrRedirect(locale);
   redirectIfUsernameSetupNeeded(locale, session.user);

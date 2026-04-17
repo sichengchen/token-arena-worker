@@ -36,16 +36,10 @@ export function PreferenceSaveAlert() {
       }, dismissDelayMs);
     };
 
-    window.addEventListener(
-      preferenceNoticeEventName,
-      handleNotice as EventListener,
-    );
+    window.addEventListener(preferenceNoticeEventName, handleNotice as EventListener);
 
     return () => {
-      window.removeEventListener(
-        preferenceNoticeEventName,
-        handleNotice as EventListener,
-      );
+      window.removeEventListener(preferenceNoticeEventName, handleNotice as EventListener);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

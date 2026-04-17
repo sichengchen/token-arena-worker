@@ -20,15 +20,14 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 vi.mock("@/lib/wechat/share-server", async () => {
-  const actual = await vi.importActual<
-    typeof import("@/lib/wechat/share-server")
-  >("@/lib/wechat/share-server");
+  const actual = await vi.importActual<typeof import("@/lib/wechat/share-server")>(
+    "@/lib/wechat/share-server",
+  );
 
   return {
     ...actual,
     isWechatShareConfigured: mocks.isWechatShareConfigured,
-    createWechatProfileShareTicketPayload:
-      mocks.createWechatProfileShareTicketPayload,
+    createWechatProfileShareTicketPayload: mocks.createWechatProfileShareTicketPayload,
   };
 });
 
@@ -40,9 +39,7 @@ describe("wechat share ticket route", () => {
   it("returns 401 when unauthenticated", async () => {
     mocks.getOptionalSession.mockResolvedValue(null);
 
-    const { POST } = await import(
-      "@/app/api/integrations/wechat/share-ticket/route"
-    );
+    const { POST } = await import("@/app/api/integrations/wechat/share-ticket/route");
     const response = await POST(
       new Request("https://example.com/api/integrations/wechat/share-ticket", {
         method: "POST",
@@ -68,9 +65,7 @@ describe("wechat share ticket route", () => {
       },
     });
 
-    const { POST } = await import(
-      "@/app/api/integrations/wechat/share-ticket/route"
-    );
+    const { POST } = await import("@/app/api/integrations/wechat/share-ticket/route");
     const response = await POST(
       new Request("https://example.com/api/integrations/wechat/share-ticket", {
         method: "POST",
@@ -106,9 +101,7 @@ describe("wechat share ticket route", () => {
       timeout: 30000,
     });
 
-    const { POST } = await import(
-      "@/app/api/integrations/wechat/share-ticket/route"
-    );
+    const { POST } = await import("@/app/api/integrations/wechat/share-ticket/route");
     const response = await POST(
       new Request("https://example.com/api/integrations/wechat/share-ticket", {
         method: "POST",

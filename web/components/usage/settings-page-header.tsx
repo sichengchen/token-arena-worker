@@ -32,23 +32,16 @@ function formatHeaderTitle(name: string | null, username: string | null) {
   return "";
 }
 
-export function SettingsPageHeader({
-  viewer,
-}: {
-  viewer: SettingsPageHeaderViewer;
-}) {
+export function SettingsPageHeader({ viewer }: { viewer: SettingsPageHeaderViewer }) {
   const t = useTranslations("usage.settings");
   const title =
     formatHeaderTitle(viewer.name, viewer.username) ||
     viewer.email.split("@")[0]?.trim() ||
     viewer.email;
-  const identityForInitial =
-    viewer.name?.trim() || viewer.username || viewer.email;
+  const identityForInitial = viewer.name?.trim() || viewer.username || viewer.email;
   const [imageFailed, setImageFailed] = useState(false);
   const profileUsername = viewer.username?.trim();
-  const homeHref = profileUsername
-    ? `/u/${encodeURIComponent(profileUsername)}`
-    : "/";
+  const homeHref = profileUsername ? `/u/${encodeURIComponent(profileUsername)}` : "/";
 
   return (
     <header className="mb-3 px-4 pb-6 pt-1 sm:mb-4 sm:px-5 sm:pb-8 md:px-6">
@@ -68,12 +61,8 @@ export function SettingsPageHeader({
             </span>
           )}
           <div className="min-w-0">
-            <div className="truncate font-semibold text-foreground">
-              {title}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {t("headerSubtitle")}
-            </p>
+            <div className="truncate font-semibold text-foreground">{title}</div>
+            <p className="text-sm text-muted-foreground">{t("headerSubtitle")}</p>
           </div>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">

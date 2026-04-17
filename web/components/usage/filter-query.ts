@@ -1,7 +1,4 @@
-export function buildUsageHref(
-  currentSearch: string,
-  updates: Record<string, string | null>,
-) {
+export function buildUsageHref(currentSearch: string, updates: Record<string, string | null>) {
   const next = new URLSearchParams(currentSearch);
 
   for (const [key, value] of Object.entries(updates)) {

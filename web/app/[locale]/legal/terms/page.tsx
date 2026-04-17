@@ -11,9 +11,7 @@ function isZh(locale: string) {
 
 const EFFECTIVE_DATE = "2026-03-31";
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
 
   if (isZh(locale)) {
@@ -39,8 +37,7 @@ export default async function TermsPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">1. 协议的范围与生效</h2>
         <p>
           本《用户协议》（下称“协议”）适用于你访问、浏览或使用 Token
-          Arena（下称“本服务”）的网站、API、以及 CLI 同步与数据展示功能
-          的全部行为。
+          Arena（下称“本服务”）的网站、API、以及 CLI 同步与数据展示功能 的全部行为。
         </p>
         <p>
           本协议生效日期为 <b>{EFFECTIVE_DATE}</b>。如果你不同意本协议
@@ -65,8 +62,7 @@ export default async function TermsPage({ params }: PageProps) {
       <section className="space-y-2">
         <h2 className="text-xl font-medium">3. 服务内容与使用方式</h2>
         <p>
-          本服务提供 AI
-          用量统计、可视化分析、社交展示（如关注、公开主页与排行榜）
+          本服务提供 AI 用量统计、可视化分析、社交展示（如关注、公开主页与排行榜）
           以及数据同步功能。具体功能以你所使用的版本与页面展示为准。
         </p>
         <p>
@@ -106,9 +102,7 @@ export default async function TermsPage({ params }: PageProps) {
           本服务可能集成第三方登录/认证（如 OAuth2/社交登录）及基础设施服务。
           第三方服务的条款与隐私政策可能同样适用，你应自行了解并承担相应风险。
         </p>
-        <p>
-          对第三方服务导致的延迟、错误或不可用，本服务在法律允许范围内不承担责任。
-        </p>
+        <p>对第三方服务导致的延迟、错误或不可用，本服务在法律允许范围内不承担责任。</p>
       </section>
 
       <section className="space-y-2">
@@ -123,16 +117,15 @@ export default async function TermsPage({ params }: PageProps) {
         <p>
           本服务相关的软件（包括开源代码）以开源方式提供，采用 MIT 开源协议。
           除开源代码的许可范围外，本服务的界面、标识、以及相关文档等内容仍受知识产权保护。
-          未经我们或权利人书面许可，你不得复制、传播、改编或以商业方式使用。
-          开源代码的 MIT 许可全文可在仓库中的 `LICENSE` 文件中查阅。
+          未经我们或权利人书面许可，你不得复制、传播、改编或以商业方式使用。 开源代码的 MIT
+          许可全文可在仓库中的 `LICENSE` 文件中查阅。
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">9. 免责声明</h2>
         <p>
-          9.1
-          按“现状”和“可用”提供：在法律允许的最大范围内，本服务不提供任何明示或暗示的担保，
+          9.1 按“现状”和“可用”提供：在法律允许的最大范围内，本服务不提供任何明示或暗示的担保，
           包括但不限于适销性、特定用途适用性、准确性或不侵权。
         </p>
         <p>
@@ -140,8 +133,7 @@ export default async function TermsPage({ params }: PageProps) {
           不保证：我们不保证本服务在任何时间持续可用、不间断或无错误，也不对统计结果的完整性、准确性或及时性作出保证。
         </p>
         <p>
-          9.3
-          外部依赖：本服务可能依赖第三方登录平台、网络与服务器基础设施等外部系统。
+          9.3 外部依赖：本服务可能依赖第三方登录平台、网络与服务器基础设施等外部系统。
           因这些外部因素导致的问题，本服务在法律允许范围内不承担责任。
         </p>
       </section>
@@ -178,9 +170,7 @@ export default async function TermsPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">13. 联系我们</h2>
         <p>
           若你对本协议有任何疑问或请求，请通过{" "}
-          <Link href="https://github.com/poco-ai/tokenarena">
-            GitHub repository
-          </Link>{" "}
+          <Link href="https://github.com/poco-ai/tokenarena">GitHub repository</Link>{" "}
           与我们取得联系。
         </p>
       </section>
@@ -192,52 +182,46 @@ export default async function TermsPage({ params }: PageProps) {
       <section className="space-y-2">
         <h2 className="text-xl font-medium">1. Scope and Effective Date</h2>
         <p>
-          This Terms of Service (the “Terms”) applies to your access to and use
-          of Token Arena (the “Service”), including the website, APIs, and CLI
-          synchronization and data display features.
+          This Terms of Service (the “Terms”) applies to your access to and use of Token Arena (the
+          “Service”), including the website, APIs, and CLI synchronization and data display
+          features.
         </p>
         <p>
-          Effective date: <b>{EFFECTIVE_DATE}</b>. If you do not agree with any
-          part of these Terms, you must stop using the Service.
+          Effective date: <b>{EFFECTIVE_DATE}</b>. If you do not agree with any part of these Terms,
+          you must stop using the Service.
         </p>
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-xl font-medium">
-          2. Accounts, Eligibility, and Security
-        </h2>
+        <h2 className="text-xl font-medium">2. Accounts, Eligibility, and Security</h2>
         <p>
-          2.1 Eligibility: You must have the legal authority to enter into these
-          Terms, or have obtained permission from a legal guardian where
-          required.
+          2.1 Eligibility: You must have the legal authority to enter into these Terms, or have
+          obtained permission from a legal guardian where required.
         </p>
         <p>
-          2.2 Account: You agree to provide accurate registration information
-          and keep it updated.
+          2.2 Account: You agree to provide accurate registration information and keep it updated.
         </p>
         <p>
-          2.3 API Keys: CLI-to-server communication is authenticated using API
-          keys/credentials. You are responsible for safeguarding your API keys
-          and preventing unauthorized use.
+          2.3 API Keys: CLI-to-server communication is authenticated using API keys/credentials. You
+          are responsible for safeguarding your API keys and preventing unauthorized use.
         </p>
         <p>
-          2.4 Risk: Losses arising from your failure to protect your keys may be
-          your responsibility to the extent permitted by law. If you suspect
-          compromise, disable/delete affected keys and notify us promptly.
+          2.4 Risk: Losses arising from your failure to protect your keys may be your responsibility
+          to the extent permitted by law. If you suspect compromise, disable/delete affected keys
+          and notify us promptly.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">3. Service Description</h2>
         <p>
-          The Service provides AI usage analytics, dashboards, and optional
-          social visibility features such as following and public profiles/
-          leaderboards.
+          The Service provides AI usage analytics, dashboards, and optional social visibility
+          features such as following and public profiles/ leaderboards.
         </p>
         <p>
-          You understand that usage statistics come from your local CLI uploads
-          and subsequent processing. We do not guarantee completeness,
-          precision, or suitability for any particular purpose.
+          You understand that usage statistics come from your local CLI uploads and subsequent
+          processing. We do not guarantee completeness, precision, or suitability for any particular
+          purpose.
         </p>
       </section>
 
@@ -245,124 +229,107 @@ export default async function TermsPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">4. Acceptable Use</h2>
         <p>You agree not to:</p>
         <p>4.1 violate any applicable laws or infringe others’ rights;</p>
-        <p>
-          4.2 access, probe, disrupt, or interfere with the Service without
-          authorization;
-        </p>
+        <p>4.2 access, probe, disrupt, or interfere with the Service without authorization;</p>
         <p>4.3 abuse APIs or cause unreasonable load through automation;</p>
-        <p>
-          4.4 upload or share unlawful, infringing, malicious, or inappropriate
-          content;
-        </p>
-        <p>
-          4.5 manipulate rankings or analytics through deceptive or abnormal
-          uploads.
-        </p>
+        <p>4.4 upload or share unlawful, infringing, malicious, or inappropriate content;</p>
+        <p>4.5 manipulate rankings or analytics through deceptive or abnormal uploads.</p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">5. Data, Content, and License</h2>
         <p>
-          You retain rights in your data submitted to the Service (including
-          usage information and optional public profile content).
+          You retain rights in your data submitted to the Service (including usage information and
+          optional public profile content).
         </p>
         <p>
-          To provide and operate the Service, you grant us a non-exclusive,
-          worldwide, revocable (where legally/technically feasible) license to
-          collect, store, process, analyze, and display your data as necessary
-          to deliver the Service.
+          To provide and operate the Service, you grant us a non-exclusive, worldwide, revocable
+          (where legally/technically feasible) license to collect, store, process, analyze, and
+          display your data as necessary to deliver the Service.
         </p>
         <p>
-          When you enable public profile/leaderboard visibility, certain
-          information may be visible to other users and accessible to the public
-          via your profile pages.
+          When you enable public profile/leaderboard visibility, certain information may be visible
+          to other users and accessible to the public via your profile pages.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">6. Third-Party Services</h2>
         <p>
-          The Service may integrate third-party authentication and
-          infrastructure. Third-party terms and privacy policies may apply in
-          addition to these Terms. You are responsible for reviewing them.
+          The Service may integrate third-party authentication and infrastructure. Third-party terms
+          and privacy policies may apply in addition to these Terms. You are responsible for
+          reviewing them.
         </p>
         <p>
-          We are not responsible for delays, errors, or unavailability caused by
-          third-party services.
+          We are not responsible for delays, errors, or unavailability caused by third-party
+          services.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">7. Fees (If Applicable)</h2>
         <p>
-          This draft does not include paid subscription terms. If paid features
-          are introduced, we will disclose pricing, billing rules, and refund
-          policies before they take effect.
+          This draft does not include paid subscription terms. If paid features are introduced, we
+          will disclose pricing, billing rules, and refund policies before they take effect.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">8. Intellectual Property</h2>
         <p>
-          The Service’s related software (including its open-source code) is
-          provided under the MIT Open Source License. Except for the rights
-          granted by that open-source license, the Service UI, branding,
-          documentation, and related materials remain protected by intellectual
-          property laws. No unauthorized copying, distribution, adaptation, or
-          commercial exploitation is permitted. The full text of the MIT License
-          for the open-source code can be found in the repository’s `LICENSE`
-          file.
+          The Service’s related software (including its open-source code) is provided under the MIT
+          Open Source License. Except for the rights granted by that open-source license, the
+          Service UI, branding, documentation, and related materials remain protected by
+          intellectual property laws. No unauthorized copying, distribution, adaptation, or
+          commercial exploitation is permitted. The full text of the MIT License for the open-source
+          code can be found in the repository’s `LICENSE` file.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">9. Disclaimer</h2>
         <p>
-          The Service is provided “as is” and “as available.” To the maximum
-          extent permitted by law, we disclaim all warranties, whether express
-          or implied, including implied warranties of merchantability, fitness
-          for a particular purpose, accuracy, or non-infringement.
+          The Service is provided “as is” and “as available.” To the maximum extent permitted by
+          law, we disclaim all warranties, whether express or implied, including implied warranties
+          of merchantability, fitness for a particular purpose, accuracy, or non-infringement.
         </p>
         <p>
-          We do not warrant uninterrupted access, error-free operation, or the
-          accuracy, completeness, or timeliness of analytics.
+          We do not warrant uninterrupted access, error-free operation, or the accuracy,
+          completeness, or timeliness of analytics.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">10. Limitation of Liability</h2>
         <p>
-          To the maximum extent permitted by law, we are not liable for
-          indirect, incidental, consequential, or punitive damages arising from
-          your use of or inability to use the Service.
+          To the maximum extent permitted by law, we are not liable for indirect, incidental,
+          consequential, or punitive damages arising from your use of or inability to use the
+          Service.
         </p>
         <p>
-          Our total liability for direct damages (if any) is limited to amounts
-          you paid to us before the dispute arises (and may be zero if you have
-          not paid fees).
+          Our total liability for direct damages (if any) is limited to amounts you paid to us
+          before the dispute arises (and may be zero if you have not paid fees).
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">11. Indemnity</h2>
         <p>
-          You agree to indemnify us for claims, losses, damages, and expenses
-          arising from your breach of these Terms or infringement of any
-          third-party rights. This includes reasonable attorneys’ fees and
-          costs.
+          You agree to indemnify us for claims, losses, damages, and expenses arising from your
+          breach of these Terms or infringement of any third-party rights. This includes reasonable
+          attorneys’ fees and costs.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">12. Suspension and Termination</h2>
         <p>
-          We may suspend or terminate your access where we reasonably believe
-          there is a breach of these Terms or a security risk. Such actions may
-          be taken with or without prior notice in urgent situations.
+          We may suspend or terminate your access where we reasonably believe there is a breach of
+          these Terms or a security risk. Such actions may be taken with or without prior notice in
+          urgent situations.
         </p>
         <p>
-          Termination does not affect rights and obligations that have already
-          accrued under these Terms.
+          Termination does not affect rights and obligations that have already accrued under these
+          Terms.
         </p>
       </section>
 
@@ -370,10 +337,7 @@ export default async function TermsPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">13. Contact</h2>
         <p>
           Legal inquiries: via{" "}
-          <Link href="https://github.com/poco-ai/tokenarena">
-            GitHub repository
-          </Link>
-          .
+          <Link href="https://github.com/poco-ai/tokenarena">GitHub repository</Link>.
         </p>
       </section>
     </>

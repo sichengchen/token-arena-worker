@@ -20,16 +20,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  formatDateTime,
-  formatTokenCount,
-  formatUsdAmount,
-} from "@/lib/usage/format";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { formatDateTime, formatTokenCount, formatUsdAmount } from "@/lib/usage/format";
 import type { UsageSessionRow } from "@/lib/usage/types";
 import { CollapsibleSection } from "./collapsible-section";
 
@@ -45,18 +37,13 @@ function buildPageRange(
       value: i + 1,
     }));
   }
-  const pages: (
-    | { type: "ellipsis"; key: string }
-    | { type: "page"; value: number }
-  )[] = [{ type: "page", value: 1 }];
+  const pages: ({ type: "ellipsis"; key: string } | { type: "page"; value: number })[] = [
+    { type: "page", value: 1 },
+  ];
   if (current > 3) {
     pages.push({ type: "ellipsis", key: "start" });
   }
-  for (
-    let i = Math.max(2, current - 1);
-    i <= Math.min(total - 1, current + 1);
-    i++
-  ) {
+  for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
     pages.push({ type: "page", value: i });
   }
   if (current < total - 2) {
@@ -72,11 +59,7 @@ type SessionsSectionProps = {
   defaultOpen?: boolean;
 };
 
-export function SessionsSection({
-  sessions,
-  timezone,
-  defaultOpen = true,
-}: SessionsSectionProps) {
+export function SessionsSection({ sessions, timezone, defaultOpen = true }: SessionsSectionProps) {
   const locale = useLocale();
   const t = useTranslations("usage.sessions");
 
@@ -85,15 +68,11 @@ export function SessionsSection({
   const clampedPage = Math.min(page, totalPages);
 
   const pagedSessions = useMemo(
-    () =>
-      sessions.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE),
+    () => sessions.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE),
     [sessions, clampedPage],
   );
 
-  const pages = useMemo(
-    () => buildPageRange(clampedPage, totalPages),
-    [clampedPage, totalPages],
-  );
+  const pages = useMemo(() => buildPageRange(clampedPage, totalPages), [clampedPage, totalPages]);
 
   return (
     <CollapsibleSection
@@ -112,27 +91,13 @@ export function SessionsSection({
             <Table className="min-w-[760px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-center">
-                    {t("table.startedAt")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t("table.tool")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t("table.model")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t("table.project")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t("table.device")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t("table.tokens")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t("table.cost")}
-                  </TableHead>
+                  <TableHead className="text-center">{t("table.startedAt")}</TableHead>
+                  <TableHead className="text-center">{t("table.tool")}</TableHead>
+                  <TableHead className="text-center">{t("table.model")}</TableHead>
+                  <TableHead className="text-center">{t("table.project")}</TableHead>
+                  <TableHead className="text-center">{t("table.device")}</TableHead>
+                  <TableHead className="text-center">{t("table.tokens")}</TableHead>
+                  <TableHead className="text-center">{t("table.cost")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -140,36 +105,17 @@ export function SessionsSection({
                   <TableRow key={session.id}>
                     <TableCell className="align-top">
                       <div className="font-medium">
-                        {formatDateTime(
-                          session.firstMessageAt,
-                          timezone,
-                          locale,
-                        )}
+                        {formatDateTime(session.firstMessageAt, timezone, locale)}
                       </div>
                     </TableCell>
-                    <TableCell className="align-top font-medium">
-                      {session.source}
+                    <TableCell className="align-top font-medium">{session.source}</TableCell>
+                    <TableCell className="max-w-[200px] align-top" title={session.primaryModel}>
+                      <div className="truncate font-medium">{session.primaryModel}</div>
                     </TableCell>
-                    <TableCell
-                      className="max-w-[200px] align-top"
-                      title={session.primaryModel}
-                    >
-                      <div className="truncate font-medium">
-                        {session.primaryModel}
-                      </div>
+                    <TableCell className="max-w-[220px] align-top" title={session.projectLabel}>
+                      <div className="truncate font-medium">{session.projectLabel}</div>
                     </TableCell>
-                    <TableCell
-                      className="max-w-[220px] align-top"
-                      title={session.projectLabel}
-                    >
-                      <div className="truncate font-medium">
-                        {session.projectLabel}
-                      </div>
-                    </TableCell>
-                    <TableCell
-                      className="max-w-[200px] align-top"
-                      title={session.deviceLabel}
-                    >
+                    <TableCell className="max-w-[200px] align-top" title={session.deviceLabel}>
                       <div className="truncate">{session.deviceLabel}</div>
                     </TableCell>
                     <TableCell className="align-top text-right">
@@ -181,41 +127,27 @@ export function SessionsSection({
                         </TooltipTrigger>
                         <TooltipContent align="end" side="left">
                           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                            <div className="text-muted-foreground">
-                              {t("table.input")}
-                            </div>
+                            <div className="text-muted-foreground">{t("table.input")}</div>
                             <div className="text-right font-medium">
                               {formatTokenCount(session.inputTokens, locale)}
                             </div>
-                            <div className="text-muted-foreground">
-                              {t("table.output")}
-                            </div>
+                            <div className="text-muted-foreground">{t("table.output")}</div>
                             <div className="text-right font-medium">
                               {formatTokenCount(session.outputTokens, locale)}
                             </div>
                             {session.reasoningTokens > 0 && (
                               <>
-                                <div className="text-muted-foreground">
-                                  {t("table.reasoning")}
-                                </div>
+                                <div className="text-muted-foreground">{t("table.reasoning")}</div>
                                 <div className="text-right font-medium">
-                                  {formatTokenCount(
-                                    session.reasoningTokens,
-                                    locale,
-                                  )}
+                                  {formatTokenCount(session.reasoningTokens, locale)}
                                 </div>
                               </>
                             )}
                             {session.cachedTokens > 0 && (
                               <>
-                                <div className="text-muted-foreground">
-                                  {t("table.cache")}
-                                </div>
+                                <div className="text-muted-foreground">{t("table.cache")}</div>
                                 <div className="text-right font-medium">
-                                  {formatTokenCount(
-                                    session.cachedTokens,
-                                    locale,
-                                  )}
+                                  {formatTokenCount(session.cachedTokens, locale)}
                                 </div>
                               </>
                             )}
@@ -246,9 +178,7 @@ export function SessionsSection({
                         if (clampedPage > 1) setPage(clampedPage - 1);
                       }}
                       className={
-                        clampedPage <= 1
-                          ? "pointer-events-none opacity-50"
-                          : "cursor-pointer"
+                        clampedPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"
                       }
                     />
                   </PaginationItem>

@@ -13,9 +13,7 @@ type LeaderboardPublicProfileButtonProps = {
   className?: string;
 };
 
-export function LeaderboardPublicProfileButton({
-  className,
-}: LeaderboardPublicProfileButtonProps) {
+export function LeaderboardPublicProfileButton({ className }: LeaderboardPublicProfileButtonProps) {
   const t = useTranslations("social.leaderboard");
   const tSettings = useTranslations("usage.settings");
   const router = useRouter();
@@ -35,9 +33,7 @@ export function LeaderboardPublicProfileButton({
 
       if (!response.ok) {
         throw new Error(
-          typeof payload.error === "string"
-            ? payload.error
-            : tSettings("saveFailed"),
+          typeof payload.error === "string" ? payload.error : tSettings("saveFailed"),
         );
       }
 
@@ -49,11 +45,7 @@ export function LeaderboardPublicProfileButton({
       });
       router.refresh();
     } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : tSettings("saveFailed"),
-      );
+      setError(requestError instanceof Error ? requestError.message : tSettings("saveFailed"));
     } finally {
       setPending(false);
     }
@@ -70,9 +62,7 @@ export function LeaderboardPublicProfileButton({
         aria-busy={pending}
         onClick={() => void enablePublicProfile()}
       >
-        {pending ? (
-          <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
-        ) : null}
+        {pending ? <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden /> : null}
         {t("enablePublicProfile")}
       </Button>
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
@@ -89,9 +79,7 @@ export function LeaderboardPrivateNotice() {
         <div className="flex flex-row items-center justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-1">
             <div className="text-sm font-medium">{t("privateNoticeTitle")}</div>
-            <p className="text-sm text-muted-foreground">
-              {t("privateNoticeDescription")}
-            </p>
+            <p className="text-sm text-muted-foreground">{t("privateNoticeDescription")}</p>
           </div>
           <LeaderboardPublicProfileButton />
         </div>

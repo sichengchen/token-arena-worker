@@ -11,8 +11,6 @@ describe("token counts", () => {
   });
 
   it("clamps values above the safe integer limit", () => {
-    expect(tokenCountToNumber(BigInt(Number.MAX_SAFE_INTEGER) + 1n)).toBe(
-      Number.MAX_SAFE_INTEGER,
-    );
+    expect(tokenCountToNumber(BigInt(Number.MAX_SAFE_INTEGER) + 1n)).toBe(Number.MAX_SAFE_INTEGER);
   });
 });

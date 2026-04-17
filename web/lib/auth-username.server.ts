@@ -1,17 +1,11 @@
 import { randomUUID } from "node:crypto";
-import {
-  normalizeUsername,
-  USERNAME_MAX_LENGTH,
-  USERNAME_MIN_LENGTH,
-} from "@/lib/auth-username";
+import { normalizeUsername, USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from "@/lib/auth-username";
 
 type UsernameLookupResult = {
   id: string;
 };
 
-type FindUserByUsername = (
-  username: string,
-) => Promise<UsernameLookupResult | null>;
+type FindUserByUsername = (username: string) => Promise<UsernameLookupResult | null>;
 
 type GenerateUniqueUsernameOptions = {
   findUserByUsername: FindUserByUsername;
@@ -55,10 +49,7 @@ export async function generateUniqueUsername(
 ) {
   const fallbackBase = "user";
   const normalizedBase = createUsernameCandidateBase(seed);
-  const base =
-    normalizedBase.length >= USERNAME_MIN_LENGTH
-      ? normalizedBase
-      : fallbackBase;
+  const base = normalizedBase.length >= USERNAME_MIN_LENGTH ? normalizedBase : fallbackBase;
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const suffix = attempt === 0 ? "" : `.${createSuffix()}`;
@@ -82,9 +73,7 @@ export async function resolveCreatedUsername({
   createRandomSuffix,
 }: ResolveCreatedUsernameOptions): Promise<ResolvedCreatedUsername> {
   const normalizedProvidedUsername =
-    typeof providedUsername === "string"
-      ? normalizeUsername(providedUsername)
-      : "";
+    typeof providedUsername === "string" ? normalizeUsername(providedUsername) : "";
 
   if (!normalizedProvidedUsername) {
     return {

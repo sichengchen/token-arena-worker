@@ -36,10 +36,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function LoginPage({
-  params,
-  searchParams,
-}: LoginPageProps) {
+export default async function LoginPage({ params, searchParams }: LoginPageProps) {
   const { locale } = await params;
   const session = await getOptionalSession();
   const t = await getTranslations("auth.login");
@@ -64,17 +61,11 @@ export default async function LoginPage({
           providers.length > 0 ? (
             <p className="text-center text-sm text-white/80">
               {t("agreementPrefix")}{" "}
-              <Link
-                href="/legal/terms"
-                className="underline underline-offset-4"
-              >
+              <Link href="/legal/terms" className="underline underline-offset-4">
                 {t("termsLink")}
               </Link>{" "}
               {t("and")}{" "}
-              <Link
-                href="/legal/privacy"
-                className="underline underline-offset-4"
-              >
+              <Link href="/legal/privacy" className="underline underline-offset-4">
                 {t("privacyLink")}
               </Link>
             </p>

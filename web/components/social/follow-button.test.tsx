@@ -44,12 +44,7 @@ vi.mock("@/i18n/navigation", () => ({
 describe("FollowButton", () => {
   it("renders follow button when not following", () => {
     const markup = renderToStaticMarkup(
-      <FollowButton
-        locale="zh-CN"
-        username="alice"
-        initialFollowing={false}
-        isAuthenticated
-      />,
+      <FollowButton locale="zh-CN" username="alice" initialFollowing={false} isAuthenticated />,
     );
 
     expect(markup).toContain("关注");
@@ -70,9 +65,7 @@ describe("FollowButton", () => {
     expect(markup).toContain("已关注");
     expect(markup).toContain('data-slot="button-group"');
     expect(markup).toContain('aria-label="关注标签"');
-    expect(markup).toContain(
-      "overflow-hidden border border-border/60 bg-secondary",
-    );
+    expect(markup).toContain("overflow-hidden border border-border/60 bg-secondary");
     expect(markup).toContain("border-t-[5px] border-t-current");
     expect(markup).not.toContain("rounded-r-none");
   });

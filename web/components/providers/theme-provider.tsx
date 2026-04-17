@@ -10,11 +10,7 @@ import {
   useState,
 } from "react";
 import { persistClientTheme } from "@/lib/preferences-client";
-import {
-  resolveThemeAppearance,
-  type ThemeAppearance,
-  type ThemeMode,
-} from "@/lib/theme";
+import { resolveThemeAppearance, type ThemeAppearance, type ThemeMode } from "@/lib/theme";
 
 type ThemeContextValue = {
   themeMode: ThemeMode;
@@ -29,10 +25,7 @@ function getSystemPrefersDark() {
 }
 
 function applyTheme(themeMode: ThemeMode) {
-  const resolvedTheme = resolveThemeAppearance(
-    themeMode,
-    getSystemPrefersDark(),
-  );
+  const resolvedTheme = resolveThemeAppearance(themeMode, getSystemPrefersDark());
 
   document.documentElement.classList.toggle("dark", resolvedTheme === "dark");
   document.documentElement.dataset.themeMode = themeMode;
@@ -48,10 +41,7 @@ type ThemeProviderProps = {
   children: ReactNode;
 };
 
-export function ThemeProvider({
-  initialThemeMode,
-  children,
-}: ThemeProviderProps) {
+export function ThemeProvider({ initialThemeMode, children }: ThemeProviderProps) {
   const [themeMode, setThemeModeState] = useState<ThemeMode>(initialThemeMode);
   const [resolvedTheme, setResolvedTheme] = useState<ThemeAppearance>(() =>
     resolveThemeAppearance(initialThemeMode, false),
@@ -89,9 +79,7 @@ export function ThemeProvider({
     [resolvedTheme, setThemeMode, themeMode],
   );
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

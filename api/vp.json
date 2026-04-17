@@ -1,0 +1,17 @@
+{
+  "$schema": "https://vp.dev/schema.json",
+  "build": {
+    "entry": ["src/index.ts"],
+    "outDir": "dist"
+  },
+  "dev": {
+    "port": 8787,
+    "wrangler": true
+  },
+  "check": {
+    "targets": ["src/**/*.ts"]
+  },
+  "test": {
+    "runner": "vitest"
+  }
+}

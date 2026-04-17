@@ -65,9 +65,7 @@ describe("ProfileListItem", () => {
     expect(markup).toMatch(
       />qychen<\/a><span class="shrink-0 text-sm text-muted-foreground">@qychen<\/span>/,
     );
-    expect(markup).not.toContain(
-      '<div class="text-sm text-muted-foreground">@qychen</div>',
-    );
+    expect(markup).not.toContain('<div class="text-sm text-muted-foreground">@qychen</div>');
   });
 
   it("keeps the action area on a single row", () => {

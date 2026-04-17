@@ -1,12 +1,8 @@
 import { describe, expect, it } from "vitest";
-import {
-  buildLeaderboardBadgeAwards,
-  type RankedLeaderboardEntry,
-} from "./finalize";
+import { buildLeaderboardBadgeAwards, type RankedLeaderboardEntry } from "./finalize";
 
 function createEntry(
-  overrides: Partial<RankedLeaderboardEntry> &
-    Pick<RankedLeaderboardEntry, "userId" | "rank">,
+  overrides: Partial<RankedLeaderboardEntry> & Pick<RankedLeaderboardEntry, "userId" | "rank">,
 ): RankedLeaderboardEntry {
   return {
     userId: overrides.userId,

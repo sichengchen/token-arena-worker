@@ -1,7 +1,4 @@
-import {
-  formatLeaderboardWindowLabel,
-  SHANGHAI_TIMEZONE,
-} from "@/lib/leaderboard/date";
+import { formatLeaderboardWindowLabel, SHANGHAI_TIMEZONE } from "@/lib/leaderboard/date";
 import type { LeaderboardPeriod } from "@/lib/leaderboard/types";
 
 type LeaderboardWindowBadgeProps = {

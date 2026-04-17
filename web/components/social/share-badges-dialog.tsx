@@ -50,19 +50,9 @@ const badgeDefinitions: BadgeDefinition[] = [
   },
 ];
 
-const badgeStyles: BadgeStyle[] = [
-  "flat",
-  "flat-square",
-  "plastic",
-  "for-the-badge",
-];
+const badgeStyles: BadgeStyle[] = ["flat", "flat-square", "plastic", "for-the-badge"];
 
-function buildBadgeUrl(
-  appUrl: string,
-  username: string,
-  metric: BadgeMetric,
-  style: BadgeStyle,
-) {
+function buildBadgeUrl(appUrl: string, username: string, metric: BadgeMetric, style: BadgeStyle) {
   const url = new URL(`/api/badges/${encodeURIComponent(username)}`, appUrl);
   url.searchParams.set("metric", metric);
   url.searchParams.set("style", style);
@@ -85,12 +75,7 @@ export function ShareBadgesDialog({
   const items = useMemo(
     () =>
       badgeDefinitions.map((definition) => {
-        const url = buildBadgeUrl(
-          appUrl,
-          username,
-          definition.metric,
-          selectedStyle,
-        );
+        const url = buildBadgeUrl(appUrl, username, definition.metric, selectedStyle);
         return {
           ...definition,
           url,
@@ -155,9 +140,7 @@ export function ShareBadgesDialog({
                     type="button"
                     className={cn(
                       "relative z-10 inline-flex min-w-0 items-center justify-center rounded-xl px-2 py-2 text-[10px] font-medium transition-colors sm:px-2.5 sm:text-xs",
-                      isActive
-                        ? "text-foreground"
-                        : "text-muted-foreground hover:text-foreground",
+                      isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                     )}
                     onClick={() => setSelectedStyle(style)}
                   >
@@ -172,9 +155,7 @@ export function ShareBadgesDialog({
                         }}
                       />
                     ) : null}
-                    <span className="relative whitespace-nowrap">
-                      {t(`styles.${style}`)}
-                    </span>
+                    <span className="relative whitespace-nowrap">{t(`styles.${style}`)}</span>
                   </button>
                 );
               })}
@@ -192,11 +173,8 @@ export function ShareBadgesDialog({
           <div className="grid grid-cols-2 gap-3">
             {items.map((item) => {
               const success =
-                copyFeedback?.metric === item.metric &&
-                copyFeedback.kind === "success";
-              const error =
-                copyFeedback?.metric === item.metric &&
-                copyFeedback.kind === "error";
+                copyFeedback?.metric === item.metric && copyFeedback.kind === "success";
+              const error = copyFeedback?.metric === item.metric && copyFeedback.kind === "error";
               const label = success
                 ? t("status.copiedMarkdown")
                 : error

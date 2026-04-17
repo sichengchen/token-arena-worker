@@ -1,9 +1,4 @@
-export const followTags = [
-  "coworker",
-  "friend",
-  "peer",
-  "inspiration",
-] as const;
+export const followTags = ["coworker", "friend", "peer", "inspiration"] as const;
 
 export type FollowTag = (typeof followTags)[number];
 
@@ -13,9 +8,7 @@ export type FollowTagFilter = (typeof followTagFilterValues)[number];
 export const followTagSelectValues = ["none", ...followTags] as const;
 export type FollowTagSelectValue = (typeof followTagSelectValues)[number];
 
-export function toFollowTagSelectValue(
-  tag: FollowTag | null | undefined,
-): FollowTagSelectValue {
+export function toFollowTagSelectValue(tag: FollowTag | null | undefined): FollowTagSelectValue {
   return tag ?? "none";
 }
 

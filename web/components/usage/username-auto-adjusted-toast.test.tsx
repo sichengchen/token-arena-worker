@@ -55,9 +55,7 @@ describe("UsernameAutoAdjustedToast", () => {
 
   it("shows a toast once for an auto-adjusted username", () => {
     act(() => {
-      root.render(
-        <UsernameAutoAdjustedToast enabled username="alice.abcdef" />,
-      );
+      root.render(<UsernameAutoAdjustedToast enabled username="alice.abcdef" />);
     });
 
     expect(toastInfo).toHaveBeenCalledTimes(1);
@@ -66,9 +64,7 @@ describe("UsernameAutoAdjustedToast", () => {
     );
 
     act(() => {
-      root.render(
-        <UsernameAutoAdjustedToast enabled username="alice.abcdef" />,
-      );
+      root.render(<UsernameAutoAdjustedToast enabled username="alice.abcdef" />);
     });
 
     expect(toastInfo).toHaveBeenCalledTimes(1);
@@ -76,9 +72,7 @@ describe("UsernameAutoAdjustedToast", () => {
 
   it("does not show the same toast again after a remount", () => {
     act(() => {
-      root.render(
-        <UsernameAutoAdjustedToast enabled username="alice.abcdef" />,
-      );
+      root.render(<UsernameAutoAdjustedToast enabled username="alice.abcdef" />);
     });
 
     expect(toastInfo).toHaveBeenCalledTimes(1);
@@ -90,9 +84,7 @@ describe("UsernameAutoAdjustedToast", () => {
     root = createRoot(container);
 
     act(() => {
-      root.render(
-        <UsernameAutoAdjustedToast enabled username="alice.abcdef" />,
-      );
+      root.render(<UsernameAutoAdjustedToast enabled username="alice.abcdef" />);
     });
 
     expect(toastInfo).toHaveBeenCalledTimes(1);
@@ -100,9 +92,7 @@ describe("UsernameAutoAdjustedToast", () => {
 
   it("does not show a toast when the username was only suggested for setup", () => {
     act(() => {
-      root.render(
-        <UsernameAutoAdjustedToast enabled={false} username="alice" />,
-      );
+      root.render(<UsernameAutoAdjustedToast enabled={false} username="alice" />);
     });
 
     expect(toastInfo).not.toHaveBeenCalled();
@@ -110,15 +100,11 @@ describe("UsernameAutoAdjustedToast", () => {
 
   it("shows a new toast when the adjusted username changes", () => {
     act(() => {
-      root.render(
-        <UsernameAutoAdjustedToast enabled username="alice.abcdef" />,
-      );
+      root.render(<UsernameAutoAdjustedToast enabled username="alice.abcdef" />);
     });
 
     act(() => {
-      root.render(
-        <UsernameAutoAdjustedToast enabled username="alice.ghijkl" />,
-      );
+      root.render(<UsernameAutoAdjustedToast enabled username="alice.ghijkl" />);
     });
 
     expect(toastInfo).toHaveBeenCalledTimes(2);

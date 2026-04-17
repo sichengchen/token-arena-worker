@@ -24,15 +24,10 @@ export default async function RootLayout({
 }>) {
   const gaSecret = process.env.GA_SECRET;
   const clarityId = process.env.CLARITY_ID?.trim();
-  const wechatShareEnabled = Boolean(
-    process.env.WECHAT_OPEN_APP_ID?.trim() && getAppOrigin(),
-  );
+  const wechatShareEnabled = Boolean(process.env.WECHAT_OPEN_APP_ID?.trim() && getAppOrigin());
   const cookieStore = await cookies();
-  const locale =
-    (await getLocale().catch(() => defaultLocale)) ?? defaultLocale;
-  const initialThemeMode = getThemeMode(
-    cookieStore.get(themeCookieName)?.value,
-  );
+  const locale = (await getLocale().catch(() => defaultLocale)) ?? defaultLocale;
+  const initialThemeMode = getThemeMode(cookieStore.get(themeCookieName)?.value);
 
   return (
     <html lang={locale} suppressHydrationWarning className="h-full antialiased">

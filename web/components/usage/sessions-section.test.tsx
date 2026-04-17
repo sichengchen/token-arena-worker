@@ -68,11 +68,7 @@ describe("SessionsSection", () => {
   it("can be collapsed with defaultOpen={false}", () => {
     const markup = renderToStaticMarkup(
       <TooltipProvider>
-        <SessionsSection
-          sessions={sessions}
-          timezone="Asia/Shanghai"
-          defaultOpen={false}
-        />
+        <SessionsSection sessions={sessions} timezone="Asia/Shanghai" defaultOpen={false} />
       </TooltipProvider>,
     );
 

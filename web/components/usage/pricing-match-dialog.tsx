@@ -44,9 +44,7 @@ function getProviderLabel(row: ModelPricingRow) {
 
 export function PricingMatchDialog({ rows }: PricingMatchDialogProps) {
   const t = useTranslations("usage.pricing");
-  const showReasoningColumn = rows.some(
-    (row) => row.reasoningRateUsdPerMillion != null,
-  );
+  const showReasoningColumn = rows.some((row) => row.reasoningRateUsdPerMillion != null);
 
   if (rows.length === 0) {
     return null;
@@ -76,20 +74,12 @@ export function PricingMatchDialog({ rows }: PricingMatchDialogProps) {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t("table.rawModel")}</TableHead>
-                  <TableHead className="text-right">
-                    {t("table.input")}
-                  </TableHead>
-                  <TableHead className="text-right">
-                    {t("table.output")}
-                  </TableHead>
+                  <TableHead className="text-right">{t("table.input")}</TableHead>
+                  <TableHead className="text-right">{t("table.output")}</TableHead>
                   {showReasoningColumn ? (
-                    <TableHead className="text-right">
-                      {t("table.reasoning")}
-                    </TableHead>
+                    <TableHead className="text-right">{t("table.reasoning")}</TableHead>
                   ) : null}
-                  <TableHead className="text-right">
-                    {t("table.cache")}
-                  </TableHead>
+                  <TableHead className="text-right">{t("table.cache")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

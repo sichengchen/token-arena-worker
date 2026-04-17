@@ -26,12 +26,7 @@ type AppShellProps = {
   children: ReactNode;
 };
 
-export async function AppShell({
-  locale,
-  viewer,
-  mainClassName,
-  children,
-}: AppShellProps) {
+export async function AppShell({ locale, viewer, mainClassName, children }: AppShellProps) {
   const t = await getTranslations({ locale, namespace: "social.nav" });
   const navItems = viewer
     ? [
@@ -46,9 +41,7 @@ export async function AppShell({
       ];
 
   return (
-    <main
-      className={cn("flex min-h-screen flex-col bg-muted/30", mainClassName)}
-    >
+    <main className={cn("flex min-h-screen flex-col bg-muted/30", mainClassName)}>
       {viewer?.username ? (
         <UsernameAutoAdjustedToast
           enabled={viewer.usernameAutoAdjusted ?? false}

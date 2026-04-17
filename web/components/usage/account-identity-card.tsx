@@ -77,10 +77,7 @@ export function AccountIdentityCard({
     return () => window.clearTimeout(timeout);
   }, [justSaved]);
 
-  const normalizedUsername = useMemo(
-    () => normalizeUsername(username),
-    [username],
-  );
+  const normalizedUsername = useMemo(() => normalizeUsername(username), [username]);
 
   const hasIdentityChanges =
     name.trim() !== savedName.trim() || normalizedUsername !== savedUsername;
@@ -167,10 +164,7 @@ export function AccountIdentityCard({
         });
 
         if (result.error) {
-          const errorMessage = getAuthErrorMessage(
-            result.error,
-            t("identity.errors.default"),
-          );
+          const errorMessage = getAuthErrorMessage(result.error, t("identity.errors.default"));
 
           setFormError(
             errorMessage === USERNAME_TAKEN_ERROR_MESSAGE
@@ -206,10 +200,7 @@ export function AccountIdentityCard({
         router.refresh();
       }
     } catch (error) {
-      const errorMessage = getAuthErrorMessage(
-        error,
-        t("identity.errors.default"),
-      );
+      const errorMessage = getAuthErrorMessage(error, t("identity.errors.default"));
 
       setFormError(
         errorMessage === USERNAME_TAKEN_ERROR_MESSAGE
@@ -252,13 +243,7 @@ export function AccountIdentityCard({
             onChange={(event) => setName(event.target.value)}
             aria-invalid={Boolean(nameError)}
           />
-          <p
-            className={
-              nameError
-                ? "text-sm text-destructive"
-                : "text-xs text-muted-foreground"
-            }
-          >
+          <p className={nameError ? "text-sm text-destructive" : "text-xs text-muted-foreground"}>
             {nameError ?? t("identity.nameHint")}
           </p>
         </div>
@@ -275,9 +260,7 @@ export function AccountIdentityCard({
           />
           <div
             className={
-              usernameError
-                ? "text-sm text-destructive"
-                : "space-y-1 text-xs text-muted-foreground"
+              usernameError ? "text-sm text-destructive" : "space-y-1 text-xs text-muted-foreground"
             }
           >
             {usernameError ? (
@@ -310,10 +293,7 @@ export function AccountIdentityCard({
         </div>
 
         <div className="flex justify-end">
-          <Button
-            type="submit"
-            disabled={isSubmitting || (!hasChanges && !requireUsernameSetup)}
-          >
+          <Button type="submit" disabled={isSubmitting || (!hasChanges && !requireUsernameSetup)}>
             {isSubmitting
               ? t("identity.saving")
               : justSaved && !hasChanges

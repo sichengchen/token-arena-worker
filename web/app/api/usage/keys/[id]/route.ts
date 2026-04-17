@@ -10,10 +10,7 @@ async function getSessionUserId() {
   return session?.user.id ?? null;
 }
 
-export async function PATCH(
-  request: Request,
-  context: RouteContext<"/api/usage/keys/[id]">,
-) {
+export async function PATCH(request: Request, context: RouteContext<"/api/usage/keys/[id]">) {
   const userId = await getSessionUserId();
 
   if (!userId) {
@@ -31,10 +28,7 @@ export async function PATCH(
   return NextResponse.json({ key });
 }
 
-export async function DELETE(
-  _request: Request,
-  context: RouteContext<"/api/usage/keys/[id]">,
-) {
+export async function DELETE(_request: Request, context: RouteContext<"/api/usage/keys/[id]">) {
   const userId = await getSessionUserId();
 
   if (!userId) {

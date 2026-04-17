@@ -11,9 +11,7 @@ function isZh(locale: string) {
 
 const EFFECTIVE_DATE = "2026-03-31";
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params;
 
   if (isZh(locale)) {
@@ -38,8 +36,7 @@ export default async function PrivacyPage({ params }: PageProps) {
       <section className="space-y-2">
         <h2 className="text-xl font-medium">1. 我们是谁</h2>
         <p>
-          Token Arena（“我们”）运营本服务。我们提供 AI
-          使用数据采集、分析与展示，以及（在你启用时）
+          Token Arena（“我们”）运营本服务。我们提供 AI 使用数据采集、分析与展示，以及（在你启用时）
           公开主页、关注关系与排行榜等社交功能。
         </p>
       </section>
@@ -62,19 +59,14 @@ export default async function PrivacyPage({ params }: PageProps) {
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">4. 我们收集的信息（数据类别）</h2>
+        <p>4.1 账号与身份信息：用户名、展示名称、邮箱、头像、以及与第三方登录相关的账户标识。</p>
         <p>
-          4.1
-          账号与身份信息：用户名、展示名称、邮箱、头像、以及与第三方登录相关的账户标识。
-        </p>
-        <p>
-          4.2 认证与安全信息：会话标识、登录时间、IP
-          地址、用户代理（User-Agent）、会话 token 等。
+          4.2 认证与安全信息：会话标识、登录时间、IP 地址、用户代理（User-Agent）、会话 token 等。
         </p>
         <p>
           4.3
           设备与使用信息：设备标识（deviceId）、主机名（hostname）、会话起止时间、活跃时长、消息数、输入/输出/推理/缓存命中等
-          token
-          统计、模型与工具分布、项目标识（可能为哈希或原始值，取决于你的项目模式设置）。
+          token 统计、模型与工具分布、项目标识（可能为哈希或原始值，取决于你的项目模式设置）。
         </p>
         <p>
           4.4
@@ -86,10 +78,7 @@ export default async function PrivacyPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">5. 我们如何使用信息（处理目的）</h2>
         <p>我们会出于以下目的处理信息：</p>
         <p>5.1 提供账号注册、登录与安全保护（包括会话管理与防滥用）；</p>
-        <p>
-          5.2 计算、存储与展示你的使用统计（usage
-          analytics）与成本估算（如适用）；
-        </p>
+        <p>5.2 计算、存储与展示你的使用统计（usage analytics）与成本估算（如适用）；</p>
         <p>5.3 支持 CLI 与服务端同步（上传与聚合）；</p>
         <p>5.4 支持社交功能（关注、互相关注、公开主页与排行榜展示）；</p>
         <p>5.5 故障排查、性能优化、以及改进产品体验；</p>
@@ -112,8 +101,7 @@ export default async function PrivacyPage({ params }: PageProps) {
           云托管/基础设施服务商、认证/登录服务商、日志与运维服务商、以及其他为提供服务所必需的技术支持方。
         </p>
         <p>
-          7.3
-          排行榜为默认公开展示功能。你的部分统计信息可能对其他用户可见，并可能被公众访问与检索。
+          7.3 排行榜为默认公开展示功能。你的部分统计信息可能对其他用户可见，并可能被公众访问与检索。
         </p>
       </section>
 
@@ -148,10 +136,7 @@ export default async function PrivacyPage({ params }: PageProps) {
           也可能享有向监管机构投诉的权利。
         </p>
         <p>
-          你可以通过{" "}
-          <Link href="https://github.com/poco-ai/tokenarena">
-            GitHub repository
-          </Link>{" "}
+          你可以通过 <Link href="https://github.com/poco-ai/tokenarena">GitHub repository</Link>{" "}
           与我们取得联系。
         </p>
       </section>
@@ -187,9 +172,7 @@ export default async function PrivacyPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">16. 联系我们</h2>
         <p>
           隐私相关联系渠道：请通过{" "}
-          <Link href="https://github.com/poco-ai/tokenarena">
-            GitHub repository
-          </Link>{" "}
+          <Link href="https://github.com/poco-ai/tokenarena">GitHub repository</Link>{" "}
           与我们取得联系。
         </p>
       </section>
@@ -201,84 +184,70 @@ export default async function PrivacyPage({ params }: PageProps) {
       <section className="space-y-2">
         <h2 className="text-xl font-medium">1. Who We Are</h2>
         <p>
-          Token Arena (“we”, “us”) operates this Service. We provide AI usage
-          data collection, analytics, and presentation, and (when you enable it)
-          social features such as public profiles, following, and leaderboards.
+          Token Arena (“we”, “us”) operates this Service. We provide AI usage data collection,
+          analytics, and presentation, and (when you enable it) social features such as public
+          profiles, following, and leaderboards.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">2. Scope</h2>
         <p>
-          This Privacy Policy applies to your access to or use of Token Arena’s
-          website, APIs, and CLI features, including identity verification
-          through third-party sign-in providers.
+          This Privacy Policy applies to your access to or use of Token Arena’s website, APIs, and
+          CLI features, including identity verification through third-party sign-in providers.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">3. Effective Date</h2>
         <p>
-          This policy is effective as of <b>{EFFECTIVE_DATE}</b>. We may update
-          it from time to time to reflect actual data practices.
+          This policy is effective as of <b>{EFFECTIVE_DATE}</b>. We may update it from time to time
+          to reflect actual data practices.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">4. Information We Collect</h2>
         <p>
-          4.1 Account & identity data: username, display name, email, avatar,
-          and third-party account identifiers.
+          4.1 Account & identity data: username, display name, email, avatar, and third-party
+          account identifiers.
         </p>
         <p>
-          4.2 Authentication & security data: session identifiers, login
-          timestamps, IP address, user agent, session tokens, and related
-          metadata.
+          4.2 Authentication & security data: session identifiers, login timestamps, IP address,
+          user agent, session tokens, and related metadata.
         </p>
         <p>
-          4.3 Device & usage data: device ID, hostname, session start/end times,
-          active duration, message counts, token statistics
-          (input/output/reasoning/cache), and model/tool usage distributions.
-          Project identifiers may be hashed or raw depending on your project
-          mode settings.
+          4.3 Device & usage data: device ID, hostname, session start/end times, active duration,
+          message counts, token statistics (input/output/reasoning/cache), and model/tool usage
+          distributions. Project identifiers may be hashed or raw depending on your project mode
+          settings.
         </p>
         <p>
-          4.4 Social/public profile data (if enabled): bio, public profile
-          visibility, follow relationships, and aggregated stats shown on your
-          public pages and leaderboards.
+          4.4 Social/public profile data (if enabled): bio, public profile visibility, follow
+          relationships, and aggregated stats shown on your public pages and leaderboards.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">5. How We Use Data</h2>
         <p>We use personal data for:</p>
+        <p>5.1 providing authentication, account services, and security controls;</p>
         <p>
-          5.1 providing authentication, account services, and security controls;
-        </p>
-        <p>
-          5.2 computing, storing, and displaying usage analytics and (where
-          applicable) cost estimates;
+          5.2 computing, storing, and displaying usage analytics and (where applicable) cost
+          estimates;
         </p>
         <p>5.3 enabling CLI-to-server synchronization;</p>
-        <p>
-          5.4 operating social features such as following and public visibility;
-        </p>
-        <p>
-          5.5 troubleshooting, performance optimization, and improving user
-          experience;
-        </p>
-        <p>
-          5.6 complying with legal obligations and handling complaints/disputes.
-        </p>
+        <p>5.4 operating social features such as following and public visibility;</p>
+        <p>5.5 troubleshooting, performance optimization, and improving user experience;</p>
+        <p>5.6 complying with legal obligations and handling complaints/disputes.</p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">6. Legal Bases</h2>
         <p>
-          We process personal data based on: (1) necessity to perform a
-          contract; (2) legitimate interests (e.g., security, anti-abuse,
-          product maintenance and improvement); (3) your consent where required;
-          and (4) legal obligations.
+          We process personal data based on: (1) necessity to perform a contract; (2) legitimate
+          interests (e.g., security, anti-abuse, product maintenance and improvement); (3) your
+          consent where required; and (4) legal obligations.
         </p>
       </section>
 
@@ -286,102 +255,90 @@ export default async function PrivacyPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">7. Sharing & Recipients</h2>
         <p>7.1 We do not sell personal data.</p>
         <p>
-          7.2 We may share limited, necessary data with categories of vendors
-          needed to run the Service, such as cloud hosting/infrastructure
-          providers, authentication providers, and operational/support vendors.
+          7.2 We may share limited, necessary data with categories of vendors needed to run the
+          Service, such as cloud hosting/infrastructure providers, authentication providers, and
+          operational/support vendors.
         </p>
         <p>
-          7.3 When you enable public profiles or leaderboards, some information
-          may be visible to other users and accessible to the public.
-          Leaderboards are public by default.
+          7.3 When you enable public profiles or leaderboards, some information may be visible to
+          other users and accessible to the public. Leaderboards are public by default.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">8. International Transfers</h2>
         <p>
-          Your data may be accessed or processed in countries outside your
-          jurisdiction. If cross-border transfers occur, we apply reasonable
-          safeguards and, where required, provide appropriate notice and
-          contractual or other legal mechanisms.
+          Your data may be accessed or processed in countries outside your jurisdiction. If
+          cross-border transfers occur, we apply reasonable safeguards and, where required, provide
+          appropriate notice and contractual or other legal mechanisms.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">9. Retention</h2>
         <p>
-          We retain data only as long as necessary for the purposes described or
-          as required by applicable law. If you request deletion (e.g., account
-          deletion), we will delete or anonymize data where commercially
-          reasonable, subject to lawful exceptions for compliance, security, or
-          audit purposes.
+          We retain data only as long as necessary for the purposes described or as required by
+          applicable law. If you request deletion (e.g., account deletion), we will delete or
+          anonymize data where commercially reasonable, subject to lawful exceptions for compliance,
+          security, or audit purposes.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">10. Security</h2>
         <p>
-          We implement reasonable technical and organizational measures, such as
-          encryption in transit, access control, authentication, and key
-          management. However, no system can guarantee absolute security, and
-          you must protect your account and credentials.
+          We implement reasonable technical and organizational measures, such as encryption in
+          transit, access control, authentication, and key management. However, no system can
+          guarantee absolute security, and you must protect your account and credentials.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">11. Your Rights</h2>
         <p>
-          Depending on your jurisdiction, you may have rights including access,
-          correction, deletion, restriction of processing, objection, data
-          portability (where applicable), and withdrawal of consent where
-          applicable. You may also have the right to lodge a complaint with a
-          supervisory authority.
+          Depending on your jurisdiction, you may have rights including access, correction,
+          deletion, restriction of processing, objection, data portability (where applicable), and
+          withdrawal of consent where applicable. You may also have the right to lodge a complaint
+          with a supervisory authority.
         </p>
         <p>
           To exercise your rights, contact us via{" "}
-          <Link href="https://github.com/poco-ai/tokenarena">
-            GitHub repository
-          </Link>
-          .
+          <Link href="https://github.com/poco-ai/tokenarena">GitHub repository</Link>.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">12. Cookies</h2>
         <p>
-          We use cookies/session technologies to enable authentication and
-          security controls. Non-essential cookies (if any) are used only as
-          permitted by applicable law and consent requirements.
+          We use cookies/session technologies to enable authentication and security controls.
+          Non-essential cookies (if any) are used only as permitted by applicable law and consent
+          requirements.
         </p>
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-xl font-medium">
-          13. Automated Decision-Making & Profiling
-        </h2>
+        <h2 className="text-xl font-medium">13. Automated Decision-Making & Profiling</h2>
         <p>
-          We primarily use aggregated statistics to deliver analytics and
-          display. We do not intend to make decisions that significantly affect
-          you solely based on automated processing, where such effects would be
-          subject to additional legal requirements.
+          We primarily use aggregated statistics to deliver analytics and display. We do not intend
+          to make decisions that significantly affect you solely based on automated processing,
+          where such effects would be subject to additional legal requirements.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">14. Children</h2>
         <p>
-          The Service is not intended for users below the age of eligibility
-          under applicable law. If we learn that we collected personal data from
-          children without authorization, we will take reasonable steps to
-          delete it.
+          The Service is not intended for users below the age of eligibility under applicable law.
+          If we learn that we collected personal data from children without authorization, we will
+          take reasonable steps to delete it.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-xl font-medium">15. Updates</h2>
         <p>
-          We may update this policy. Material changes will be notified via
-          in-app notices or other legally compliant methods.
+          We may update this policy. Material changes will be notified via in-app notices or other
+          legally compliant methods.
         </p>
       </section>
 
@@ -389,10 +346,7 @@ export default async function PrivacyPage({ params }: PageProps) {
         <h2 className="text-xl font-medium">16. Contact</h2>
         <p>
           Privacy contact: via{" "}
-          <Link href="https://github.com/poco-ai/tokenarena">
-            GitHub repository
-          </Link>
-          .
+          <Link href="https://github.com/poco-ai/tokenarena">GitHub repository</Link>.
         </p>
       </section>
     </>

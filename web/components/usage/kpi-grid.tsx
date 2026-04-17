@@ -1,15 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  formatKpiDelta,
-  formatKpiMetricValue,
-  type KpiMetricKind,
-} from "@/lib/usage/kpi-format";
-import type {
-  ModelPricingRow,
-  UsageOverviewMetrics,
-  UsagePricingSummary,
-} from "@/lib/usage/types";
+import { formatKpiDelta, formatKpiMetricValue, type KpiMetricKind } from "@/lib/usage/kpi-format";
+import type { ModelPricingRow, UsageOverviewMetrics, UsagePricingSummary } from "@/lib/usage/types";
 import { cn } from "@/lib/utils";
 import { AnimatedKpiDelta, AnimatedKpiValue } from "./kpi-animated-metric";
 import { PricingMatchDialog } from "./pricing-match-dialog";
@@ -152,10 +144,7 @@ function getMetricSnapshot(
   return overview[key];
 }
 
-function sumMetricSnapshots(
-  left: MetricSnapshot,
-  right: MetricSnapshot,
-): MetricSnapshot {
+function sumMetricSnapshots(left: MetricSnapshot, right: MetricSnapshot): MetricSnapshot {
   return {
     current: left.current + right.current,
     previous: left.previous + right.previous,
@@ -195,37 +184,19 @@ function DeltaBadge({
   );
 }
 
-export async function KpiGrid({
-  overview,
-  pricingSummary,
-  modelPricingRows = [],
-}: KpiGridProps) {
+export async function KpiGrid({ overview, pricingSummary, modelPricingRows = [] }: KpiGridProps) {
   const t = await getTranslations("usage.kpis");
 
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
       {kpis.map((kpi) => {
         if (kpi.type === "combined") {
-          const primaryMetric = getMetricSnapshot(
-            kpi.primary.key,
-            overview,
-            pricingSummary,
-          );
-          const secondaryMetric = getMetricSnapshot(
-            kpi.secondary.key,
-            overview,
-            pricingSummary,
-          );
-          const combinedMetric = sumMetricSnapshots(
-            primaryMetric,
-            secondaryMetric,
-          );
+          const primaryMetric = getMetricSnapshot(kpi.primary.key, overview, pricingSummary);
+          const secondaryMetric = getMetricSnapshot(kpi.secondary.key, overview, pricingSummary);
+          const combinedMetric = sumMetricSnapshots(primaryMetric, secondaryMetric);
           const primaryDeltaDescription = t("deltaVsPrevious", {
             delta: formatKpiDelta(combinedMetric.delta, kpi.primary.kind),
-            previous: formatKpiMetricValue(
-              combinedMetric.previous,
-              kpi.primary.kind,
-            ),
+            previous: formatKpiMetricValue(combinedMetric.previous, kpi.primary.kind),
           });
 
           return (
@@ -243,16 +214,10 @@ export async function KpiGrid({
               <CardContent>
                 <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
                   <div className="text-2xl font-semibold tracking-tight">
-                    <AnimatedKpiValue
-                      kind={kpi.primary.kind}
-                      to={combinedMetric.current}
-                    />
+                    <AnimatedKpiValue kind={kpi.primary.kind} to={combinedMetric.current} />
                   </div>
                   <div className="inline-flex flex-wrap items-baseline gap-x-1 pb-1 text-xs text-muted-foreground">
-                    <AnimatedKpiValue
-                      kind={kpi.secondary.kind}
-                      to={secondaryMetric.current}
-                    />
+                    <AnimatedKpiValue kind={kpi.secondary.kind} to={secondaryMetric.current} />
                     <span>{t("reasoningSuffix")}</span>
                   </div>
                 </div>
@@ -275,15 +240,9 @@ export async function KpiGrid({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5">
                   <CardTitle>{t(kpi.labelKey)}</CardTitle>
-                  {isEstimatedCostCard ? (
-                    <PricingMatchDialog rows={modelPricingRows} />
-                  ) : null}
+                  {isEstimatedCostCard ? <PricingMatchDialog rows={modelPricingRows} /> : null}
                 </div>
-                <DeltaBadge
-                  metric={metric}
-                  kind={kpi.kind}
-                  title={deltaDescription}
-                />
+                <DeltaBadge metric={metric} kind={kpi.kind} title={deltaDescription} />
               </div>
             </CardHeader>
             <CardContent>

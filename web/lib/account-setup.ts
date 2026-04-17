@@ -4,9 +4,7 @@ type UserWithSetupState = {
   usernameNeedsSetup?: boolean | null;
 };
 
-export function needsUsernameSetup(
-  user: UserWithSetupState | null | undefined,
-) {
+export function needsUsernameSetup(user: UserWithSetupState | null | undefined) {
   return user?.usernameNeedsSetup === true;
 }
 
@@ -14,9 +12,7 @@ export function getAuthenticatedAppPath(
   locale: string,
   user: UserWithSetupState | null | undefined,
 ) {
-  return needsUsernameSetup(user)
-    ? `/${locale}/settings/account`
-    : `/${locale}/usage`;
+  return needsUsernameSetup(user) ? `/${locale}/settings/account` : `/${locale}/usage`;
 }
 
 export function redirectIfUsernameSetupNeeded(

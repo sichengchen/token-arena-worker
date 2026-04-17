@@ -7,10 +7,7 @@ import {
   renderBadgeSvg,
 } from "@/lib/social/badges";
 
-export async function GET(
-  request: Request,
-  context: RouteContext<"/api/badges/[username]">,
-) {
+export async function GET(request: Request, context: RouteContext<"/api/badges/[username]">) {
   const { searchParams } = new URL(request.url);
   const metric = parsePublicBadgeMetric(searchParams.get("metric"));
 

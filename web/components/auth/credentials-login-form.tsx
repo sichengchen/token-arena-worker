@@ -68,9 +68,7 @@ export function CredentialsLoginForm({
       });
 
       if (result.error) {
-        setFormError(
-          getAuthErrorMessage(result.error, t("login.errors.default")),
-        );
+        setFormError(getAuthErrorMessage(result.error, t("login.errors.default")));
         return;
       }
 
@@ -107,9 +105,7 @@ export function CredentialsLoginForm({
           onChange={(event) => setEmail(event.target.value)}
           aria-invalid={Boolean(emailError)}
         />
-        {emailError ? (
-          <p className="text-sm text-destructive">{emailError}</p>
-        ) : null}
+        {emailError ? <p className="text-sm text-destructive">{emailError}</p> : null}
       </div>
 
       <div className="space-y-2">
@@ -122,9 +118,7 @@ export function CredentialsLoginForm({
           onChange={(event) => setPassword(event.target.value)}
           aria-invalid={Boolean(passwordError)}
         />
-        {passwordError ? (
-          <p className="text-sm text-destructive">{passwordError}</p>
-        ) : null}
+        {passwordError ? <p className="text-sm text-destructive">{passwordError}</p> : null}
       </div>
 
       <Button className="w-full" type="submit" disabled={isSubmitting}>
@@ -133,10 +127,7 @@ export function CredentialsLoginForm({
 
       <p className="text-center text-sm text-muted-foreground">
         {t("login.noAccount")}{" "}
-        <Link
-          href="/register"
-          className="text-foreground underline underline-offset-4"
-        >
+        <Link href="/register" className="text-foreground underline underline-offset-4">
           {t("login.registerLink")}
         </Link>
       </p>

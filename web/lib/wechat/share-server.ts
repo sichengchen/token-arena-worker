@@ -1,10 +1,6 @@
 import { z } from "zod";
 import type { AppLocale } from "@/lib/i18n";
-import {
-  buildAbsoluteUrl,
-  getAppOrigin,
-  resolveAppLocale,
-} from "@/lib/site-url";
+import { buildAbsoluteUrl, getAppOrigin, resolveAppLocale } from "@/lib/site-url";
 
 const ACCESS_TOKEN_TTL_BUFFER_MS = 5 * 60 * 1000;
 const DEFAULT_SHARE_TIMEOUT_MS = 30000;
@@ -99,9 +95,7 @@ export function buildWechatProfileSharePayload(input: {
   timeout?: number;
 }) {
   const locale = resolveAppLocale(input.locale);
-  const url = buildAbsoluteUrl(
-    `/${locale}/u/${encodeURIComponent(input.username)}`,
-  );
+  const url = buildAbsoluteUrl(`/${locale}/u/${encodeURIComponent(input.username)}`);
   const thumburl = buildAbsoluteUrl("/logo_green.svg");
 
   if (!url || !thumburl) {
@@ -185,9 +179,7 @@ async function requestWechatAccessToken(fetchImpl: FetchLike) {
   } satisfies WechatAccessTokenResult;
 }
 
-export async function createWechatPcOpenSdkTicket(
-  fetchImpl: FetchLike = fetch,
-) {
+export async function createWechatPcOpenSdkTicket(fetchImpl: FetchLike = fetch) {
   const accessToken = await getWechatAccessToken(fetchImpl);
   const response = await fetchImpl(
     `https://api.weixin.qq.com/cgi-bin/pcopensdk/ticket?access_token=${encodeURIComponent(accessToken)}`,
@@ -241,8 +233,8 @@ export async function createWechatProfileShareTicketPayload(
 export function isWechatShareConfigured() {
   return Boolean(
     process.env.WECHAT_OPEN_APP_ID?.trim() &&
-      process.env.WECHAT_OPEN_APP_SECRET?.trim() &&
-      getAppOrigin(),
+    process.env.WECHAT_OPEN_APP_SECRET?.trim() &&
+    getAppOrigin(),
   );
 }
 

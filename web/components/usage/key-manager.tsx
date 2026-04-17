@@ -44,11 +44,9 @@ type KeyManagerProps = {
   };
 };
 
-const mutedControlClassName =
-  "border-border/60 bg-background hover:bg-muted/40";
+const mutedControlClassName = "border-border/60 bg-background hover:bg-muted/40";
 
-const summaryBadgeClassName =
-  "border-border/60 bg-background text-muted-foreground";
+const summaryBadgeClassName = "border-border/60 bg-background text-muted-foreground";
 
 const activeBadgeClassName =
   "border-emerald-500/25 bg-emerald-500/12 text-emerald-700 dark:border-emerald-400/20 dark:text-emerald-300";
@@ -75,8 +73,7 @@ export function KeyManager({
 
   useEffect(() => {
     if (
-      searchParams.get(SETTINGS_CLI_KEY_CREATE_QUERY.name) !==
-      SETTINGS_CLI_KEY_CREATE_QUERY.value
+      searchParams.get(SETTINGS_CLI_KEY_CREATE_QUERY.name) !== SETTINGS_CLI_KEY_CREATE_QUERY.value
     ) {
       return;
     }
@@ -88,15 +85,12 @@ export function KeyManager({
     router.replace(query ? `${pathname}?${query}` : pathname);
   }, [searchParams, pathname, router]);
 
-  const request = async <T,>(
-    input: RequestInfo,
-    init?: RequestInit,
-  ): Promise<T> => {
+  const request = async <T,>(input: RequestInfo, init?: RequestInit): Promise<T> => {
     const response = await fetch(input, {
       ...init,
       headers: {
         "Content-Type": "application/json",
-        ...(init?.headers ?? {}),
+        ...init?.headers,
       },
     });
 
@@ -126,25 +120,15 @@ export function KeyManager({
     setError(null);
 
     try {
-      const nextStatus: UsageApiKeyStatus =
-        key.status === "active" ? "disabled" : "active";
-      const response = await request<{ key: UsageKeyRecord }>(
-        `/api/usage/keys/${key.id}`,
-        {
-          method: "PATCH",
-          body: JSON.stringify({ status: nextStatus }),
-        },
-      );
+      const nextStatus: UsageApiKeyStatus = key.status === "active" ? "disabled" : "active";
+      const response = await request<{ key: UsageKeyRecord }>(`/api/usage/keys/${key.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: nextStatus }),
+      });
 
-      setKeys((current) =>
-        current.map((item) => (item.id === key.id ? response.key : item)),
-      );
+      setKeys((current) => current.map((item) => (item.id === key.id ? response.key : item)));
     } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : t("updateFailed"),
-      );
+      setError(requestError instanceof Error ? requestError.message : t("updateFailed"));
     } finally {
       setPendingKeyId(null);
     }
@@ -161,11 +145,7 @@ export function KeyManager({
 
       setKeys((current) => current.filter((item) => item.id !== key.id));
     } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : t("deleteFailed"),
-      );
+      setError(requestError instanceof Error ? requestError.message : t("deleteFailed"));
     } finally {
       setPendingKeyId(null);
     }
@@ -176,23 +156,16 @@ export function KeyManager({
     setError(null);
 
     try {
-      const response = await request<{ key: UsageKeyRecord; rawKey: string }>(
-        "/api/usage/keys",
-        {
-          method: "POST",
-          body: JSON.stringify({ name }),
-        },
-      );
+      const response = await request<{ key: UsageKeyRecord; rawKey: string }>("/api/usage/keys", {
+        method: "POST",
+        body: JSON.stringify({ name }),
+      });
 
       setKeys((current) => [response.key, ...current]);
       setRawKey(response.rawKey);
       setIsCreateOpen(false);
     } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : t("createFailed"),
-      );
+      setError(requestError instanceof Error ? requestError.message : t("createFailed"));
     } finally {
       setIsDialogPending(false);
     }
@@ -216,17 +189,11 @@ export function KeyManager({
       );
 
       setKeys((current) =>
-        current.map((item) =>
-          item.id === renameTarget.id ? response.key : item,
-        ),
+        current.map((item) => (item.id === renameTarget.id ? response.key : item)),
       );
       setRenameTarget(null);
     } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : t("renameFailed"),
-      );
+      setError(requestError instanceof Error ? requestError.message : t("renameFailed"));
     } finally {
       setIsDialogPending(false);
     }
@@ -259,9 +226,7 @@ export function KeyManager({
               </h2>
               {createKeyButton}
             </div>
-            <p className="text-sm text-muted-foreground">
-              {sectionHeading.description}
-            </p>
+            <p className="text-sm text-muted-foreground">{sectionHeading.description}</p>
           </>
         ) : (
           <div
@@ -288,9 +253,7 @@ export function KeyManager({
         {rawKey ? (
           <div className="space-y-3 rounded-lg bg-muted/30 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="min-w-0 text-sm text-muted-foreground">
-                {t("copyShownOnce")}
-              </p>
+              <p className="min-w-0 text-sm text-muted-foreground">{t("copyShownOnce")}</p>
               <Button
                 type="button"
                 variant="outline"
@@ -309,9 +272,7 @@ export function KeyManager({
         ) : null}
 
         {keys.length === 0 ? (
-          <div className="py-1 text-left text-sm text-muted-foreground">
-            {t("empty")}
-          </div>
+          <div className="py-1 text-left text-sm text-muted-foreground">{t("empty")}</div>
         ) : (
           <div className="overflow-hidden rounded-xl border border-border/60 bg-background">
             <Table className={cn(isDialog ? "min-w-[760px]" : undefined)}>
@@ -352,9 +313,7 @@ export function KeyManager({
                       <Badge
                         variant="outline"
                         className={
-                          key.status === "active"
-                            ? activeBadgeClassName
-                            : summaryBadgeClassName
+                          key.status === "active" ? activeBadgeClassName : summaryBadgeClassName
                         }
                       >
                         {t(`status.${key.status}`)}
@@ -387,23 +346,17 @@ export function KeyManager({
                           size="icon-sm"
                           className="text-muted-foreground hover:bg-muted hover:text-foreground"
                           title={
-                            key.status === "active"
-                              ? t("actions.disable")
-                              : t("actions.enable")
+                            key.status === "active" ? t("actions.disable") : t("actions.enable")
                           }
                           aria-label={
-                            key.status === "active"
-                              ? t("actions.disable")
-                              : t("actions.enable")
+                            key.status === "active" ? t("actions.disable") : t("actions.enable")
                           }
                           onClick={() => toggleStatus(key)}
                           disabled={pendingKeyId === key.id}
                         >
                           <Power />
                           <span className="sr-only">
-                            {key.status === "active"
-                              ? t("actions.disable")
-                              : t("actions.enable")}
+                            {key.status === "active" ? t("actions.disable") : t("actions.enable")}
                           </span>
                         </Button>
                         <Button

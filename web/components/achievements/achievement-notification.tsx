@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Bell,
-  ChevronRight,
-  Flame,
-  Medal,
-  Sparkles,
-  Target,
-} from "lucide-react";
+import { Bell, ChevronRight, Flame, Medal, Sparkles, Target } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -103,42 +96,27 @@ export function AchievementNotification() {
         {state.status === "loading" || state.status === "idle" ? (
           <div className="space-y-3 px-4 py-4">
             {["s1", "s2", "s3"].map((key) => (
-              <div
-                key={key}
-                className="h-16 animate-pulse rounded-2xl bg-muted"
-              />
+              <div key={key} className="h-16 animate-pulse rounded-2xl bg-muted" />
             ))}
           </div>
         ) : state.status === "error" ? (
-          <div className="px-4 py-6 text-sm text-muted-foreground">
-            {t("error")}
-          </div>
+          <div className="px-4 py-6 text-sm text-muted-foreground">{t("error")}</div>
         ) : summary ? (
           <div className="space-y-4 px-4 py-4">
             <div className="grid grid-cols-3 gap-2">
               <div className="rounded-2xl border border-border/60 px-3 py-3 text-center">
-                <div className="text-[11px] text-muted-foreground">
-                  {t("score")}
-                </div>
+                <div className="text-[11px] text-muted-foreground">{t("score")}</div>
                 <div className="mt-1 text-base font-semibold">
                   {formatTokenCount(summary.score, locale)}
                 </div>
               </div>
               <div className="rounded-2xl border border-border/60 px-3 py-3 text-center">
-                <div className="text-[11px] text-muted-foreground">
-                  {t("level")}
-                </div>
-                <div className="mt-1 text-base font-semibold">
-                  Lv. {summary.level}
-                </div>
+                <div className="text-[11px] text-muted-foreground">{t("level")}</div>
+                <div className="mt-1 text-base font-semibold">Lv. {summary.level}</div>
               </div>
               <div className="rounded-2xl border border-border/60 px-3 py-3 text-center">
-                <div className="text-[11px] text-muted-foreground">
-                  {t("streak")}
-                </div>
-                <div className="mt-1 text-base font-semibold">
-                  {summary.currentStreak}
-                </div>
+                <div className="text-[11px] text-muted-foreground">{t("streak")}</div>
+                <div className="mt-1 text-base font-semibold">{summary.currentStreak}</div>
               </div>
             </div>
 
@@ -178,9 +156,7 @@ export function AchievementNotification() {
                       <div className="truncate text-sm font-medium text-foreground">
                         {tItems(`${achievement.code}.title`)}
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        +{achievement.points} pts
-                      </div>
+                      <div className="text-xs text-muted-foreground">+{achievement.points} pts</div>
                     </div>
                   </div>
                 ))

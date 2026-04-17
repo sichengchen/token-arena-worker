@@ -49,9 +49,7 @@ const OFFICIAL_PRICING_PROVIDER_RULES: PricingProviderRule[] = [
   {
     providerId: "alibaba",
     matches: (candidate) =>
-      candidate.startsWith("qwen") ||
-      candidate.startsWith("qwq-") ||
-      candidate.startsWith("qvq-"),
+      candidate.startsWith("qwen") || candidate.startsWith("qwq-") || candidate.startsWith("qvq-"),
   },
   {
     providerId: "minimax",
@@ -73,8 +71,7 @@ const OFFICIAL_PRICING_PROVIDER_RULES: PricingProviderRule[] = [
   },
   {
     providerId: "cohere",
-    matches: (candidate) =>
-      candidate.startsWith("command-") || candidate.startsWith("embed-"),
+    matches: (candidate) => candidate.startsWith("command-") || candidate.startsWith("embed-"),
   },
 ];
 
@@ -133,9 +130,7 @@ export function resolveOfficialPricingProviderId(rawModel: string) {
   const candidates = buildModelLookupCandidates(rawModel);
 
   for (const candidate of candidates) {
-    const matchedRule = OFFICIAL_PRICING_PROVIDER_RULES.find((rule) =>
-      rule.matches(candidate),
-    );
+    const matchedRule = OFFICIAL_PRICING_PROVIDER_RULES.find((rule) => rule.matches(candidate));
 
     if (matchedRule) {
       return matchedRule.providerId;
@@ -205,11 +200,7 @@ export function resolveOfficialPricingMatch(
     return null;
   }
 
-  const match = findCatalogModel(
-    catalog,
-    providerId,
-    buildModelLookupCandidates(rawModel),
-  );
+  const match = findCatalogModel(catalog, providerId, buildModelLookupCandidates(rawModel));
   if (!match) {
     return null;
   }
@@ -238,8 +229,7 @@ export function estimateCostUsd(
 
   const inputUsd = (input.inputTokens / 1_000_000) * (cost.input ?? 0);
   const outputUsd = (input.outputTokens / 1_000_000) * (cost.output ?? 0);
-  const reasoningUsd =
-    (input.reasoningTokens / 1_000_000) * (cost.reasoning ?? cost.output ?? 0);
+  const reasoningUsd = (input.reasoningTokens / 1_000_000) * (cost.reasoning ?? cost.output ?? 0);
   const cacheUsd = (input.cachedTokens / 1_000_000) * (cost.cache_read ?? 0);
 
   return {

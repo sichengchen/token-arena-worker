@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  defaultThemeMode,
-  getThemeMode,
-  resolveThemeAppearance,
-  themeCookieName,
-} from "./theme";
+import { defaultThemeMode, getThemeMode, resolveThemeAppearance, themeCookieName } from "./theme";
 
 describe("theme helpers", () => {
   it("normalizes supported theme values", () => {

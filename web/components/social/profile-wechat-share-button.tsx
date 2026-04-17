@@ -20,10 +20,7 @@ import {
   mapWechatShareErrorCode,
   shareLinkToWechat,
 } from "@/lib/wechat/pc-opensdk";
-import type {
-  WechatShareSource,
-  WechatShareTicketPayload,
-} from "@/lib/wechat/share-server";
+import type { WechatShareSource, WechatShareTicketPayload } from "@/lib/wechat/share-server";
 
 const MIN_ACTION_GAP_MS = 1000;
 
@@ -31,9 +28,7 @@ type ProfileWechatShareButtonProps = {
   shareUrl: string;
 };
 
-export function ProfileWechatShareButton({
-  shareUrl,
-}: ProfileWechatShareButtonProps) {
+export function ProfileWechatShareButton({ shareUrl }: ProfileWechatShareButtonProps) {
   const locale = useLocale();
   const t = useTranslations("social.profile.wechatShare");
   const lastAttemptRef = useRef(0);
@@ -139,9 +134,7 @@ export function ProfileWechatShareButton({
         const result = await shareLinkToWechat(payload);
 
         if (result.errcode === 0) {
-          toast.success(
-            source === "chat" ? t("friendSuccess") : t("timelineSuccess"),
-          );
+          toast.success(source === "chat" ? t("friendSuccess") : t("timelineSuccess"));
           return;
         }
 
@@ -150,10 +143,7 @@ export function ProfileWechatShareButton({
         });
       } catch (error) {
         toast.error(t("failed"), {
-          description:
-            error instanceof Error && error.message
-              ? error.message
-              : t("desktopOnly"),
+          description: error instanceof Error && error.message ? error.message : t("desktopOnly"),
         });
       } finally {
         setIsPending(false);
@@ -164,12 +154,7 @@ export function ProfileWechatShareButton({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          disabled={isPending}
-        >
+        <Button type="button" variant="outline" className="w-full" disabled={isPending}>
           {isPending ? (
             <LoaderCircle className="animate-spin" />
           ) : (

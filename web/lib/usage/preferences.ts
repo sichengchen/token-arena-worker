@@ -13,18 +13,10 @@ function createProjectHashSalt() {
 }
 
 function isUsagePreferenceUniqueConflict(error: unknown) {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    error.code === "P2002"
-  );
+  return typeof error === "object" && error !== null && "code" in error && error.code === "P2002";
 }
 
-export async function ensureUsagePreferenceWithDb(
-  db: UsagePreferenceClient,
-  userId: string,
-) {
+export async function ensureUsagePreferenceWithDb(db: UsagePreferenceClient, userId: string) {
   const existing = await db.usagePreference.findUnique({
     where: { userId },
   });

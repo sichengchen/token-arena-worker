@@ -3,11 +3,7 @@ import type { ReactNode } from "react";
 import { SiGithub } from "react-icons/si";
 import type { LinkedProfileProviderId } from "@/lib/social/linked-provider-profile";
 
-function ProviderIcon({
-  providerId,
-}: {
-  providerId: LinkedProfileProviderId;
-}): ReactNode {
+function ProviderIcon({ providerId }: { providerId: LinkedProfileProviderId }): ReactNode {
   switch (providerId) {
     case "github":
       return <SiGithub className="size-4 shrink-0" aria-hidden />;

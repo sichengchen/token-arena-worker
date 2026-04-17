@@ -5,11 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useTheme } from "@/components/providers/theme-provider";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -56,9 +52,7 @@ export function ThemeSwitcher({
     setThemeMode(nextThemeMode);
 
     if (authenticated) {
-      void persistServerPreference({ theme: nextThemeMode }).catch(
-        console.error,
-      );
+      void persistServerPreference({ theme: nextThemeMode }).catch(console.error);
     }
 
     setOpen(false);
@@ -83,12 +77,7 @@ export function ThemeSwitcher({
             <TriggerIcon className="size-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          align="end"
-          side="top"
-          sideOffset={8}
-          className="w-auto min-w-[10rem] p-1"
-        >
+        <PopoverContent align="end" side="top" sideOffset={8} className="w-auto min-w-[10rem] p-1">
           <div className="flex flex-col gap-0.5" role="listbox">
             {themeModes.map((mode) => {
               const Icon = themeIcons[mode];
@@ -138,10 +127,7 @@ export function ThemeSwitcher({
   }
 
   return (
-    <Select
-      value={themeMode}
-      onValueChange={(value) => handleChange(value as ThemeMode)}
-    >
+    <Select value={themeMode} onValueChange={(value) => handleChange(value as ThemeMode)}>
       <SelectTrigger
         aria-label={t("theme")}
         size="default"

@@ -2,42 +2,35 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/components/ui/count-up", () => ({
-  default: function MockCountUp({
-    to,
-    format,
-  }: {
-    to: number;
-    format: (n: number) => string;
-  }) {
+  default: function MockCountUp({ to, format }: { to: number; format: (n: number) => string }) {
     return <span>{format(to)}</span>;
   },
 }));
 
 vi.mock("next-intl/server", () => ({
-  getTranslations:
-    async () => (key: string, values?: Record<string, string>) => {
-      if (key === "deltaVsPrevious") {
-        return `${values?.delta ?? ""} vs previous ${values?.previous ?? ""}`;
-      }
+  getTranslations: async () => (key: string, values?: Record<string, string>) => {
+    if (key === "deltaVsPrevious") {
+      return `${values?.delta ?? ""} vs previous ${values?.previous ?? ""}`;
+    }
 
-      return (
-        {
-          estimatedCost: "Est. Cost",
-          totalTokens: "Total Tokens",
-          inputTokens: "Input Tokens",
-          outputTokens: "Output Tokens",
-          reasoningTokens: "Reasoning Tokens",
-          reasoningIncluded: `${values?.value ?? ""} reasoning`,
-          reasoningSuffix: " reasoning",
-          cachedTokens: "Cached Tokens",
-          activeTime: "Active Time",
-          totalTime: "Total Time",
-          sessions: "Sessions",
-          messages: "Messages",
-          userMessages: "User Messages",
-        }[key] ?? key
-      );
-    },
+    return (
+      {
+        estimatedCost: "Est. Cost",
+        totalTokens: "Total Tokens",
+        inputTokens: "Input Tokens",
+        outputTokens: "Output Tokens",
+        reasoningTokens: "Reasoning Tokens",
+        reasoningIncluded: `${values?.value ?? ""} reasoning`,
+        reasoningSuffix: " reasoning",
+        cachedTokens: "Cached Tokens",
+        activeTime: "Active Time",
+        totalTime: "Total Time",
+        sessions: "Sessions",
+        messages: "Messages",
+        userMessages: "User Messages",
+      }[key] ?? key
+    );
+  },
 }));
 
 vi.mock("./pricing-match-dialog", () => ({

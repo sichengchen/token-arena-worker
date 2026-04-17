@@ -10,11 +10,7 @@ import {
   resolveLinkedProfileUrl,
 } from "@/lib/social/linked-provider-profile";
 import { tokenCountToNumber } from "@/lib/token-counts";
-import {
-  groupByHourOrDay,
-  listRangeBuckets,
-  resolveDashboardRange,
-} from "@/lib/usage/date-range";
+import { groupByHourOrDay, listRangeBuckets, resolveDashboardRange } from "@/lib/usage/date-range";
 import { formatDateInput } from "@/lib/usage/format";
 import type { FollowTag } from "./follow-tags";
 
@@ -145,10 +141,7 @@ function createDailyRange(timezone: string, days: number) {
   return resolveDashboardRange({
     preset: "custom",
     timezone,
-    from: formatDateInput(
-      new Date(now.getTime() - (days - 1) * DAY_MS),
-      timezone,
-    ),
+    from: formatDateInput(new Date(now.getTime() - (days - 1) * DAY_MS), timezone),
     to: formatDateInput(now, timezone),
   });
 }
@@ -158,9 +151,7 @@ function mapRelationFlags(
   direct: Array<{ followingId: string; tag: FollowTag | null }>,
   reverse: Array<{ followerId: string }>,
 ) {
-  const followingMap = new Map(
-    direct.map((record) => [record.followingId, record.tag] as const),
-  );
+  const followingMap = new Map(direct.map((record) => [record.followingId, record.tag] as const));
   const followerIds = new Set(reverse.map((record) => record.followerId));
 
   return new Map<string, RelationFlags>(
@@ -338,11 +329,7 @@ export async function getActivityHeatmap365(input: {
     }),
   ]);
 
-  return buildHeatmap(
-    input.timezone,
-    sessions365,
-    buckets365.map(normalizeUsageBucketTokenFields),
-  );
+  return buildHeatmap(input.timezone, sessions365, buckets365.map(normalizeUsageBucketTokenFields));
 }
 
 function buildTopTools(
@@ -354,16 +341,10 @@ function buildTopTools(
   const rows = new Map<string, number>();
 
   for (const bucket of buckets) {
-    rows.set(
-      bucket.source,
-      (rows.get(bucket.source) ?? 0) + bucket.totalTokens,
-    );
+    rows.set(bucket.source, (rows.get(bucket.source) ?? 0) + bucket.totalTokens);
   }
 
-  const total = Array.from(rows.values()).reduce(
-    (sum, value) => sum + value,
-    0,
-  );
+  const total = Array.from(rows.values()).reduce((sum, value) => sum + value, 0);
 
   return Array.from(rows.entries())
     .map(([name, totalTokens]) => ({
@@ -387,10 +368,7 @@ function buildTopModels(
     rows.set(bucket.model, (rows.get(bucket.model) ?? 0) + bucket.totalTokens);
   }
 
-  const total = Array.from(rows.values()).reduce(
-    (sum, value) => sum + value,
-    0,
-  );
+  const total = Array.from(rows.values()).reduce((sum, value) => sum + value, 0);
 
   return Array.from(rows.entries())
     .map(([name, totalTokens]) => ({
@@ -490,10 +468,7 @@ export async function getPublicProfileActivityShareData(input: {
     heatmap,
     summary: {
       activeDays: heatmap.filter((day) => day.activeSeconds > 0).length,
-      activeSeconds: sessions365.reduce(
-        (sum, session) => sum + session.activeSeconds,
-        0,
-      ),
+      activeSeconds: sessions365.reduce((sum, session) => sum + session.activeSeconds, 0),
     },
   };
 }
@@ -513,8 +488,7 @@ export async function getPublicProfilePageData(input: {
     return null;
   }
 
-  const publicProfileEnabled =
-    user.usagePreference?.publicProfileEnabled ?? false;
+  const publicProfileEnabled = user.usagePreference?.publicProfileEnabled ?? false;
   const isSelf = input.viewerUserId === user.id;
 
   if (!publicProfileEnabled && !isSelf) {
@@ -759,10 +733,7 @@ export async function searchPublicProfiles(input: {
   );
 }
 
-export async function countPublicProfiles(input: {
-  query?: string;
-  viewerUserId?: string | null;
-}) {
+export async function countPublicProfiles(input: { query?: string; viewerUserId?: string | null }) {
   const query = input.query?.trim();
 
   return prisma.user.count({
@@ -884,9 +855,7 @@ export async function listFollowerProfiles(viewerUserId: string) {
       tag: true,
     },
   });
-  const directMap = new Map(
-    direct.map((record) => [record.followingId, record.tag] as const),
-  );
+  const directMap = new Map(direct.map((record) => [record.followingId, record.tag] as const));
 
   return rows.map((row) =>
     mapUserToListProfile(

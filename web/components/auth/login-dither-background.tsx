@@ -16,10 +16,7 @@ const WAVE_COLOR: [number, number, number] = [0.34, 0.34, 0.34];
  */
 export function LoginDitherBackground() {
   return (
-    <div
-      className="pointer-events-none fixed inset-0 z-0 isolate bg-neutral-950"
-      aria-hidden
-    >
+    <div className="pointer-events-none fixed inset-0 z-0 isolate bg-neutral-950" aria-hidden>
       <Dither
         colorNum={4}
         disableAnimation={false}

@@ -2,10 +2,7 @@ import { finalizePendingLeaderboardPeriods } from "@/lib/leaderboard/finalize";
 import { getUserGlobalLeaderboardRanksByTotalTokens } from "@/lib/leaderboard/rank";
 import type { PricingCatalog } from "@/lib/pricing/catalog";
 import { getPricingCatalog } from "@/lib/pricing/catalog";
-import {
-  estimateCostUsd,
-  resolveOfficialPricingMatch,
-} from "@/lib/pricing/resolve";
+import { estimateCostUsd, resolveOfficialPricingMatch } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import { tokenCountToNumber } from "@/lib/token-counts";
 import { resolveDashboardRange } from "@/lib/usage/date-range";
@@ -26,10 +23,7 @@ import {
   mergeAchievementRecords,
   type StoredAchievementRecord,
 } from "./records";
-import type {
-  AchievementNotificationData,
-  AchievementsPageData,
-} from "./types";
+import type { AchievementNotificationData, AchievementsPageData } from "./types";
 
 function latestIso(values: Array<string | null | undefined>) {
   const timestamps = values
@@ -45,9 +39,7 @@ function latestIso(values: Array<string | null | undefined>) {
 }
 
 function sortIsoAsc<T extends { at: string }>(values: T[]) {
-  return [...values].sort(
-    (left, right) => Date.parse(left.at) - Date.parse(right.at),
-  );
+  return [...values].sort((left, right) => Date.parse(left.at) - Date.parse(right.at));
 }
 
 function estimateBucketCostUsd(
@@ -252,13 +244,11 @@ function buildAllTimeMetrics(input: {
   }
 
   for (const session of input.sessions) {
-    activityDayKeys.add(
-      formatDateInput(session.firstMessageAt, input.timezone),
-    );
+    activityDayKeys.add(formatDateInput(session.firstMessageAt, input.timezone));
   }
 
-  const sortedActivityDayKeys = Array.from(activityDayKeys).sort(
-    (left, right) => left.localeCompare(right),
+  const sortedActivityDayKeys = Array.from(activityDayKeys).sort((left, right) =>
+    left.localeCompare(right),
   );
 
   const now = new Date();
@@ -266,9 +256,7 @@ function buildAllTimeMetrics(input: {
   yesterday.setUTCDate(yesterday.getUTCDate() - 1);
 
   const followingMap = new Map(
-    input.following.map(
-      (record) => [record.followingId, record.createdAt] as const,
-    ),
+    input.following.map((record) => [record.followingId, record.createdAt] as const),
   );
   const mutualEffectiveDates = input.followers
     .map((record) => {
@@ -278,9 +266,7 @@ function buildAllTimeMetrics(input: {
         return null;
       }
 
-      return new Date(
-        Math.max(followingAt.getTime(), record.createdAt.getTime()),
-      ).toISOString();
+      return new Date(Math.max(followingAt.getTime(), record.createdAt.getTime())).toISOString();
     })
     .filter((value): value is string => Boolean(value))
     .sort((left, right) => Date.parse(left) - Date.parse(right));
@@ -328,14 +314,10 @@ function buildAllTimeMetrics(input: {
   const topProjectTokens = Math.max(0, ...recentTotals.byProject.values());
   const topModelTokens = Math.max(0, ...recentTotals.byModel.values());
   const totalTokens30d = recentTotals.totalTokens;
-  const reasoningShare30d =
-    totalTokens30d > 0 ? recentTotals.reasoningTokens / totalTokens30d : 0;
-  const cacheShare30d =
-    totalTokens30d > 0 ? recentTotals.cachedTokens / totalTokens30d : 0;
-  const topProjectShare30d =
-    totalTokens30d > 0 ? topProjectTokens / totalTokens30d : 0;
-  const topModelShare30d =
-    totalTokens30d > 0 ? topModelTokens / totalTokens30d : 0;
+  const reasoningShare30d = totalTokens30d > 0 ? recentTotals.reasoningTokens / totalTokens30d : 0;
+  const cacheShare30d = totalTokens30d > 0 ? recentTotals.cachedTokens / totalTokens30d : 0;
+  const topProjectShare30d = totalTokens30d > 0 ? topProjectTokens / totalTokens30d : 0;
+  const topModelShare30d = totalTokens30d > 0 ? topModelTokens / totalTokens30d : 0;
   const currentPersona = resolveCurrentPersona({
     totalTokens: totalTokens30d,
     totalSessions: recentSessions.length,
@@ -348,29 +330,19 @@ function buildAllTimeMetrics(input: {
 
   return {
     timezone: input.timezone,
-    firstSyncAt: latestIso([
-      tokenTimeline[0]?.at ?? null,
-      sessionTimeline[0]?.at ?? null,
-    ])
+    firstSyncAt: latestIso([tokenTimeline[0]?.at ?? null, sessionTimeline[0]?.at ?? null])
       ? ([tokenTimeline[0]?.at, sessionTimeline[0]?.at]
           .filter((value): value is string => Boolean(value))
-          .sort((left, right) => Date.parse(left) - Date.parse(right))[0] ??
-        null)
+          .sort((left, right) => Date.parse(left) - Date.parse(right))[0] ?? null)
       : null,
     publicProfileEnabled: input.publicProfileEnabled,
     publicProfileUpdatedAt: input.publicProfileUpdatedAt?.toISOString() ?? null,
     activeDayKeys: sortedActivityDayKeys,
     todayKey: formatDateInput(now, input.timezone),
     yesterdayKey: formatDateInput(yesterday, input.timezone),
-    totalTokens: input.buckets.reduce(
-      (sum, bucket) => sum + bucket.totalTokens,
-      0,
-    ),
+    totalTokens: input.buckets.reduce((sum, bucket) => sum + bucket.totalTokens, 0),
     totalSessions: input.sessions.length,
-    totalActiveSeconds: input.sessions.reduce(
-      (sum, session) => sum + session.activeSeconds,
-      0,
-    ),
+    totalActiveSeconds: input.sessions.reduce((sum, session) => sum + session.activeSeconds, 0),
     tokenTimeline,
     costTimeline,
     totalEstimatedCostUsd: input.totalEstimatedCostUsd,
@@ -389,14 +361,10 @@ function buildAllTimeMetrics(input: {
     ]),
     followingCount: input.following.length,
     firstFollowingAt: input.following[0]?.createdAt.toISOString() ?? null,
-    followingTimeline: input.following.map((record) =>
-      record.createdAt.toISOString(),
-    ),
+    followingTimeline: input.following.map((record) => record.createdAt.toISOString()),
     followerCount: input.followers.length,
     firstFollowerAt: input.followers[0]?.createdAt.toISOString() ?? null,
-    followerTimeline: input.followers.map((record) =>
-      record.createdAt.toISOString(),
-    ),
+    followerTimeline: input.followers.map((record) => record.createdAt.toISOString()),
     mutualCount: mutualEffectiveDates.length,
     mutualReachedAt: mutualEffectiveDates[2] ?? null,
     mutualTimeline: mutualEffectiveDates,
@@ -429,62 +397,61 @@ function normalizeStoredAchievementRecord(row: {
 
 async function loadAchievementMetrics(userId: string) {
   const preference = await getUsagePreference(userId);
-  const [user, buckets, sessions, following, followers, catalog] =
-    await Promise.all([
-      prisma.user.findUniqueOrThrow({
-        where: { id: userId },
-        select: {
-          usagePreference: {
-            select: {
-              publicProfileEnabled: true,
-              updatedAt: true,
-            },
+  const [user, buckets, sessions, following, followers, catalog] = await Promise.all([
+    prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: {
+        usagePreference: {
+          select: {
+            publicProfileEnabled: true,
+            updatedAt: true,
           },
         },
-      }),
-      prisma.usageBucket.findMany({
-        where: { userId },
-        select: {
-          bucketStart: true,
-          totalTokens: true,
-          inputTokens: true,
-          outputTokens: true,
-          reasoningTokens: true,
-          cachedTokens: true,
-          model: true,
-          source: true,
-          projectKey: true,
-          deviceId: true,
-        },
-        orderBy: { bucketStart: "asc" },
-      }),
-      prisma.usageSession.findMany({
-        where: { userId },
-        select: {
-          firstMessageAt: true,
-          activeSeconds: true,
-          deviceId: true,
-        },
-        orderBy: { firstMessageAt: "asc" },
-      }),
-      prisma.follow.findMany({
-        where: { followerId: userId },
-        select: {
-          followingId: true,
-          createdAt: true,
-        },
-        orderBy: { createdAt: "asc" },
-      }),
-      prisma.follow.findMany({
-        where: { followingId: userId },
-        select: {
-          followerId: true,
-          createdAt: true,
-        },
-        orderBy: { createdAt: "asc" },
-      }),
-      getPricingCatalog(),
-    ]);
+      },
+    }),
+    prisma.usageBucket.findMany({
+      where: { userId },
+      select: {
+        bucketStart: true,
+        totalTokens: true,
+        inputTokens: true,
+        outputTokens: true,
+        reasoningTokens: true,
+        cachedTokens: true,
+        model: true,
+        source: true,
+        projectKey: true,
+        deviceId: true,
+      },
+      orderBy: { bucketStart: "asc" },
+    }),
+    prisma.usageSession.findMany({
+      where: { userId },
+      select: {
+        firstMessageAt: true,
+        activeSeconds: true,
+        deviceId: true,
+      },
+      orderBy: { firstMessageAt: "asc" },
+    }),
+    prisma.follow.findMany({
+      where: { followerId: userId },
+      select: {
+        followingId: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.follow.findMany({
+      where: { followingId: userId },
+      select: {
+        followerId: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+    getPricingCatalog(),
+  ]);
   const normalizedBuckets = buckets.map(normalizeUsageBucketTokenFields);
 
   const costTimeline = sortIsoAsc(
@@ -493,15 +460,10 @@ async function loadAchievementMetrics(userId: string) {
       value: estimateBucketCostUsd(bucket, catalog),
     })),
   );
-  const totalEstimatedCostUsd = costTimeline.reduce(
-    (sum, point) => sum + point.value,
-    0,
-  );
+  const totalEstimatedCostUsd = costTimeline.reduce((sum, point) => sum + point.value, 0);
 
-  const publicProfileEnabled =
-    user.usagePreference?.publicProfileEnabled ?? false;
-  const leaderboardRanks =
-    await getUserGlobalLeaderboardRanksByTotalTokens(userId);
+  const publicProfileEnabled = user.usagePreference?.publicProfileEnabled ?? false;
+  const leaderboardRanks = await getUserGlobalLeaderboardRanksByTotalTokens(userId);
 
   return buildAllTimeMetrics({
     timezone: preference.timezone,
@@ -572,24 +534,16 @@ async function synchronizeUserAchievements(input: {
           },
           update: {
             awardCount: record.awardCount,
-            firstAwardedAt: record.firstAwardedAt
-              ? new Date(record.firstAwardedAt)
-              : null,
-            lastAwardedAt: record.lastAwardedAt
-              ? new Date(record.lastAwardedAt)
-              : null,
+            firstAwardedAt: record.firstAwardedAt ? new Date(record.firstAwardedAt) : null,
+            lastAwardedAt: record.lastAwardedAt ? new Date(record.lastAwardedAt) : null,
             ...(record.state ? { state: record.state } : {}),
           },
           create: {
             userId: input.userId,
             code: record.code,
             awardCount: record.awardCount,
-            firstAwardedAt: record.firstAwardedAt
-              ? new Date(record.firstAwardedAt)
-              : null,
-            lastAwardedAt: record.lastAwardedAt
-              ? new Date(record.lastAwardedAt)
-              : null,
+            firstAwardedAt: record.firstAwardedAt ? new Date(record.firstAwardedAt) : null,
+            lastAwardedAt: record.lastAwardedAt ? new Date(record.lastAwardedAt) : null,
             ...(record.state ? { state: record.state } : {}),
           },
         });
@@ -613,9 +567,7 @@ export async function synchronizeAchievementsForUser(
   });
 }
 
-export async function getAchievementsPageData(
-  userId: string,
-): Promise<AchievementsPageData> {
+export async function getAchievementsPageData(userId: string): Promise<AchievementsPageData> {
   await finalizePendingLeaderboardPeriods();
   const metrics = await loadAchievementMetrics(userId);
   const records = await synchronizeUserAchievements({
@@ -625,10 +577,7 @@ export async function getAchievementsPageData(
   });
   return buildAchievementsPageDataFromStatuses({
     metrics,
-    achievements: mergeAchievementRecords(
-      buildAchievementStatuses(metrics),
-      records,
-    ),
+    achievements: mergeAchievementRecords(buildAchievementStatuses(metrics), records),
   });
 }
 
@@ -650,10 +599,7 @@ export async function getAchievementArenaSummary(userId: string): Promise<{
   });
   const pageData = buildAchievementsPageDataFromStatuses({
     metrics,
-    achievements: mergeAchievementRecords(
-      buildAchievementStatuses(metrics),
-      records,
-    ),
+    achievements: mergeAchievementRecords(buildAchievementStatuses(metrics), records),
   });
   return {
     score: pageData.summary.score,
@@ -679,10 +625,7 @@ export async function getAchievementNotificationData(
   return buildAchievementNotificationData(
     buildAchievementsPageDataFromStatuses({
       metrics,
-      achievements: mergeAchievementRecords(
-        buildAchievementStatuses(metrics),
-        records,
-      ),
+      achievements: mergeAchievementRecords(buildAchievementStatuses(metrics), records),
     }),
   );
 }

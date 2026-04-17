@@ -3,11 +3,7 @@
 import { CheckIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSocialFollow } from "@/hooks/use-social-follow";
 import { Link } from "@/i18n/navigation";
 import type { FollowTag } from "@/lib/social/follow-tags";
@@ -76,9 +72,7 @@ export function FollowButton({
           data-slot="button-group"
           className={cn(
             "inline-flex items-center overflow-hidden border border-border/60 bg-secondary text-secondary-foreground shadow-sm",
-            size === "sm"
-              ? "rounded-[min(var(--radius-md),12px)]"
-              : "rounded-lg",
+            size === "sm" ? "rounded-[min(var(--radius-md),12px)]" : "rounded-lg",
           )}
         >
           <button
@@ -116,10 +110,7 @@ export function FollowButton({
               <div className="space-y-0.5">
                 {(["none", ...followTags] as const).map((value) => {
                   const isSelected = value === toFollowTagSelectValue(tag);
-                  const label =
-                    value === "none"
-                      ? tTags("none")
-                      : tTags(`options.${value}`);
+                  const label = value === "none" ? tTags("none") : tTags(`options.${value}`);
 
                   return (
                     <button

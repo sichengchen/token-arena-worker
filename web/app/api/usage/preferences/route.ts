@@ -2,10 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getOptionalSession } from "@/lib/session";
 import { usagePreferenceUpdateSchema } from "@/lib/usage/contracts";
-import {
-  getUsagePreference,
-  updateUsagePreference,
-} from "@/lib/usage/preferences";
+import { getUsagePreference, updateUsagePreference } from "@/lib/usage/preferences";
 
 async function getSessionUserId() {
   const session = await getOptionalSession();

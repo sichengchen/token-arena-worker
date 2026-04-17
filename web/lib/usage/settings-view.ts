@@ -25,11 +25,12 @@ export const localeOptions: Array<{ value: AppLocale; label: string }> = [
   { value: "zh", label: "中文" },
 ];
 
-export const themeModeOptions: Array<{ value: ThemeMode; label: string }> =
-  themeModes.map((value) => ({
+export const themeModeOptions: Array<{ value: ThemeMode; label: string }> = themeModes.map(
+  (value) => ({
     value,
     label: value === "light" ? "Light" : value === "dark" ? "Dark" : "System",
-  }));
+  }),
+);
 
 type PreferenceSnapshot = {
   locale?: AppLocale;
@@ -48,10 +49,7 @@ type UsageKeySummary = {
   disabled: number;
 };
 
-export function hasPreferenceChanges(
-  initial: PreferenceSnapshot,
-  current: PreferenceSnapshot,
-) {
+export function hasPreferenceChanges(initial: PreferenceSnapshot, current: PreferenceSnapshot) {
   return (
     initial.locale !== current.locale ||
     initial.theme !== current.theme ||
@@ -62,9 +60,7 @@ export function hasPreferenceChanges(
   );
 }
 
-export function summarizeUsageKeys(
-  keys: Array<{ status: UsageApiKeyStatus }>,
-): UsageKeySummary {
+export function summarizeUsageKeys(keys: Array<{ status: UsageApiKeyStatus }>): UsageKeySummary {
   const active = keys.filter((key) => key.status === "active").length;
 
   return {

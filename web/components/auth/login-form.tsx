@@ -9,23 +9,12 @@ type LoginFormProps = {
   providers: LoginProvider[];
 };
 
-export function LoginForm({
-  mode,
-  showInvalidSessionMessage = false,
-  providers,
-}: LoginFormProps) {
+export function LoginForm({ mode, showInvalidSessionMessage = false, providers }: LoginFormProps) {
   if (mode === "self-hosted") {
-    return (
-      <CredentialsLoginForm
-        showInvalidSessionMessage={showInvalidSessionMessage}
-      />
-    );
+    return <CredentialsLoginForm showInvalidSessionMessage={showInvalidSessionMessage} />;
   }
 
   return (
-    <SocialLoginForm
-      showInvalidSessionMessage={showInvalidSessionMessage}
-      providers={providers}
-    />
+    <SocialLoginForm showInvalidSessionMessage={showInvalidSessionMessage} providers={providers} />
   );
 }

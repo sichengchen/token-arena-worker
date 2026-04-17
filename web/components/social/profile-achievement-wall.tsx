@@ -2,12 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { AchievementBadge } from "@/components/achievements/achievement-badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getAchievementCountBadgeValue } from "@/lib/achievements/catalog";
 import type { ProfileAchievementWallItem } from "@/lib/achievements/profile-wall";
 
@@ -34,10 +29,7 @@ export function ProfileAchievementWall({ items }: ProfileAchievementWallProps) {
                     iconKey={item.iconKey}
                     tier={item.tier}
                     size="xs"
-                    count={getAchievementCountBadgeValue(
-                      item.code,
-                      item.awardCount,
-                    )}
+                    count={getAchievementCountBadgeValue(item.code, item.awardCount)}
                   />
                 </span>
               </TooltipTrigger>

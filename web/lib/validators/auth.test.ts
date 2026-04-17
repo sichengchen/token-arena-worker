@@ -33,9 +33,7 @@ describe("loginSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.flatten().fieldErrors.password).toContain(
-        "Password is required.",
-      );
+      expect(result.error.flatten().fieldErrors.password).toContain("Password is required.");
     }
   });
 
@@ -130,9 +128,7 @@ describe("registerSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.flatten().fieldErrors.username).toContain(
-        "Username is required.",
-      );
+      expect(result.error.flatten().fieldErrors.username).toContain("Username is required.");
     }
   });
 

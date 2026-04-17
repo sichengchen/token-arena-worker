@@ -63,12 +63,8 @@ describe("wechat share server utilities", () => {
       ),
     );
 
-    await expect(getWechatAccessToken(fetchMock)).resolves.toBe(
-      "access_token_1",
-    );
-    await expect(getWechatAccessToken(fetchMock)).resolves.toBe(
-      "access_token_1",
-    );
+    await expect(getWechatAccessToken(fetchMock)).resolves.toBe("access_token_1");
+    await expect(getWechatAccessToken(fetchMock)).resolves.toBe("access_token_1");
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });

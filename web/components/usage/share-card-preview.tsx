@@ -40,10 +40,7 @@ type UsageShareCardPreviewProps = {
   className?: string;
 };
 
-type TranslationFn = (
-  key: string,
-  values?: Record<string, string | number>,
-) => string;
+type TranslationFn = (key: string, values?: Record<string, string | number>) => string;
 
 const paletteMap: Record<
   UsageShareCardPersona,
@@ -144,11 +141,7 @@ function formatShortDate(value: string, locale: string, timezone: string) {
   }).format(new Date(value));
 }
 
-function getRangeLabel(
-  data: UsageShareCardData,
-  locale: string,
-  t: TranslationFn,
-) {
+function getRangeLabel(data: UsageShareCardData, locale: string, t: TranslationFn) {
   if (data.period !== "custom") {
     return t(`card.range.${data.period}`);
   }
@@ -271,16 +264,9 @@ function MetricTile({
       )}
     >
       <div className={cn("text-white/64", microClassName)}>{label}</div>
-      <div className={cn("mt-2 font-semibold tracking-tight", bodyClassName)}>
-        {value}
-      </div>
-      {meta ? (
-        <div className={cn("mt-2 text-white/72", microClassName)}>{meta}</div>
-      ) : null}
-      <div
-        className="mt-4 h-1.5 rounded-full"
-        style={{ backgroundColor: accent, opacity: 0.7 }}
-      />
+      <div className={cn("mt-2 font-semibold tracking-tight", bodyClassName)}>{value}</div>
+      {meta ? <div className={cn("mt-2 text-white/72", microClassName)}>{meta}</div> : null}
+      <div className="mt-4 h-1.5 rounded-full" style={{ backgroundColor: accent, opacity: 0.7 }} />
     </div>
   );
 }
@@ -375,19 +361,9 @@ function CompositionBar({
       </div>
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {items.map((item) => (
-          <div
-            key={item.key}
-            className="rounded-2xl border border-white/10 bg-black/10 px-3 py-2"
-          >
-            <div className={cn("text-white/62", sizePresets[size].micro)}>
-              {item.label}
-            </div>
-            <div
-              className={cn(
-                "mt-1 font-semibold text-white",
-                sizePresets[size].body,
-              )}
-            >
+          <div key={item.key} className="rounded-2xl border border-white/10 bg-black/10 px-3 py-2">
+            <div className={cn("text-white/62", sizePresets[size].micro)}>{item.label}</div>
+            <div className={cn("mt-1 font-semibold text-white", sizePresets[size].body)}>
               {formatPercentage(item.share, locale)}
             </div>
           </div>
@@ -417,23 +393,11 @@ function SummaryTemplate({
       <div className="flex flex-col justify-between gap-5">
         <div className="space-y-5">
           <div className="space-y-2">
-            <div className={cn("text-white/72", sizePresets[size].body)}>
-              {t("card.mainTitle")}
-            </div>
-            <div
-              className={cn(
-                "font-semibold tracking-tight text-white",
-                sizePresets[size].hero,
-              )}
-            >
+            <div className={cn("text-white/72", sizePresets[size].body)}>{t("card.mainTitle")}</div>
+            <div className={cn("font-semibold tracking-tight text-white", sizePresets[size].hero)}>
               {formatTokenCount(data.totalTokens)}
             </div>
-            <div
-              className={cn(
-                "font-medium text-white/78",
-                sizePresets[size].body,
-              )}
-            >
+            <div className={cn("font-medium text-white/78", sizePresets[size].body)}>
               {t("card.tokenLabel")}
             </div>
             <div className={cn("text-white/62", sizePresets[size].body)}>
@@ -442,21 +406,11 @@ function SummaryTemplate({
           </div>
 
           <div className="rounded-[28px] border border-white/12 bg-black/14 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)]">
-            <div
-              className={cn(
-                "flex items-center gap-2 text-white/70",
-                sizePresets[size].micro,
-              )}
-            >
+            <div className={cn("flex items-center gap-2 text-white/70", sizePresets[size].micro)}>
               <Sparkles className={size === "export" ? "size-5" : "size-4"} />
               {t("card.insight")}
             </div>
-            <div
-              className={cn(
-                "mt-3 font-medium text-white",
-                sizePresets[size].body,
-              )}
-            >
+            <div className={cn("mt-3 font-medium text-white", sizePresets[size].body)}>
               {getInsightText(data, privacy, locale, t)}
             </div>
           </div>
@@ -509,12 +463,7 @@ function SummaryTemplate({
         </div>
 
         <div className="rounded-[30px] border border-white/12 bg-white/6 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.14)]">
-          <div
-            className={cn(
-              "flex items-center gap-2 text-white/70",
-              sizePresets[size].micro,
-            )}
-          >
+          <div className={cn("flex items-center gap-2 text-white/70", sizePresets[size].micro)}>
             <Layers3 className={size === "export" ? "size-5" : "size-4"} />
             {t("card.trend")}
           </div>
@@ -592,17 +541,9 @@ function PersonaFact({
     >
       <div className="flex items-center gap-3 text-white/82">
         {icon}
-        <span
-          className={cn("font-medium text-white/72", sizePresets[size].micro)}
-        >
-          {label}
-        </span>
+        <span className={cn("font-medium text-white/72", sizePresets[size].micro)}>{label}</span>
       </div>
-      <div
-        className={cn("mt-3 font-semibold text-white", sizePresets[size].body)}
-      >
-        {value}
-      </div>
+      <div className={cn("mt-3 font-semibold text-white", sizePresets[size].body)}>{value}</div>
     </div>
   );
 }
@@ -629,17 +570,10 @@ function PersonaTemplate({
           <div className={cn("text-white/68", sizePresets[size].body)}>
             {t("card.personaLabel")}
           </div>
-          <div
-            className={cn(
-              "font-semibold tracking-tight text-white",
-              sizePresets[size].title,
-            )}
-          >
+          <div className={cn("font-semibold tracking-tight text-white", sizePresets[size].title)}>
             {t(getPersonaBadgeKey(data.persona))}
           </div>
-          <div
-            className={cn("max-w-3xl text-white/78", sizePresets[size].body)}
-          >
+          <div className={cn("max-w-3xl text-white/78", sizePresets[size].body)}>
             {t(getPersonaDescriptionKey(data.persona))}
           </div>
         </div>
@@ -653,27 +587,21 @@ function PersonaTemplate({
             accentSoft={tone.accentSoft}
           />
           <PersonaFact
-            icon={
-              <Activity className={size === "export" ? "size-6" : "size-4"} />
-            }
+            icon={<Activity className={size === "export" ? "size-6" : "size-4"} />}
             label={t("card.activeTime")}
             value={formatDuration(data.activeSeconds)}
             size={size}
             accentSoft={tone.accentSoft}
           />
           <PersonaFact
-            icon={
-              <Wrench className={size === "export" ? "size-6" : "size-4"} />
-            }
+            icon={<Wrench className={size === "export" ? "size-6" : "size-4"} />}
             label={t("card.topTool")}
             value={data.leaders.tool?.label ?? t("card.notAvailable")}
             size={size}
             accentSoft={tone.accentSoft}
           />
           <PersonaFact
-            icon={
-              <FolderGit2 className={size === "export" ? "size-6" : "size-4"} />
-            }
+            icon={<FolderGit2 className={size === "export" ? "size-6" : "size-4"} />}
             label={t("card.topProject")}
             value={getProjectLabel(data, privacy, t)}
             size={size}
@@ -687,12 +615,7 @@ function PersonaTemplate({
           <div className={cn("text-white/64", sizePresets[size].micro)}>
             {t("card.personaInsightLabel")}
           </div>
-          <div
-            className={cn(
-              "mt-3 font-medium text-white",
-              sizePresets[size].body,
-            )}
-          >
+          <div className={cn("mt-3 font-medium text-white", sizePresets[size].body)}>
             {getInsightText(data, privacy, locale, t)}
           </div>
         </div>
@@ -728,15 +651,8 @@ function PersonaTemplate({
         </div>
 
         <div className="rounded-[30px] border border-white/12 bg-white/6 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.14)]">
-          <div
-            className={cn(
-              "flex items-center gap-2 text-white/70",
-              sizePresets[size].micro,
-            )}
-          >
-            <MessagesSquare
-              className={size === "export" ? "size-5" : "size-4"}
-            />
+          <div className={cn("flex items-center gap-2 text-white/70", sizePresets[size].micro)}>
+            <MessagesSquare className={size === "export" ? "size-5" : "size-4"} />
             {t("card.currentView")}
           </div>
           <div className="mt-4 h-[220px] sm:h-[250px] xl:h-full">
@@ -757,12 +673,7 @@ export function buildUsageShareCardCaption(input: {
 }) {
   const user = getDisplayUser(input.data, input.privacy, input.t);
   const period = getRangeLabel(input.data, input.locale, input.t).toLowerCase();
-  const insight = getInsightText(
-    input.data,
-    input.privacy,
-    input.locale,
-    input.t,
-  );
+  const insight = getInsightText(input.data, input.privacy, input.locale, input.t);
 
   if (input.template === "persona") {
     return input.t("captions.persona", {
@@ -807,12 +718,7 @@ export function UsageShareCardPreview({
       <div className="absolute inset-0 bg-[linear-gradient(transparent,rgba(255,255,255,0.02))]" />
       <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:42px_42px]" />
 
-      <div
-        className={cn(
-          "relative flex h-full flex-col",
-          sizePresets[size].padding,
-        )}
-      >
+      <div className={cn("relative flex h-full flex-col", sizePresets[size].padding)}>
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <div
@@ -842,35 +748,16 @@ export function UsageShareCardPreview({
 
         <div className="flex-1">
           {template === "persona" ? (
-            <PersonaTemplate
-              data={data}
-              privacy={privacy}
-              locale={locale}
-              size={size}
-              t={t}
-            />
+            <PersonaTemplate data={data} privacy={privacy} locale={locale} size={size} t={t} />
           ) : (
-            <SummaryTemplate
-              data={data}
-              privacy={privacy}
-              locale={locale}
-              size={size}
-              t={t}
-            />
+            <SummaryTemplate data={data} privacy={privacy} locale={locale} size={size} t={t} />
           )}
         </div>
 
         <div className="mt-6 flex items-end justify-between gap-4 border-t border-white/10 pt-4">
           <div className="space-y-2">
-            <div className={cn("text-white/64", sizePresets[size].micro)}>
-              {displayUser}
-            </div>
-            <div
-              className={cn(
-                "flex items-center gap-2 text-white/78",
-                sizePresets[size].micro,
-              )}
-            >
+            <div className={cn("text-white/64", sizePresets[size].micro)}>{displayUser}</div>
+            <div className={cn("flex items-center gap-2 text-white/78", sizePresets[size].micro)}>
               <Sparkles className={size === "export" ? "size-4" : "size-3.5"} />
               {t("card.currentView")}
             </div>

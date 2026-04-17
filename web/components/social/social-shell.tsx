@@ -14,11 +14,7 @@ type SocialShellProps = {
   children: ReactNode;
 };
 
-export async function SocialShell({
-  locale,
-  viewer,
-  children,
-}: SocialShellProps) {
+export async function SocialShell({ locale, viewer, children }: SocialShellProps) {
   return (
     <AppShell locale={locale} viewer={viewer}>
       {children}

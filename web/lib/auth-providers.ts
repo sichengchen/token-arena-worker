@@ -131,25 +131,15 @@ const oauth2ProviderDefinitions: readonly OAuth2ProviderDefinition[] = [
   },
 ] as const;
 
-const providerDefinitions = [
-  ...socialProviderDefinitions,
-  ...oauth2ProviderDefinitions,
-] as const;
+const providerDefinitions = [...socialProviderDefinitions, ...oauth2ProviderDefinitions] as const;
 
-function getEnvValue(
-  name: ProviderEnvName,
-  env = process.env,
-): string | undefined {
+function getEnvValue(name: ProviderEnvName, env = process.env): string | undefined {
   return env[name];
 }
 
-function hasProviderCredentials(
-  credentials: ProviderCredentials,
-  env = process.env,
-): boolean {
+function hasProviderCredentials(credentials: ProviderCredentials, env = process.env): boolean {
   return Boolean(
-    getEnvValue(credentials.clientId, env) &&
-      getEnvValue(credentials.clientSecret, env),
+    getEnvValue(credentials.clientId, env) && getEnvValue(credentials.clientSecret, env),
   );
 }
 
@@ -184,16 +174,12 @@ export function isSocialProviderEnabled(
   providerId: "discord" | "github" | "google",
   env = process.env,
 ): boolean {
-  const provider = socialProviderDefinitions.find(
-    (candidate) => candidate.id === providerId,
-  );
+  const provider = socialProviderDefinitions.find((candidate) => candidate.id === providerId);
 
   return provider ? hasProviderCredentials(provider.credentials, env) : false;
 }
 
-export function getEnabledOAuth2ProviderConfigs(
-  env = process.env,
-): GenericOAuthConfig[] {
+export function getEnabledOAuth2ProviderConfigs(env = process.env): GenericOAuthConfig[] {
   return oauth2ProviderDefinitions.flatMap((provider) => {
     const credentials = getProviderCredentials(provider.credentials, env);
 

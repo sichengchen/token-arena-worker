@@ -160,10 +160,7 @@ function compressTrend(points: TokenTrendPoint[], maxPoints = 12) {
     compressed.push({
       label: slice.at(-1)?.label ?? slice[0]?.label ?? "",
       totalTokens: slice.reduce((sum, point) => sum + point.totalTokens, 0),
-      estimatedCostUsd: slice.reduce(
-        (sum, point) => sum + point.estimatedCostUsd,
-        0,
-      ),
+      estimatedCostUsd: slice.reduce((sum, point) => sum + point.estimatedCostUsd, 0),
       totalSeconds: slice.reduce((sum, point) => sum + point.totalSeconds, 0),
     });
   }
@@ -265,24 +262,13 @@ export function buildUsageShareCardData(input: {
 }): UsageShareCardData {
   const totalTokens = input.overview.totalTokens.current;
   const inputShare = safeRatio(input.overview.inputTokens.current, totalTokens);
-  const outputShare = safeRatio(
-    input.overview.outputTokens.current,
-    totalTokens,
-  );
-  const reasoningShare = safeRatio(
-    input.overview.reasoningTokens.current,
-    totalTokens,
-  );
-  const cacheShare = safeRatio(
-    input.overview.cachedTokens.current,
-    totalTokens,
-  );
+  const outputShare = safeRatio(input.overview.outputTokens.current, totalTokens);
+  const reasoningShare = safeRatio(input.overview.reasoningTokens.current, totalTokens);
+  const cacheShare = safeRatio(input.overview.cachedTokens.current, totalTokens);
   const topProject = getLeader(input.breakdowns.projects);
   const topModel = getLeader(input.breakdowns.models);
   const topTool = getLeader(input.breakdowns.tools);
-  const modelDiversity = input.breakdowns.models.filter(
-    (row) => row.totalTokens > 0,
-  ).length;
+  const modelDiversity = input.breakdowns.models.filter((row) => row.totalTokens > 0).length;
   const averageTokensPerSession = safeRatio(
     totalTokens,
     Math.max(input.overview.sessions.current, 1),
@@ -328,8 +314,7 @@ export function buildUsageShareCardData(input: {
     diversity: {
       models: modelDiversity,
       tools: input.breakdowns.tools.filter((row) => row.totalTokens > 0).length,
-      projects: input.breakdowns.projects.filter((row) => row.totalTokens > 0)
-        .length,
+      projects: input.breakdowns.projects.filter((row) => row.totalTokens > 0).length,
     },
     persona,
     insight: resolveInsight({

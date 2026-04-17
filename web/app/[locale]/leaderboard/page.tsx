@@ -8,10 +8,7 @@ import { SocialShell } from "@/components/social/social-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
-import {
-  leaderboardMetricSchema,
-  leaderboardPeriodSchema,
-} from "@/lib/leaderboard/contracts";
+import { leaderboardMetricSchema, leaderboardPeriodSchema } from "@/lib/leaderboard/contracts";
 import { getLeaderboardPageData } from "@/lib/leaderboard/queries";
 import {
   defaultLeaderboardMetric,
@@ -40,10 +37,7 @@ function resolveMetric(value: string | undefined): LeaderboardMetric {
   return parsed.success ? parsed.data : defaultLeaderboardMetric;
 }
 
-function buildLeaderboardQuery(input: {
-  period: LeaderboardPeriod;
-  metric: LeaderboardMetric;
-}) {
+function buildLeaderboardQuery(input: { period: LeaderboardPeriod; metric: LeaderboardMetric }) {
   return {
     period: input.period,
     ...(input.metric === defaultLeaderboardMetric
@@ -67,10 +61,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function LeaderboardPage({
-  params,
-  searchParams,
-}: LeaderboardPageProps) {
+export default async function LeaderboardPage({ params, searchParams }: LeaderboardPageProps) {
   const { locale } = await params;
   const viewer = await getOptionalSession();
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
@@ -212,9 +203,7 @@ export default async function LeaderboardPage({
             <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-1">
                 <div className="font-medium">{t("signInTitle")}</div>
-                <p className="text-sm text-muted-foreground">
-                  {t("signInDescription")}
-                </p>
+                <p className="text-sm text-muted-foreground">{t("signInDescription")}</p>
               </div>
               <div className="flex gap-2">
                 <Button asChild type="button" variant="outline" size="sm">

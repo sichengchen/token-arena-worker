@@ -3,11 +3,7 @@ import { getAuthenticatedAppPath } from "@/lib/account-setup";
 import { getOptionalSession } from "@/lib/session";
 import { getUsagePreference } from "@/lib/usage/preferences";
 
-export default async function LocaleHomePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+export default async function LocaleHomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const session = await getOptionalSession();
 

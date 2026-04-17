@@ -85,17 +85,11 @@ describe("ProfileTopList", () => {
     const charts = elements.filter((element) => element.type === BarChart);
     const markup = renderToStaticMarkup(tree);
 
-    expect(
-      elements.filter((element) => element.type === ResponsiveContainer),
-    ).toHaveLength(1);
+    expect(elements.filter((element) => element.type === ResponsiveContainer)).toHaveLength(1);
     expect(charts).toHaveLength(1);
     expect(elements.filter((element) => element.type === Bar)).toHaveLength(1);
-    expect(
-      elements.filter((element) => element.type === LabelList),
-    ).toHaveLength(1);
-    expect((charts[0]?.props.data as Array<{ value: number }>)[0]?.value).toBe(
-      1200000,
-    );
+    expect(elements.filter((element) => element.type === LabelList)).toHaveLength(1);
+    expect((charts[0]?.props.data as Array<{ value: number }>)[0]?.value).toBe(1200000);
     expect(markup).not.toContain("Claude Code");
     expect(markup).not.toContain("75.0%");
   });

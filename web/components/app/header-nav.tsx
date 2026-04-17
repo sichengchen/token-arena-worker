@@ -13,11 +13,7 @@ type AppHeaderNavProps = {
   items: HeaderNavItem[];
 };
 
-function isActivePath(
-  pathname: string,
-  href: string,
-  match: HeaderNavItem["match"] = "exact",
-) {
+function isActivePath(pathname: string, href: string, match: HeaderNavItem["match"] = "exact") {
   if (match === "prefix") {
     return pathname === href || pathname.startsWith(`${href}/`);
   }

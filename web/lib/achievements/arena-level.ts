@@ -53,9 +53,7 @@ export function getArenaLevelProgressFromScore(score: number) {
     : span <= 0
       ? 1
       : Math.min(1, Math.max(0, (safeScore - bandStart) / span));
-  const remainingToNext = isMaxLevel
-    ? 0
-    : Math.max(0, nextThreshold - safeScore);
+  const remainingToNext = isMaxLevel ? 0 : Math.max(0, nextThreshold - safeScore);
 
   return {
     level,

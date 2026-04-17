@@ -160,15 +160,8 @@ function sortRowsByMetric(rows: BreakdownRow[], metric: BreakdownMetric) {
   });
 }
 
-function getMetricShare(
-  rows: BreakdownRow[],
-  row: BreakdownRow,
-  metric: BreakdownMetric,
-) {
-  const total = rows.reduce(
-    (sum, item) => sum + getMetricValue(item, metric),
-    0,
-  );
+function getMetricShare(rows: BreakdownRow[], row: BreakdownRow, metric: BreakdownMetric) {
+  const total = rows.reduce((sum, item) => sum + getMetricValue(item, metric), 0);
 
   if (total === 0) {
     return 0;
@@ -186,11 +179,7 @@ function getMetricLabelKey(metric: BreakdownMetric) {
   }
 }
 
-function formatMetricValue(
-  value: number,
-  metric: BreakdownMetric,
-  locale: string,
-) {
+function formatMetricValue(value: number, metric: BreakdownMetric, locale: string) {
   if (metric === "estimatedCostUsd") {
     return formatUsdAmount(value, locale, { compact: true });
   }
@@ -230,9 +219,7 @@ function toChartData(
   });
 }
 
-function createInitialMetricViews(
-  defaultMetricView: BreakdownMetricView,
-): BreakdownMetricViews {
+function createInitialMetricViews(defaultMetricView: BreakdownMetricView): BreakdownMetricViews {
   return cards.reduce<BreakdownMetricViews>(
     (result, card) => {
       result[card.key] = defaultMetricView;
@@ -271,14 +258,10 @@ function BreakdownTooltipContent({
 
   return (
     <div className="min-w-48 rounded-lg border bg-background/95 p-3 shadow-md">
-      <div className="mb-3 text-sm font-medium text-foreground">
-        {point.name}
-      </div>
+      <div className="mb-3 text-sm font-medium text-foreground">{point.name}</div>
       <div className="space-y-1.5">
         <div className="flex items-center justify-between gap-6 text-sm">
-          <span className="text-muted-foreground">
-            {t(getMetricLabelKey(metric))}
-          </span>
+          <span className="text-muted-foreground">{t(getMetricLabelKey(metric))}</span>
           <span className="font-medium text-foreground">
             {formatMetricValue(point.value, metric, locale)}
           </span>
@@ -315,15 +298,11 @@ function BreakdownTooltipContent({
         ) : null}
         <div className="flex items-center justify-between gap-6 text-sm">
           <span className="text-muted-foreground">{t("sessions")}</span>
-          <span className="font-medium text-foreground">
-            {formatTokenCount(point.sessions)}
-          </span>
+          <span className="font-medium text-foreground">{formatTokenCount(point.sessions)}</span>
         </div>
         <div className="flex items-center justify-between gap-6 text-sm">
           <span className="text-muted-foreground">{t("messages")}</span>
-          <span className="font-medium text-foreground">
-            {formatTokenCount(point.messages)}
-          </span>
+          <span className="font-medium text-foreground">{formatTokenCount(point.messages)}</span>
         </div>
       </div>
     </div>
@@ -342,20 +321,13 @@ export function BreakdownGrid({
   );
 
   return (
-    <CollapsibleSection
-      title={t("title")}
-      description={t("description")}
-      defaultOpen={defaultOpen}
-    >
+    <CollapsibleSection title={t("title")} description={t("description")} defaultOpen={defaultOpen}>
       <div className="grid gap-3 md:grid-cols-2">
         {cards.map((card) => {
           const metricView = metricViews[card.key];
           const metric: BreakdownMetric =
             metricView === "cost" ? "estimatedCostUsd" : "totalTokens";
-          const rows = getDisplayRows(
-            sortRowsByMetric(breakdowns[card.key], metric),
-            t("others"),
-          );
+          const rows = getDisplayRows(sortRowsByMetric(breakdowns[card.key], metric), t("others"));
           const chartData = toChartData(rows, metric, locale);
           const chartHeight = Math.max(chartData.length * 40 + 20, 196);
           const hasMetricData = chartData.some((row) => row.value > 0);
@@ -372,9 +344,7 @@ export function BreakdownGrid({
                       key={view.value}
                       type="button"
                       size="xs"
-                      variant={
-                        metricView === view.value ? "secondary" : "ghost"
-                      }
+                      variant={metricView === view.value ? "secondary" : "ghost"}
                       onClick={() =>
                         setMetricViews((current) => ({
                           ...current,
@@ -398,10 +368,7 @@ export function BreakdownGrid({
                   </div>
                 ) : (
                   <div className="flex flex-1 flex-col">
-                    <div
-                      className="w-full min-w-0 flex-1"
-                      style={{ height: `${chartHeight}px` }}
-                    >
+                    <div className="w-full min-w-0 flex-1" style={{ height: `${chartHeight}px` }}>
                       <ResponsiveContainer
                         width="100%"
                         height="100%"
@@ -424,9 +391,7 @@ export function BreakdownGrid({
                           <XAxis
                             type="number"
                             tick={{ fontSize: 12 }}
-                            tickFormatter={(value) =>
-                              formatMetricValue(value, metric, locale)
-                            }
+                            tickFormatter={(value) => formatMetricValue(value, metric, locale)}
                             axisLine={false}
                             tickLine={false}
                           />
@@ -438,20 +403,14 @@ export function BreakdownGrid({
                             axisLine={false}
                             tickLine={false}
                             tickFormatter={(value: string) => {
-                              const entry = chartData.find(
-                                (row) => row.key === value,
-                              );
+                              const entry = chartData.find((row) => row.key === value);
                               return entry?.shortName ?? value;
                             }}
                           />
                           <Tooltip
                             cursor={{ fill: "var(--muted)", opacity: 0.45 }}
                             content={(props) => (
-                              <BreakdownTooltipContent
-                                {...props}
-                                metric={metric}
-                                locale={locale}
-                              />
+                              <BreakdownTooltipContent {...props} metric={metric} locale={locale} />
                             )}
                           />
                           <Bar

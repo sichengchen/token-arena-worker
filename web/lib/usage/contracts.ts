@@ -1,12 +1,7 @@
 import { z } from "zod";
 import { supportedLocales } from "@/lib/i18n";
 import { themeModes } from "@/lib/theme";
-import {
-  dashboardPresets,
-  projectModes,
-  schemaVersion,
-  usageApiKeyStatuses,
-} from "./types";
+import { dashboardPresets, projectModes, schemaVersion, usageApiKeyStatuses } from "./types";
 
 export const projectModeSchema = z.enum(projectModes);
 export const usageApiKeyStatusSchema = z.enum(usageApiKeyStatuses);
@@ -23,23 +18,16 @@ export function isValidTimezone(timezone: string): boolean {
   }
 }
 
-const timezoneSchema = z
-  .string()
-  .trim()
-  .min(1)
-  .max(100)
-  .refine(isValidTimezone, {
-    message: "Invalid timezone. Use IANA format like Asia/Shanghai.",
-  });
+const timezoneSchema = z.string().trim().min(1).max(100).refine(isValidTimezone, {
+  message: "Invalid timezone. Use IANA format like Asia/Shanghai.",
+});
 
 const dashboardDateParamSchema = z
   .string()
   .trim()
   .min(1)
   .refine(
-    (value) =>
-      /^\d{4}-\d{2}-\d{2}$/.test(value) ||
-      !Number.isNaN(new Date(value).getTime()),
+    (value) => /^\d{4}-\d{2}-\d{2}$/.test(value) || !Number.isNaN(new Date(value).getTime()),
     {
       message: "Invalid date value.",
     },
@@ -117,13 +105,10 @@ export const dashboardQuerySchema = z
     model: z.string().trim().min(1).optional(),
     projectKey: z.string().trim().min(1).optional(),
   })
-  .refine(
-    (input) => input.preset !== "custom" || Boolean(input.from && input.to),
-    {
-      message: "Custom ranges require both from and to.",
-      path: ["from"],
-    },
-  );
+  .refine((input) => input.preset !== "custom" || Boolean(input.from && input.to), {
+    message: "Custom ranges require both from and to.",
+    path: ["from"],
+  });
 
 export const usageKeyCreateSchema = z.object({
   name: z.string().trim().min(1, "Name is required.").max(80),

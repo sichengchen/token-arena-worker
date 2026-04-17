@@ -21,10 +21,7 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
-import type {
-  AchievementIconKey,
-  AchievementTier,
-} from "@/lib/achievements/types";
+import type { AchievementIconKey, AchievementTier } from "@/lib/achievements/types";
 import { cn } from "@/lib/utils";
 
 const GARMIN_HEXAGON_CLIP_PATH =
@@ -136,10 +133,7 @@ export function AchievementBadge({
               strokeWidth={2.1}
             />
             <Lock
-              className={cn(
-                "relative z-10 text-white drop-shadow-sm",
-                classes.lockIcon,
-              )}
+              className={cn("relative z-10 text-white drop-shadow-sm", classes.lockIcon)}
               strokeWidth={2.4}
             />
           </>

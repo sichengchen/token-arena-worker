@@ -20,9 +20,9 @@ describe("resolveLinkedProfileUrl", () => {
   });
 
   it("encodes Linux.do account ids safely", async () => {
-    await expect(
-      resolveLinkedProfileUrl("linuxdo", "name with space"),
-    ).resolves.toBe("https://linux.do/u/name%20with%20space/summary");
+    await expect(resolveLinkedProfileUrl("linuxdo", "name with space")).resolves.toBe(
+      "https://linux.do/u/name%20with%20space/summary",
+    );
   });
 
   it("resolves numeric Linux.do account ids to usernames via the user API", async () => {
@@ -31,14 +31,12 @@ describe("resolveLinkedProfileUrl", () => {
       json: async () => ({ username: "philfan" }),
     }) as typeof fetch;
 
-    await expect(
-      resolveLinkedProfileUrl("linuxdo", "294197", "token-123"),
-    ).resolves.toBe("https://linux.do/u/philfan/summary");
+    await expect(resolveLinkedProfileUrl("linuxdo", "294197", "token-123")).resolves.toBe(
+      "https://linux.do/u/philfan/summary",
+    );
   });
 
   it("hides Linux.do links when only a numeric id is available", async () => {
-    await expect(resolveLinkedProfileUrl("linuxdo", "294197")).resolves.toBe(
-      null,
-    );
+    await expect(resolveLinkedProfileUrl("linuxdo", "294197")).resolves.toBe(null);
   });
 });

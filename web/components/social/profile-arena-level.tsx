@@ -57,9 +57,7 @@ export async function ProfileArenaLevelBar({
         </div>
       </div>
 
-      <p className="text-center text-[11px] leading-snug text-muted-foreground">
-        {caption}
-      </p>
+      <p className="text-center text-[11px] leading-snug text-muted-foreground">{caption}</p>
     </div>
   );
 }

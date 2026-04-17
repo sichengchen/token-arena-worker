@@ -11,11 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
 import type { LeaderboardEntry } from "@/lib/leaderboard/types";
-import {
-  formatDuration,
-  formatTokenCount,
-  formatUsdAmount,
-} from "@/lib/usage/format";
+import { formatDuration, formatTokenCount, formatUsdAmount } from "@/lib/usage/format";
 import { cn } from "@/lib/utils";
 
 type LeaderboardTableProps = {
@@ -87,8 +83,7 @@ export function LeaderboardTable({
     viewerEntry && entries.every((entry) => entry.userId !== viewerEntry.userId)
       ? viewerEntry
       : null;
-  const pinnedViewerNotice =
-    !pinnedViewerEntry && viewerNotice ? viewerNotice : null;
+  const pinnedViewerNotice = !pinnedViewerEntry && viewerNotice ? viewerNotice : null;
 
   function renderEntryRow(entry: LeaderboardEntry, key: string) {
     const topRankMedal = getTopRankMedal(entry.rank);
@@ -120,12 +115,8 @@ export function LeaderboardTable({
             >
               {entry.name}
             </Link>
-            <span className="text-sm text-muted-foreground">
-              @{entry.username}
-            </span>
-            {entry.isSelf ? (
-              <Badge variant="outline">{labels.you}</Badge>
-            ) : null}
+            <span className="text-sm text-muted-foreground">@{entry.username}</span>
+            {entry.isSelf ? <Badge variant="outline">{labels.you}</Badge> : null}
             {entry.isFollowing && entry.followsYou ? (
               <Badge variant="secondary">{labels.mutual}</Badge>
             ) : null}
@@ -153,10 +144,7 @@ export function LeaderboardTable({
     }
 
     return (
-      <TableRow
-        key={`${pinnedViewerNotice.username}-viewer-notice`}
-        className="bg-muted/30"
-      >
+      <TableRow key={`${pinnedViewerNotice.username}-viewer-notice`} className="bg-muted/30">
         <TableCell className="font-medium text-muted-foreground">-</TableCell>
         <TableCell className="min-w-64">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -166,16 +154,11 @@ export function LeaderboardTable({
             >
               {pinnedViewerNotice.name}
             </Link>
-            <span className="text-sm text-muted-foreground">
-              @{pinnedViewerNotice.username}
-            </span>
+            <span className="text-sm text-muted-foreground">@{pinnedViewerNotice.username}</span>
             <Badge variant="outline">{labels.you}</Badge>
           </div>
         </TableCell>
-        <TableCell
-          colSpan={4}
-          className="text-right text-sm text-muted-foreground"
-        >
+        <TableCell colSpan={4} className="text-right text-sm text-muted-foreground">
           <div className="flex flex-wrap items-center justify-end gap-2">
             <span>{pinnedViewerNotice.message}</span>
             {pinnedViewerNotice.action ?? null}
@@ -190,9 +173,7 @@ export function LeaderboardTable({
       <header className="flex flex-row flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-border/60 bg-muted/40 px-4 py-2.5 dark:bg-muted/25">
         <CardTitle className="min-w-0 leading-tight">{title}</CardTitle>
         {headerRight ? (
-          <div className="flex min-h-8 shrink-0 items-center justify-end">
-            {headerRight}
-          </div>
+          <div className="flex min-h-8 shrink-0 items-center justify-end">{headerRight}</div>
         ) : null}
       </header>
       <CardContent className="px-4 pb-3 pt-3">
@@ -211,15 +192,9 @@ export function LeaderboardTable({
               <TableRow>
                 <TableHead className="w-16">{labels.rank}</TableHead>
                 <TableHead>{labels.user}</TableHead>
-                <TableHead className="text-right">
-                  {labels.totalTokens}
-                </TableHead>
-                <TableHead className="text-right">
-                  {labels.estimatedCost}
-                </TableHead>
-                <TableHead className="text-right">
-                  {labels.activeTime}
-                </TableHead>
+                <TableHead className="text-right">{labels.totalTokens}</TableHead>
+                <TableHead className="text-right">{labels.estimatedCost}</TableHead>
+                <TableHead className="text-right">{labels.activeTime}</TableHead>
                 <TableHead className="text-right">{labels.sessions}</TableHead>
               </TableRow>
             </TableHeader>
@@ -228,27 +203,18 @@ export function LeaderboardTable({
               {pinnedViewerEntry ? (
                 <>
                   <TableRow className="hover:bg-transparent">
-                    <TableCell
-                      colSpan={6}
-                      className="py-1 text-center text-muted-foreground"
-                    >
+                    <TableCell colSpan={6} className="py-1 text-center text-muted-foreground">
                       ...
                     </TableCell>
                   </TableRow>
-                  {renderEntryRow(
-                    pinnedViewerEntry,
-                    `${pinnedViewerEntry.userId}-viewer`,
-                  )}
+                  {renderEntryRow(pinnedViewerEntry, `${pinnedViewerEntry.userId}-viewer`)}
                 </>
               ) : null}
               {pinnedViewerNotice ? (
                 <>
                   {entries.length > 0 ? (
                     <TableRow className="hover:bg-transparent">
-                      <TableCell
-                        colSpan={6}
-                        className="py-1 text-center text-muted-foreground"
-                      >
+                      <TableCell colSpan={6} className="py-1 text-center text-muted-foreground">
                         ...
                       </TableCell>
                     </TableRow>

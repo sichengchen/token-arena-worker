@@ -1,10 +1,6 @@
 import type { ProjectMode } from "./types";
 
-export function formatProjectLabel(
-  mode: ProjectMode,
-  projectKey: string,
-  rawName?: string | null,
-) {
+export function formatProjectLabel(mode: ProjectMode, projectKey: string, rawName?: string | null) {
   if (mode === "raw" && rawName) {
     return rawName;
   }

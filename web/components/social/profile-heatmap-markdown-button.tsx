@@ -10,9 +10,7 @@ type ProfileHeatmapMarkdownButtonProps = {
   markdown: string;
 };
 
-export function ProfileHeatmapMarkdownButton({
-  markdown,
-}: ProfileHeatmapMarkdownButtonProps) {
+export function ProfileHeatmapMarkdownButton({ markdown }: ProfileHeatmapMarkdownButtonProps) {
   const t = useTranslations("social.profile");
   const [copied, setCopied] = useState(false);
 

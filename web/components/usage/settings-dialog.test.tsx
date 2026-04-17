@@ -40,24 +40,12 @@ vi.mock("@/components/ui/button", () => ({
 }));
 
 vi.mock("@/components/ui/dialog", () => ({
-  Dialog: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  DialogTrigger: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  DialogContent: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  DialogHeader: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  DialogTitle: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  DialogDescription: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  Dialog: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogDescription: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock("./key-manager", () => ({
@@ -137,17 +125,15 @@ describe("SettingsDialog", () => {
       );
     });
 
-    const preferenceTab = Array.from(container.querySelectorAll("button")).find(
-      (button) => button.textContent?.includes("Preferences"),
+    const preferenceTab = Array.from(container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Preferences"),
     );
 
     act(() => {
       preferenceTab?.click();
     });
 
-    const preferences = container.querySelector(
-      '[data-slot="settings-preferences"]',
-    );
+    const preferences = container.querySelector('[data-slot="settings-preferences"]');
 
     expect(preferences?.getAttribute("data-timezone")).toBe("UTC");
     expect(preferences?.getAttribute("data-project-mode")).toBe("raw");
@@ -169,18 +155,10 @@ describe("SettingsDialog", () => {
       );
     });
 
-    const updatedPreferences = container.querySelector(
-      '[data-slot="settings-preferences"]',
-    );
+    const updatedPreferences = container.querySelector('[data-slot="settings-preferences"]');
 
-    expect(updatedPreferences?.getAttribute("data-timezone")).toBe(
-      "Asia/Shanghai",
-    );
-    expect(updatedPreferences?.getAttribute("data-project-mode")).toBe(
-      "hashed",
-    );
-    expect(updatedPreferences?.getAttribute("data-public-profile")).toBe(
-      "true",
-    );
+    expect(updatedPreferences?.getAttribute("data-timezone")).toBe("Asia/Shanghai");
+    expect(updatedPreferences?.getAttribute("data-project-mode")).toBe("hashed");
+    expect(updatedPreferences?.getAttribute("data-public-profile")).toBe("true");
   });
 });

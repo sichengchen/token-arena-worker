@@ -6,10 +6,7 @@ import {
   recomputeLeaderboardUserDays,
 } from "@/lib/leaderboard/aggregates";
 import { getPricingCatalog } from "@/lib/pricing/catalog";
-import {
-  estimateCostUsd,
-  resolveOfficialPricingMatch,
-} from "@/lib/pricing/resolve";
+import { estimateCostUsd, resolveOfficialPricingMatch } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import { tokenCountToBigInt } from "@/lib/token-counts";
 import type { ingestRequestSchema } from "./contracts";
@@ -136,8 +133,7 @@ function normalizeSessionUsage(
       reasoningTokens: aggregatedFromModels.reasoningTokens,
       cachedTokens: aggregatedFromModels.cachedTokens,
       totalTokens: aggregatedFromModels.totalTokens,
-      primaryModel:
-        session.primaryModel ?? session.modelUsages?.[0]?.model ?? "",
+      primaryModel: session.primaryModel ?? session.modelUsages?.[0]?.model ?? "",
       estimatedCostUsd: aggregatedFromModels.hasPricedModel
         ? aggregatedFromModels.estimatedCostUsd
         : null,
@@ -154,18 +150,13 @@ function normalizeSessionUsage(
     outputTokens,
     reasoningTokens,
     cachedTokens,
-    totalTokens:
-      session.totalTokens ??
-      inputTokens + outputTokens + reasoningTokens + cachedTokens,
+    totalTokens: session.totalTokens ?? inputTokens + outputTokens + reasoningTokens + cachedTokens,
     primaryModel: session.primaryModel ?? "",
     estimatedCostUsd: null,
   };
 }
 
-export async function upsertDevice(
-  db: UsageWriteClient,
-  input: UpsertDeviceInput,
-) {
+export async function upsertDevice(db: UsageWriteClient, input: UpsertDeviceInput) {
   return db.device.upsert({
     where: {
       userId_deviceId: {
@@ -188,10 +179,7 @@ export async function upsertDevice(
   });
 }
 
-export async function upsertBuckets(
-  db: UsageWriteClient,
-  input: IngestUsagePayloadInput,
-) {
+export async function upsertBuckets(db: UsageWriteClient, input: IngestUsagePayloadInput) {
   await Promise.all(
     input.payload.buckets.map((bucket) => {
       const bucketWrite = buildUsageBucketWriteInput(bucket);
@@ -235,9 +223,7 @@ export async function upsertSessions(
     input.payload.sessions.map((session) => {
       const normalizedUsage = normalizeSessionUsage(session, catalog);
       const sessionUsageWrite =
-        normalizedUsage == null
-          ? null
-          : buildUsageSessionWriteInput(normalizedUsage);
+        normalizedUsage == null ? null : buildUsageSessionWriteInput(normalizedUsage);
 
       return db.usageSession.upsert({
         where: {
@@ -258,7 +244,7 @@ export async function upsertSessions(
           activeSeconds: session.activeSeconds,
           messageCount: session.messageCount,
           userMessageCount: session.userMessageCount,
-          ...(sessionUsageWrite ?? {}),
+          ...sessionUsageWrite,
         },
         create: {
           userId: input.userId,
@@ -322,9 +308,7 @@ export async function ingestUsagePayload(input: IngestUsagePayloadInput) {
 
     const affectedDates = collectAffectedLeaderboardDates({
       bucketStarts: input.payload.buckets.map((bucket) => bucket.bucketStart),
-      sessionStarts: input.payload.sessions.map(
-        (session) => session.firstMessageAt,
-      ),
+      sessionStarts: input.payload.sessions.map((session) => session.firstMessageAt),
       existingSessionStarts,
     });
 

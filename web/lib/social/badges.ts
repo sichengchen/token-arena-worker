@@ -1,10 +1,7 @@
 import { computeCurrentStreak } from "@/lib/achievements/evaluate";
 import { normalizeUsername } from "@/lib/auth-username";
 import { getPricingCatalog } from "@/lib/pricing/catalog";
-import {
-  estimateCostUsd,
-  resolveOfficialPricingMatch,
-} from "@/lib/pricing/resolve";
+import { estimateCostUsd, resolveOfficialPricingMatch } from "@/lib/pricing/resolve";
 import { prisma } from "@/lib/prisma";
 import { tokenCountToNumber } from "@/lib/token-counts";
 import { formatDateInput } from "@/lib/usage/format";
@@ -19,11 +16,7 @@ export const publicBadgeMetrics = [
 
 export type PublicBadgeMetric = (typeof publicBadgeMetrics)[number];
 export type PublicBadgeTheme = "light" | "dark";
-export type PublicBadgeStyle =
-  | "flat"
-  | "flat-square"
-  | "plastic"
-  | "for-the-badge";
+export type PublicBadgeStyle = "flat" | "flat-square" | "plastic" | "for-the-badge";
 
 export type PublicBadgeData = {
   username: string;
@@ -283,9 +276,7 @@ function estimateBucketCostUsd(bucket: {
   };
 }
 
-export async function getPublicBadgeData(input: {
-  username: string;
-}): Promise<PublicBadgeState> {
+export async function getPublicBadgeData(input: { username: string }): Promise<PublicBadgeState> {
   const username = normalizeUsername(input.username);
   const user = await prisma.user.findUnique({
     where: { username },
@@ -424,10 +415,7 @@ function getMetricLabel(metric: PublicBadgeMetric) {
   }
 }
 
-export function renderBadgeSvg(
-  state: PublicBadgeState,
-  config: BadgeRenderConfig,
-) {
+export function renderBadgeSvg(state: PublicBadgeState, config: BadgeRenderConfig) {
   const value =
     state.kind === "ok"
       ? getMetricValue(state.data, config.metric)
@@ -535,11 +523,7 @@ export function parsePublicBadgeTheme(value: string | null | undefined) {
 }
 
 export function parsePublicBadgeStyle(value: string | null | undefined) {
-  if (
-    value === "flat-square" ||
-    value === "plastic" ||
-    value === "for-the-badge"
-  ) {
+  if (value === "flat-square" || value === "plastic" || value === "for-the-badge") {
     return value;
   }
 

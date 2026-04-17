@@ -11,9 +11,7 @@ type UsageEmptyCopyableCommandProps = {
   command: string;
 };
 
-export function UsageEmptyCopyableCommand({
-  command,
-}: UsageEmptyCopyableCommandProps) {
+export function UsageEmptyCopyableCommand({ command }: UsageEmptyCopyableCommandProps) {
   const t = useTranslations("usage.emptyState");
   const [copied, setCopied] = useState(false);
 
@@ -52,10 +50,7 @@ export function UsageEmptyCopyableCommand({
         title={t("copyCommand")}
       >
         {copied ? (
-          <Check
-            className="size-4 text-emerald-600 dark:text-emerald-400"
-            aria-hidden
-          />
+          <Check className="size-4 text-emerald-600 dark:text-emerald-400" aria-hidden />
         ) : (
           <Copy className="size-4" aria-hidden />
         )}

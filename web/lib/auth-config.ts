@@ -8,8 +8,7 @@ export type AuthMode = "self-hosted" | "production";
  *
  * Defaults to `self-hosted` if not set.
  */
-export const authMode: AuthMode =
-  (process.env.AUTH_MODE as AuthMode) || "self-hosted";
+export const authMode: AuthMode = (process.env.AUTH_MODE as AuthMode) || "self-hosted";
 
 export const isSelfHosted = authMode === "self-hosted";
 export const isProduction = authMode === "production";

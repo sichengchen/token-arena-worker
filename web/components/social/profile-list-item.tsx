@@ -65,14 +65,10 @@ export function ProfileListItem({
                     {profile.name}
                   </div>
                 )}
-                <span className="shrink-0 text-sm text-muted-foreground">
-                  @{profile.username}
-                </span>
+                <span className="shrink-0 text-sm text-muted-foreground">@{profile.username}</span>
               </div>
 
-              {profile.isSelf ? (
-                <Badge variant="outline">{labels.you}</Badge>
-              ) : null}
+              {profile.isSelf ? <Badge variant="outline">{labels.you}</Badge> : null}
               {!profile.publicProfileEnabled ? (
                 <Badge variant="outline">{labels.private}</Badge>
               ) : null}
@@ -95,20 +91,14 @@ export function ProfileListItem({
             </div>
 
             {profile.bio ? (
-              <p className="line-clamp-2 text-sm text-foreground/80">
-                {profile.bio}
-              </p>
+              <p className="line-clamp-2 text-sm text-foreground/80">{profile.bio}</p>
             ) : null}
 
             <div className="flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
-              <span className="tabular-nums">
-                {profile.followerCount.toLocaleString(locale)}
-              </span>
+              <span className="tabular-nums">{profile.followerCount.toLocaleString(locale)}</span>
               <span>{labels.followers}</span>
               <span className="text-muted-foreground/50">·</span>
-              <span className="tabular-nums">
-                {profile.followingCount.toLocaleString(locale)}
-              </span>
+              <span className="tabular-nums">{profile.followingCount.toLocaleString(locale)}</span>
               <span>{labels.following}</span>
             </div>
           </div>

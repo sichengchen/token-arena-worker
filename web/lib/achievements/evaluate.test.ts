@@ -5,9 +5,7 @@ import {
   computeCurrentStreak,
 } from "./evaluate";
 
-function createMetrics(
-  overrides: Partial<AchievementInputMetrics> = {},
-): AchievementInputMetrics {
+function createMetrics(overrides: Partial<AchievementInputMetrics> = {}): AchievementInputMetrics {
   return {
     timezone: "Asia/Shanghai",
     firstSyncAt: "2026-03-01T00:00:00.000Z",
@@ -151,9 +149,7 @@ describe("buildAchievementStatuses", () => {
         totalTokens: 1_200_000_000_000,
         totalSessions: 100_000,
         totalActiveSeconds: 2000 * 60 * 60,
-        tokenTimeline: [
-          { at: "2025-04-01T00:00:00.000Z", value: 1_200_000_000_000 },
-        ],
+        tokenTimeline: [{ at: "2025-04-01T00:00:00.000Z", value: 1_200_000_000_000 }],
         costTimeline: [{ at: "2025-04-01T00:00:00.000Z", value: 100_000 }],
         totalEstimatedCostUsd: 100_000,
         sessionTimeline: [{ at: "2025-04-01T00:00:00.000Z", value: 100_000 }],

@@ -2,11 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { UsageFilterOptions, UsageFilters } from "@/lib/usage/types";
 
-import {
-  getActiveFilterChips,
-  getFilterMeta,
-  hasActiveDashboardState,
-} from "./filter-state";
+import { getActiveFilterChips, getFilterMeta, hasActiveDashboardState } from "./filter-state";
 
 const options: UsageFilterOptions = {
   apiKeys: [

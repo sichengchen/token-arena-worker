@@ -62,10 +62,7 @@ function firstValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function resolveQueryParams(
-  params: Record<string, string | string[] | undefined>,
-  locale: string,
-) {
+function resolveQueryParams(params: Record<string, string | string[] | undefined>, locale: string) {
   const parsed = dashboardQuerySchema.safeParse({
     preset: firstValue(params.preset),
     from: firstValue(params.from),
@@ -84,10 +81,7 @@ function resolveQueryParams(
   return parsed.data;
 }
 
-export default async function UsagePage({
-  params,
-  searchParams,
-}: UsagePageProps) {
+export default async function UsagePage({ params, searchParams }: UsagePageProps) {
   const { locale } = await params;
   const session = await getSessionOrRedirect(locale);
   redirectIfUsernameSetupNeeded(locale, session.user);
@@ -136,8 +130,7 @@ export default async function UsagePage({
     }),
   ]);
 
-  const hasData =
-    overview.totalTokens.current > 0 || overview.sessions.current > 0;
+  const hasData = overview.totalTokens.current > 0 || overview.sessions.current > 0;
   const lastSyncedText = lastSyncedAt
     ? t("lastSynced", {
         value: formatDateTime(lastSyncedAt, preference.timezone, locale),
@@ -153,9 +146,7 @@ export default async function UsagePage({
           username: session.user.username,
         })
       : null;
-  const heatmapMarkdown = compactSvgUrl
-    ? `![TokenArena Activity](${compactSvgUrl})`
-    : null;
+  const heatmapMarkdown = compactSvgUrl ? `![TokenArena Activity](${compactSvgUrl})` : null;
 
   return (
     <AppShell
@@ -220,21 +211,14 @@ export default async function UsagePage({
                 modelPricingRows={pricing.modelPricingRows}
               />
               <BreakdownGrid breakdowns={breakdowns} />
-              <SessionsSection
-                sessions={sessions}
-                timezone={preference.timezone}
-              />
+              <SessionsSection sessions={sessions} timezone={preference.timezone} />
             </>
           ) : (
             <EmptyState
               step1Action={
                 <Button asChild size="default" type="button">
                   <Link
-                    href={
-                      hasKeys
-                        ? SETTINGS_CLI_KEYS_HREF
-                        : settingsCliKeysHrefWithCreateDialog()
-                    }
+                    href={hasKeys ? SETTINGS_CLI_KEYS_HREF : settingsCliKeysHrefWithCreateDialog()}
                   >
                     {t("emptyState.createFirstKey")}
                   </Link>

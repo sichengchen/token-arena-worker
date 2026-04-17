@@ -1,8 +1,4 @@
-import {
-  formatDuration,
-  formatTokenCount,
-  formatUsdAmount,
-} from "@/lib/usage/format";
+import { formatDuration, formatTokenCount, formatUsdAmount } from "@/lib/usage/format";
 
 export type KpiMetricKind = "tokens" | "duration" | "count" | "currency";
 

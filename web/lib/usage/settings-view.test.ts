@@ -82,22 +82,14 @@ describe("hasPreferenceChanges", () => {
 describe("summarizeUsageKeys", () => {
   it("counts total, active, and disabled keys", () => {
     expect(
-      summarizeUsageKeys([
-        { status: "active" },
-        { status: "disabled" },
-        { status: "active" },
-      ]),
+      summarizeUsageKeys([{ status: "active" }, { status: "disabled" }, { status: "active" }]),
     ).toEqual({ total: 3, active: 2, disabled: 1 });
   });
 });
 
 describe("projectModeOptions", () => {
   it("keeps concise labels for the compact settings view", () => {
-    expect(projectModeOptions.map((option) => option.label)).toEqual([
-      "Hashed",
-      "Raw",
-      "Disabled",
-    ]);
+    expect(projectModeOptions.map((option) => option.label)).toEqual(["Hashed", "Raw", "Disabled"]);
   });
 });
 

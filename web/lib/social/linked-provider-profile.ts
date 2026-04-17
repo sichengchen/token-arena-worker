@@ -1,11 +1,6 @@
-export const LINKED_PROFILE_PROVIDER_IDS = [
-  "github",
-  "linuxdo",
-  "watcha",
-] as const;
+export const LINKED_PROFILE_PROVIDER_IDS = ["github", "linuxdo", "watcha"] as const;
 
-export type LinkedProfileProviderId =
-  (typeof LINKED_PROFILE_PROVIDER_IDS)[number];
+export type LinkedProfileProviderId = (typeof LINKED_PROFILE_PROVIDER_IDS)[number];
 
 export function pickLinkedAccount(
   accounts: Array<{
@@ -34,9 +29,7 @@ export function pickLinkedAccount(
   return null;
 }
 
-async function resolveGithubProfileUrl(
-  accountId: string,
-): Promise<string | null> {
+async function resolveGithubProfileUrl(accountId: string): Promise<string | null> {
   const trimmed = accountId.trim();
   if (!trimmed) {
     return null;
@@ -89,8 +82,7 @@ async function resolveLinuxdoUsernameFromAccessToken(
     }
 
     const data = (await response.json()) as { username?: string };
-    const username =
-      typeof data.username === "string" ? data.username.trim() : "";
+    const username = typeof data.username === "string" ? data.username.trim() : "";
 
     return username || null;
   } catch {

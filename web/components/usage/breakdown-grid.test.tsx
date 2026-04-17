@@ -13,8 +13,7 @@ vi.mock("next-intl", () => ({
         return (
           {
             title: "Breakdowns",
-            description:
-              "Break down usage by device, tool, model, and project.",
+            description: "Break down usage by device, tool, model, and project.",
             "views.tokens": "Total Tokens",
             "views.cost": "Est. Cost",
             "summary.tokens": "Tokens",
@@ -221,9 +220,7 @@ describe("BreakdownGrid", () => {
   });
 
   it("renders a 2x2 chart layout with per-card controls", () => {
-    const markup = renderToStaticMarkup(
-      <BreakdownGrid breakdowns={breakdowns} />,
-    );
+    const markup = renderToStaticMarkup(<BreakdownGrid breakdowns={breakdowns} />);
 
     expect(markup).toContain("Breakdowns");
     expect(markup).toContain('aria-expanded="true"');
@@ -242,19 +239,13 @@ describe("BreakdownGrid", () => {
 
   it("can switch the charts to estimated cost mode", () => {
     const markup = renderToStaticMarkup(
-      <BreakdownGrid
-        breakdowns={breakdowns}
-        defaultOpen
-        defaultMetricView="cost"
-      />,
+      <BreakdownGrid breakdowns={breakdowns} defaultOpen defaultMetricView="cost" />,
     );
 
-    expect(
-      markup.match(/data-variant="ghost"[^>]*>Total Tokens<\/button>/g) ?? [],
-    ).toHaveLength(4);
-    expect(
-      markup.match(/data-variant="secondary"[^>]*>Est\. Cost<\/button>/g) ?? [],
-    ).toHaveLength(4);
+    expect(markup.match(/data-variant="ghost"[^>]*>Total Tokens<\/button>/g) ?? []).toHaveLength(4);
+    expect(markup.match(/data-variant="secondary"[^>]*>Est\. Cost<\/button>/g) ?? []).toHaveLength(
+      4,
+    );
     expect(markup).not.toContain("No priced usage in this range.");
   });
 });

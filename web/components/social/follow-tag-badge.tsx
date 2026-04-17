@@ -4,11 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Badge } from "@/components/ui/badge";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { FollowTag, FollowTagSelectValue } from "@/lib/social/follow-tags";
 import { followTags, fromFollowTagSelectValue } from "@/lib/social/follow-tags";
 import { cn } from "@/lib/utils";
@@ -31,18 +27,15 @@ export function FollowTagBadge({ locale, username, tag }: FollowTagBadgeProps) {
       const nextTag = fromFollowTagSelectValue(nextValue);
 
       try {
-        const response = await fetch(
-          `/api/social/follows/${encodeURIComponent(username)}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              tag: nextTag,
-            }),
+        const response = await fetch(`/api/social/follows/${encodeURIComponent(username)}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            tag: nextTag,
+          }),
+        });
 
         if (response.status === 401) {
           router.push(`/${locale}/login`);

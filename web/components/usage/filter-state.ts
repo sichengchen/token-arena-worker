@@ -1,8 +1,4 @@
-import type {
-  DashboardPreset,
-  UsageFilterOptions,
-  UsageFilters,
-} from "@/lib/usage/types";
+import type { DashboardPreset, UsageFilterOptions, UsageFilters } from "@/lib/usage/types";
 
 export type ActiveFilterChip = {
   key: keyof UsageFilters;
@@ -40,50 +36,28 @@ export function getFilterMeta(key: keyof UsageFilters): FilterMeta {
   }
 }
 
-function getFilterLabel(
-  key: keyof UsageFilters,
-  value: string,
-  options: UsageFilterOptions,
-) {
+function getFilterLabel(key: keyof UsageFilters, value: string, options: UsageFilterOptions) {
   switch (key) {
     case "apiKeyId":
-      return (
-        options.apiKeys.find((option) => option.id === value)?.name ?? value
-      );
+      return options.apiKeys.find((option) => option.id === value)?.name ?? value;
     case "deviceId":
-      return (
-        options.devices.find((option) => option.value === value)?.label ?? value
-      );
+      return options.devices.find((option) => option.value === value)?.label ?? value;
     case "source":
-      return (
-        options.sources.find((option) => option.value === value)?.label ?? value
-      );
+      return options.sources.find((option) => option.value === value)?.label ?? value;
     case "model":
-      return (
-        options.models.find((option) => option.value === value)?.label ?? value
-      );
+      return options.models.find((option) => option.value === value)?.label ?? value;
     case "projectKey":
-      return (
-        options.projects.find((option) => option.value === value)?.label ??
-        value
-      );
+      return options.projects.find((option) => option.value === value)?.label ?? value;
     default:
       return value;
   }
 }
 
-export function hasActiveDashboardState(
-  preset: DashboardPreset,
-  filters: UsageFilters,
-) {
+export function hasActiveDashboardState(preset: DashboardPreset, filters: UsageFilters) {
   return (
     preset !== "7d" ||
     Boolean(
-      filters.apiKeyId ||
-        filters.deviceId ||
-        filters.source ||
-        filters.model ||
-        filters.projectKey,
+      filters.apiKeyId || filters.deviceId || filters.source || filters.model || filters.projectKey,
     )
   );
 }

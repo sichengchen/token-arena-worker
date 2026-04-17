@@ -1,8 +1,5 @@
 import { isSupportedLocale, normalizeLocale } from "@/lib/i18n";
-import type {
-  WechatShareSource,
-  WechatShareTicketPayload,
-} from "./share-server";
+import type { WechatShareSource, WechatShareTicketPayload } from "./share-server";
 
 export type WechatOpenSdkResult = {
   errcode: number;
@@ -13,9 +10,7 @@ export type WechatOpenSdkResult = {
 type WechatOpenSdk = {
   ready?: boolean;
   onReady?: (() => void) | null;
-  shareLink: (
-    payload: WechatShareTicketPayload,
-  ) => Promise<WechatOpenSdkResult>;
+  shareLink: (payload: WechatShareTicketPayload) => Promise<WechatOpenSdkResult>;
 };
 
 declare global {
@@ -40,8 +35,7 @@ export function getWechatShareSupport(input: {
   const locale = normalizeLocale(input.locale) ?? "en";
   const isHttps = input.protocol === "https:";
   const sdkLoaded = Boolean(input.sdkLoaded);
-  const isLocalhost =
-    input.hostname === "localhost" || input.hostname === "127.0.0.1";
+  const isLocalhost = input.hostname === "localhost" || input.hostname === "127.0.0.1";
 
   return {
     locale,
@@ -98,10 +92,7 @@ export async function shareLinkToWechat(payload: WechatShareTicketPayload) {
   return sdk.shareLink(payload);
 }
 
-export function mapWechatShareErrorCode(
-  errcode: number,
-  locale: string,
-): string {
+export function mapWechatShareErrorCode(errcode: number, locale: string): string {
   const normalizedLocale = isSupportedLocale(locale) ? locale : "en";
   const reason = WECHAT_ERROR_MESSAGES[errcode];
 
@@ -121,17 +112,13 @@ export function mapWechatShareErrorCode(
     domain: "This domain is not registered in the WeChat open platform.",
     https: "WeChat sharing requires an HTTPS page.",
     permission: "This app does not have WeChat share permission yet.",
-    version:
-      "The current PC WeChat version does not support this share action.",
+    version: "The current PC WeChat version does not support this share action.",
   };
 
   return normalizedLocale === "zh" ? zhMessages[reason] : enMessages[reason];
 }
 
-export function getWechatShareRequestBody(input: {
-  source: WechatShareSource;
-  locale: string;
-}) {
+export function getWechatShareRequestBody(input: { source: WechatShareSource; locale: string }) {
   return {
     source: input.source,
     locale: input.locale,

@@ -91,9 +91,7 @@ function buildWeeks(days: ProfileHeatmapDay[]) {
 
 function buildMonthLabels(weeks: HeatmapCell[][], locale: string) {
   return weeks.map((week, index) => {
-    const filledDays = week.filter(
-      (value): value is ProfileHeatmapDay => value !== null,
-    );
+    const filledDays = week.filter((value): value is ProfileHeatmapDay => value !== null);
 
     if (filledDays.length === 0) {
       return {
@@ -103,9 +101,7 @@ function buildMonthLabels(weeks: HeatmapCell[][], locale: string) {
     }
 
     const labelDay =
-      index === 0
-        ? filledDays[0]
-        : filledDays.find((day) => day.date.endsWith("-01"));
+      index === 0 ? filledDays[0] : filledDays.find((day) => day.date.endsWith("-01"));
 
     return {
       key: labelDay?.date ?? filledDays[0].date,
@@ -127,8 +123,7 @@ export function renderActivityHeatmapSvg(input: RenderActivityHeatmapSvgInput) {
   const weeks = buildWeeks(input.days);
   const monthLabels = buildMonthLabels(weeks, input.locale);
   const weeksCount = Math.max(weeks.length, 1);
-  const gridWidth =
-    weeksCount * CELL_SIZE + Math.max(0, weeksCount - 1) * WEEK_GAP;
+  const gridWidth = weeksCount * CELL_SIZE + Math.max(0, weeksCount - 1) * WEEK_GAP;
   const width = GRID_LEFT * 2 + gridWidth;
   const gridHeight = 7 * CELL_SIZE + 6 * CELL_GAP;
   const height = GRID_TOP + gridHeight + LEGEND_HEIGHT + 18;
@@ -195,10 +190,7 @@ export function buildActivitySvgUrl(input: {
   username: string;
   theme?: ActivityHeatmapSvgTheme;
 }) {
-  const url = new URL(
-    `/${input.locale}/u/${input.username}/activity.svg`,
-    input.baseUrl,
-  );
+  const url = new URL(`/${input.locale}/u/${input.username}/activity.svg`, input.baseUrl);
   if (input.theme && input.theme !== "dark") {
     url.searchParams.set("theme", input.theme);
   }

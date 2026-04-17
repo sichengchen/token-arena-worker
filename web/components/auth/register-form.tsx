@@ -108,10 +108,7 @@ export function RegisterForm() {
       });
 
       if (result.error) {
-        const errorMessage = getAuthErrorMessage(
-          result.error,
-          t("register.errors.default"),
-        );
+        const errorMessage = getAuthErrorMessage(result.error, t("register.errors.default"));
 
         setFormError(
           errorMessage === USERNAME_TAKEN_ERROR_MESSAGE
@@ -124,10 +121,7 @@ export function RegisterForm() {
       router.push("/usage");
       router.refresh();
     } catch (error) {
-      const errorMessage = getAuthErrorMessage(
-        error,
-        t("register.errors.default"),
-      );
+      const errorMessage = getAuthErrorMessage(error, t("register.errors.default"));
 
       setFormError(
         errorMessage === USERNAME_TAKEN_ERROR_MESSAGE
@@ -160,9 +154,7 @@ export function RegisterForm() {
         {nameError ? (
           <p className="text-sm text-destructive">{nameError}</p>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            {t("register.nameHint")}
-          </p>
+          <p className="text-xs text-muted-foreground">{t("register.nameHint")}</p>
         )}
       </div>
 
@@ -179,9 +171,7 @@ export function RegisterForm() {
         {usernameError ? (
           <p className="text-sm text-destructive">{usernameError}</p>
         ) : (
-          <p className="text-xs text-muted-foreground">
-            {t("register.usernameHint")}
-          </p>
+          <p className="text-xs text-muted-foreground">{t("register.usernameHint")}</p>
         )}
       </div>
 
@@ -195,9 +185,7 @@ export function RegisterForm() {
           onChange={(event) => setEmail(event.target.value)}
           aria-invalid={Boolean(emailError)}
         />
-        {emailError ? (
-          <p className="text-sm text-destructive">{emailError}</p>
-        ) : null}
+        {emailError ? <p className="text-sm text-destructive">{emailError}</p> : null}
       </div>
 
       <div className="space-y-2">
@@ -210,9 +198,7 @@ export function RegisterForm() {
           onChange={(event) => setPassword(event.target.value)}
           aria-invalid={Boolean(passwordError)}
         />
-        {passwordError ? (
-          <p className="text-sm text-destructive">{passwordError}</p>
-        ) : null}
+        {passwordError ? <p className="text-sm text-destructive">{passwordError}</p> : null}
       </div>
 
       <Button className="w-full" type="submit" disabled={isSubmitting}>
@@ -232,10 +218,7 @@ export function RegisterForm() {
 
       <p className="text-center text-sm text-muted-foreground">
         {t("register.haveAccount")}{" "}
-        <Link
-          href="/login"
-          className="text-foreground underline underline-offset-4"
-        >
+        <Link href="/login" className="text-foreground underline underline-offset-4">
           {t("register.signInLink")}
         </Link>
       </p>

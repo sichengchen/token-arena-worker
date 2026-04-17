@@ -10,9 +10,9 @@ import {
 
 describe("leaderboard date helpers", () => {
   it("normalizes a timestamp to Shanghai midnight", () => {
-    expect(
-      startOfShanghaiDay(new Date("2026-03-28T19:45:00.000Z")).toISOString(),
-    ).toBe("2026-03-28T16:00:00.000Z");
+    expect(startOfShanghaiDay(new Date("2026-03-28T19:45:00.000Z")).toISOString()).toBe(
+      "2026-03-28T16:00:00.000Z",
+    );
   });
 
   it("builds day, week, and month windows using Shanghai calendar boundaries", () => {
@@ -33,23 +33,15 @@ describe("leaderboard date helpers", () => {
   });
 
   it("returns an ISO date key in Shanghai time", () => {
-    expect(getShanghaiDateKey(new Date("2026-03-28T23:59:59.999Z"))).toBe(
-      "2026-03-29",
-    );
+    expect(getShanghaiDateKey(new Date("2026-03-28T23:59:59.999Z"))).toBe("2026-03-29");
   });
 
   it("resolves the latest finalizable weekly and monthly windows at 4am Shanghai time", () => {
     expect(
-      resolveLatestFinalizableLeaderboardWindow(
-        "week",
-        new Date("2026-04-05T19:59:59.999Z"),
-      ),
+      resolveLatestFinalizableLeaderboardWindow("week", new Date("2026-04-05T19:59:59.999Z")),
     ).toBeNull();
     expect(
-      resolveLatestFinalizableLeaderboardWindow(
-        "week",
-        new Date("2026-04-05T20:00:00.000Z"),
-      ),
+      resolveLatestFinalizableLeaderboardWindow("week", new Date("2026-04-05T20:00:00.000Z")),
     ).toEqual({
       start: new Date("2026-03-29T16:00:00.000Z"),
       end: new Date("2026-04-05T16:00:00.000Z"),
@@ -57,16 +49,10 @@ describe("leaderboard date helpers", () => {
     });
 
     expect(
-      resolveLatestFinalizableLeaderboardWindow(
-        "month",
-        new Date("2026-04-30T19:59:59.999Z"),
-      ),
+      resolveLatestFinalizableLeaderboardWindow("month", new Date("2026-04-30T19:59:59.999Z")),
     ).toBeNull();
     expect(
-      resolveLatestFinalizableLeaderboardWindow(
-        "month",
-        new Date("2026-04-30T20:00:00.000Z"),
-      ),
+      resolveLatestFinalizableLeaderboardWindow("month", new Date("2026-04-30T20:00:00.000Z")),
     ).toEqual({
       start: new Date("2026-03-31T16:00:00.000Z"),
       end: new Date("2026-04-30T16:00:00.000Z"),

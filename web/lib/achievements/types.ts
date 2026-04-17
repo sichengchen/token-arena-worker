@@ -12,12 +12,7 @@ export const achievementCategories = [
 ] as const;
 export type AchievementCategory = (typeof achievementCategories)[number];
 
-export const achievementTiers = [
-  "bronze",
-  "silver",
-  "gold",
-  "special",
-] as const;
+export const achievementTiers = ["bronze", "silver", "gold", "special"] as const;
 export type AchievementTier = (typeof achievementTiers)[number];
 
 export const achievementIconKeys = [
@@ -114,13 +109,7 @@ export type AchievementDefinition = {
   order: number;
 };
 
-export type AchievementProgressUnit =
-  | "count"
-  | "days"
-  | "tokens"
-  | "seconds"
-  | "percent"
-  | "usd";
+export type AchievementProgressUnit = "count" | "days" | "tokens" | "seconds" | "percent" | "usd";
 
 export type AchievementStatus = AchievementDefinition & {
   unlocked: boolean;

@@ -12,10 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { emitPreferenceSavedNotice } from "@/lib/usage/preference-notice";
-import {
-  hasPreferenceChanges,
-  projectModeOptions,
-} from "@/lib/usage/settings-view";
+import { hasPreferenceChanges, projectModeOptions } from "@/lib/usage/settings-view";
 import type { ProjectMode } from "@/lib/usage/types";
 
 const timezoneOptions = [
@@ -43,8 +40,7 @@ const timezoneOptions = [
   { value: "Pacific/Auckland", label: "Pacific/Auckland (UTC+12/+13)" },
 ];
 
-const settingsControlClassName =
-  "w-full border-border/60 bg-background hover:bg-muted/40";
+const settingsControlClassName = "w-full border-border/60 bg-background hover:bg-muted/40";
 
 const settingsSelectContentClassName = "border-border/60 bg-popover";
 
@@ -61,14 +57,10 @@ export function SettingsPreferences({
 }: SettingsPreferencesProps) {
   const t = useTranslations("usage.settings");
   const [timezone, setTimezone] = useState(initialTimezone);
-  const [projectMode, setProjectMode] =
-    useState<ProjectMode>(initialProjectMode);
-  const [publicProfileEnabled, setPublicProfileEnabled] = useState(
-    initialPublicProfileEnabled,
-  );
+  const [projectMode, setProjectMode] = useState<ProjectMode>(initialProjectMode);
+  const [publicProfileEnabled, setPublicProfileEnabled] = useState(initialPublicProfileEnabled);
   const [savedTimezone, setSavedTimezone] = useState(initialTimezone);
-  const [savedProjectMode, setSavedProjectMode] =
-    useState<ProjectMode>(initialProjectMode);
+  const [savedProjectMode, setSavedProjectMode] = useState<ProjectMode>(initialProjectMode);
   const [savedPublicProfileEnabled, setSavedPublicProfileEnabled] = useState(
     initialPublicProfileEnabled,
   );
@@ -129,11 +121,7 @@ export function SettingsPreferences({
           bio: payload.bio,
         });
       } catch (requestError) {
-        setError(
-          requestError instanceof Error
-            ? requestError.message
-            : t("saveFailed"),
-        );
+        setError(requestError instanceof Error ? requestError.message : t("saveFailed"));
       }
     },
     [t],
@@ -166,13 +154,7 @@ export function SettingsPreferences({
         saveTimeoutRef.current = null;
       }
     };
-  }, [
-    hasChanges,
-    projectMode,
-    publicProfileEnabled,
-    savePreferences,
-    timezone,
-  ]);
+  }, [hasChanges, projectMode, publicProfileEnabled, savePreferences, timezone]);
 
   useEffect(() => {
     return () => {
@@ -212,23 +194,14 @@ export function SettingsPreferences({
             <Label htmlFor="public-profile">{t("publicProfile")}</Label>
             <Select
               value={publicProfileEnabled ? "enabled" : "disabled"}
-              onValueChange={(value) =>
-                setPublicProfileEnabled(value === "enabled")
-              }
+              onValueChange={(value) => setPublicProfileEnabled(value === "enabled")}
             >
-              <SelectTrigger
-                id="public-profile"
-                className={settingsControlClassName}
-              >
+              <SelectTrigger id="public-profile" className={settingsControlClassName}>
                 <SelectValue placeholder={t("selectPublicProfile")} />
               </SelectTrigger>
               <SelectContent className={settingsSelectContentClassName}>
-                <SelectItem value="disabled">
-                  {t("publicProfileOptions.disabled")}
-                </SelectItem>
-                <SelectItem value="enabled">
-                  {t("publicProfileOptions.enabled")}
-                </SelectItem>
+                <SelectItem value="disabled">{t("publicProfileOptions.disabled")}</SelectItem>
+                <SelectItem value="enabled">{t("publicProfileOptions.enabled")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -239,10 +212,7 @@ export function SettingsPreferences({
               value={projectMode}
               onValueChange={(value) => setProjectMode(value as ProjectMode)}
             >
-              <SelectTrigger
-                id="project-mode"
-                className={settingsControlClassName}
-              >
+              <SelectTrigger id="project-mode" className={settingsControlClassName}>
                 <SelectValue placeholder={t("selectProjectMode")} />
               </SelectTrigger>
               <SelectContent className={settingsSelectContentClassName}>

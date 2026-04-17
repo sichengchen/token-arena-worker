@@ -11,13 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDuration, formatTokenCount } from "@/lib/usage/format";
 import type { ActivityTrendPoint } from "@/lib/usage/types";
 
@@ -46,20 +40,13 @@ export function ActivityTrendCard({ data }: ActivityTrendCardProps) {
             height="100%"
             initialDimension={ACTIVITY_TREND_INITIAL_DIMENSION}
           >
-            <LineChart
-              data={data}
-              margin={{ left: 8, right: 8, top: 8, bottom: 8 }}
-            >
+            <LineChart data={data} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis dataKey="label" minTickGap={24} tick={{ fontSize: 12 }} />
-              <YAxis
-                tickFormatter={(value) => formatTokenCount(value)}
-                tick={{ fontSize: 12 }}
-              />
+              <YAxis tickFormatter={(value) => formatTokenCount(value)} tick={{ fontSize: 12 }} />
               <Tooltip
                 formatter={(value, name) => {
-                  const numericValue =
-                    typeof value === "number" ? value : Number(value ?? 0);
+                  const numericValue = typeof value === "number" ? value : Number(value ?? 0);
 
                   if (name === "Active" || name === "Total") {
                     return formatDuration(numericValue);

@@ -3,11 +3,7 @@
 import { useCallback } from "react";
 
 import CountUp from "@/components/ui/count-up";
-import {
-  formatKpiDelta,
-  formatKpiMetricValue,
-  type KpiMetricKind,
-} from "@/lib/usage/kpi-format";
+import { formatKpiDelta, formatKpiMetricValue, type KpiMetricKind } from "@/lib/usage/kpi-format";
 
 export type { KpiMetricKind };
 
@@ -22,20 +18,9 @@ export function AnimatedKpiValue({
   from?: number;
   className?: string;
 }) {
-  const format = useCallback(
-    (n: number) => formatKpiMetricValue(n, kind),
-    [kind],
-  );
+  const format = useCallback((n: number) => formatKpiMetricValue(n, kind), [kind]);
 
-  return (
-    <CountUp
-      to={to}
-      from={from}
-      format={format}
-      className={className}
-      duration={0.1}
-    />
-  );
+  return <CountUp to={to} from={from} format={format} className={className} duration={0.1} />;
 }
 
 export function AnimatedKpiDelta({
@@ -49,13 +34,5 @@ export function AnimatedKpiDelta({
 }) {
   const format = useCallback((n: number) => formatKpiDelta(n, kind), [kind]);
 
-  return (
-    <CountUp
-      to={delta}
-      from={0}
-      format={format}
-      className={className}
-      duration={0.1}
-    />
-  );
+  return <CountUp to={delta} from={0} format={format} className={className} duration={0.1} />;
 }

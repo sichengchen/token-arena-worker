@@ -43,9 +43,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function SettingsSectionPage({
-  params,
-}: SettingsSectionPageProps) {
+export default async function SettingsSectionPage({ params }: SettingsSectionPageProps) {
   const { locale, section: sectionParam } = await params;
   const parsedSection = parseSettingsSectionParam(sectionParam);
 

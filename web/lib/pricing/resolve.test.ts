@@ -83,9 +83,7 @@ describe("resolveOfficialPricingProviderId", () => {
 
 describe("resolveOfficialPricingMatch", () => {
   it("matches provider-prefixed model names against official catalog ids", () => {
-    expect(
-      resolveOfficialPricingMatch(catalog, "moonshotai/kimi-k2.5"),
-    ).toEqual(
+    expect(resolveOfficialPricingMatch(catalog, "moonshotai/kimi-k2.5")).toEqual(
       expect.objectContaining({
         providerId: "moonshotai",
         modelId: "kimi-k2.5",
@@ -97,9 +95,7 @@ describe("resolveOfficialPricingMatch", () => {
 
 describe("resolveOfficialPricingProvider", () => {
   it("returns the official provider even when the exact catalog model is not matched", () => {
-    expect(
-      resolveOfficialPricingProvider(catalog, "moonshotai/kimi-k2.5:latest"),
-    ).toEqual({
+    expect(resolveOfficialPricingProvider(catalog, "moonshotai/kimi-k2.5:latest")).toEqual({
       providerId: "moonshotai",
       providerName: "Moonshot AI",
     });

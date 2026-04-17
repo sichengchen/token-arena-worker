@@ -16,15 +16,10 @@ export async function POST(request: Request) {
   }
 
   if (!isWechatShareConfigured()) {
-    return NextResponse.json(
-      { error: "WECHAT_SHARE_NOT_CONFIGURED" },
-      { status: 503 },
-    );
+    return NextResponse.json({ error: "WECHAT_SHARE_NOT_CONFIGURED" }, { status: 503 });
   }
 
-  const body = wechatShareTicketRequestSchema.parse(
-    await request.json().catch(() => ({})),
-  );
+  const body = wechatShareTicketRequestSchema.parse(await request.json().catch(() => ({})));
 
   const user = await prisma.user.findUnique({
     where: {
@@ -57,16 +52,13 @@ export async function POST(request: Request) {
       displayName: user.name?.trim() || `@${user.username}`,
       bio: user.usagePreference?.bio,
       locale:
-        normalizeLocale(body?.locale) ??
-        normalizeLocale(user.usagePreference?.locale) ??
-        "en",
+        normalizeLocale(body?.locale) ?? normalizeLocale(user.usagePreference?.locale) ?? "en",
       source: body?.source,
     });
 
     return NextResponse.json(payload);
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "WECHAT_SHARE_FAILED";
+    const message = error instanceof Error ? error.message : "WECHAT_SHARE_FAILED";
     const status = message === "APP_ORIGIN_NOT_CONFIGURED" ? 503 : 502;
 
     return NextResponse.json({ error: message }, { status });

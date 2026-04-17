@@ -78,15 +78,11 @@ function ProfileTopTooltipContent({
 
   return (
     <div className="min-w-44 rounded-lg border bg-card p-3 shadow-md">
-      <div className="mb-3 text-sm font-medium text-foreground">
-        {point.name}
-      </div>
+      <div className="mb-3 text-sm font-medium text-foreground">{point.name}</div>
       <div className="space-y-1.5">
         <div className="flex items-center justify-between gap-6 text-sm">
           <span className="text-muted-foreground">{tokenLabel}</span>
-          <span className="font-medium text-foreground">
-            {point.valueLabel}
-          </span>
+          <span className="font-medium text-foreground">{point.valueLabel}</span>
         </div>
         <div className="flex items-center justify-between gap-6 text-sm">
           <span className="text-muted-foreground">{shareLabel}</span>
@@ -99,11 +95,7 @@ function ProfileTopTooltipContent({
   );
 }
 
-export function ProfileTopList({
-  locale,
-  emptyLabel,
-  items,
-}: ProfileTopListProps) {
+export function ProfileTopList({ locale, emptyLabel, items }: ProfileTopListProps) {
   const tProfile = useTranslations("social.profile");
   const tTable = useTranslations("usage.breakdowns.table");
 
@@ -115,10 +107,7 @@ export function ProfileTopList({
   const chartHeight = Math.max(chartData.length * 44 + 24, 220);
 
   return (
-    <div
-      className="h-[220px] w-full min-w-0"
-      style={{ height: `${chartHeight}px` }}
-    >
+    <div className="h-[220px] w-full min-w-0" style={{ height: `${chartHeight}px` }}>
       <ResponsiveContainer
         width="100%"
         height="100%"
@@ -133,11 +122,7 @@ export function ProfileTopList({
           margin={{ left: 8, right: 24, top: 4, bottom: 4 }}
           barCategoryGap="20%"
         >
-          <CartesianGrid
-            horizontal={false}
-            strokeDasharray="3 3"
-            className="stroke-muted"
-          />
+          <CartesianGrid horizontal={false} strokeDasharray="3 3" className="stroke-muted" />
           <XAxis
             type="number"
             tick={{ fontSize: 12 }}
@@ -164,11 +149,7 @@ export function ProfileTopList({
               />
             )}
           />
-          <Bar
-            dataKey="value"
-            radius={[0, 6, 6, 0]}
-            background={{ fill: "var(--muted)" }}
-          >
+          <Bar dataKey="value" radius={[0, 6, 6, 0]} background={{ fill: "var(--muted)" }}>
             {chartData.map((entry, index) => (
               <Cell
                 key={entry.name}

@@ -210,12 +210,8 @@ export function formatLeaderboardWindowLabel(input: {
   return `${formatLabelDate(start)} - ${formatLabelDate(inclusiveEnd)}`;
 }
 
-export function sameLeaderboardWindow(
-  left: LeaderboardWindow,
-  right: LeaderboardWindow,
-) {
+export function sameLeaderboardWindow(left: LeaderboardWindow, right: LeaderboardWindow) {
   return (
-    left.start?.getTime() === right.start?.getTime() &&
-    left.end?.getTime() === right.end?.getTime()
+    left.start?.getTime() === right.start?.getTime() && left.end?.getTime() === right.end?.getTime()
   );
 }

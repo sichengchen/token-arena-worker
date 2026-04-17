@@ -88,14 +88,8 @@ function zonedDateTimeToUtc(parts: ZonedDateParts, timezone: string) {
   for (let index = 0; index < 3; index += 1) {
     const offsetMs = getTimezoneOffsetMs(new Date(utcMs), timezone);
     const nextUtcMs =
-      Date.UTC(
-        parts.year,
-        parts.month - 1,
-        parts.day,
-        parts.hour,
-        parts.minute,
-        parts.second,
-      ) - offsetMs;
+      Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second) -
+      offsetMs;
 
     if (nextUtcMs === utcMs) {
       break;
@@ -112,14 +106,7 @@ function addToParts(
   input: { days?: number; hours?: number },
 ): ZonedDateParts {
   const next = new Date(
-    Date.UTC(
-      parts.year,
-      parts.month - 1,
-      parts.day,
-      parts.hour,
-      parts.minute,
-      parts.second,
-    ),
+    Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second),
   );
 
   if (input.days) {
@@ -173,9 +160,7 @@ function startOfZonedHour(date: Date, timezone: string) {
 }
 
 function parseDateOnly(value: string) {
-  const [year, month, day] = value
-    .split("-")
-    .map((part) => Number.parseInt(part, 10));
+  const [year, month, day] = value.split("-").map((part) => Number.parseInt(part, 10));
 
   return {
     year,
@@ -197,12 +182,7 @@ function dateOnlyToUtc(value: string, timezone: string, edge: "start" | "end") {
     return zonedDateTimeToUtc(startParts, timezone);
   }
 
-  return new Date(
-    zonedDateTimeToUtc(
-      addToParts(startParts, { days: 1 }),
-      timezone,
-    ).getTime() - 1,
-  );
+  return new Date(zonedDateTimeToUtc(addToParts(startParts, { days: 1 }), timezone).getTime() - 1);
 }
 
 function toDate(
@@ -226,9 +206,7 @@ function toDate(
   return new Date(value);
 }
 
-export function resolveDashboardRange(
-  input: ResolveDashboardRangeInput,
-): DashboardRange {
+export function resolveDashboardRange(input: ResolveDashboardRangeInput): DashboardRange {
   const preset = input.preset ?? "7d";
   const now = input.now ?? new Date();
 
@@ -239,8 +217,7 @@ export function resolveDashboardRange(
     return {
       from,
       to,
-      granularity:
-        to.getTime() - from.getTime() <= 36 * 60 * 60 * 1000 ? "hour" : "day",
+      granularity: to.getTime() - from.getTime() <= 36 * 60 * 60 * 1000 ? "hour" : "day",
       preset,
       timezone: input.timezone,
     };
@@ -256,10 +233,7 @@ export function resolveDashboardRange(
     };
   }
 
-  const startParts = toZonedParts(
-    startOfZonedDay(now, input.timezone),
-    input.timezone,
-  );
+  const startParts = toZonedParts(startOfZonedDay(now, input.timezone), input.timezone);
   const days = preset === "7d" ? -6 : -29;
 
   return {

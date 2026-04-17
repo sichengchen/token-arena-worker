@@ -63,23 +63,16 @@ export async function GET(request: Request) {
     projectKey: query.data.projectKey,
   };
 
-  const [
-    overview,
-    tokenTrend,
-    activityTrend,
-    breakdowns,
-    pricing,
-    sessions,
-    lastSyncedAt,
-  ] = await Promise.all([
-    getOverviewMetrics({ userId: session.user.id, range, filters }),
-    getTokenTrend({ userId: session.user.id, range, filters }),
-    getActivityTrend({ userId: session.user.id, range, filters }),
-    getBreakdowns({ userId: session.user.id, range, filters }),
-    getPricingSummaryAndRows({ userId: session.user.id, range, filters }),
-    getSessionRows({ userId: session.user.id, range, filters }),
-    getLastSyncedAt(session.user.id),
-  ]);
+  const [overview, tokenTrend, activityTrend, breakdowns, pricing, sessions, lastSyncedAt] =
+    await Promise.all([
+      getOverviewMetrics({ userId: session.user.id, range, filters }),
+      getTokenTrend({ userId: session.user.id, range, filters }),
+      getActivityTrend({ userId: session.user.id, range, filters }),
+      getBreakdowns({ userId: session.user.id, range, filters }),
+      getPricingSummaryAndRows({ userId: session.user.id, range, filters }),
+      getSessionRows({ userId: session.user.id, range, filters }),
+      getLastSyncedAt(session.user.id),
+    ]);
 
   return NextResponse.json({
     range: {

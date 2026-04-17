@@ -62,9 +62,7 @@ export function normalizeModelLookupKey(value: string) {
   return value.trim().toLowerCase();
 }
 
-export function createPricingCatalogSnapshot(
-  payload: RawCatalogPayload,
-): SerializedPricingCatalog {
+export function createPricingCatalogSnapshot(payload: RawCatalogPayload): SerializedPricingCatalog {
   const snapshot: SerializedPricingCatalog = [];
 
   for (const [providerKey, providerValue] of Object.entries(payload)) {
@@ -114,9 +112,7 @@ export function createPricingCatalogSnapshot(
   return snapshot;
 }
 
-export function hydratePricingCatalogSnapshot(
-  snapshot: SerializedPricingCatalog,
-): PricingCatalog {
+export function hydratePricingCatalogSnapshot(snapshot: SerializedPricingCatalog): PricingCatalog {
   const catalog: PricingCatalog = new Map();
 
   for (const [providerId, providerNameOverride, serializedModels] of snapshot) {
@@ -126,12 +122,7 @@ export function hydratePricingCatalogSnapshot(
 
     const modelsByLower = new Map<string, PricingCatalogModel>();
 
-    for (const [
-      lookupKey,
-      modelId,
-      modelNameOverride,
-      cost,
-    ] of serializedModels) {
+    for (const [lookupKey, modelId, modelNameOverride, cost] of serializedModels) {
       if (!lookupKey || !modelId) {
         continue;
       }
@@ -179,13 +170,11 @@ const getCachedPricingCatalogSnapshot = unstable_cache(
   },
 );
 
-export const getPricingCatalog = cache(
-  async (): Promise<PricingCatalog | null> => {
-    const snapshot = await getCachedPricingCatalogSnapshot();
-    if (!snapshot) {
-      return null;
-    }
+export const getPricingCatalog = cache(async (): Promise<PricingCatalog | null> => {
+  const snapshot = await getCachedPricingCatalogSnapshot();
+  if (!snapshot) {
+    return null;
+  }
 
-    return hydratePricingCatalogSnapshot(snapshot);
-  },
-);
+  return hydratePricingCatalogSnapshot(snapshot);
+});

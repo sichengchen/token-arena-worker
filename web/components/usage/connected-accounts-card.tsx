@@ -37,10 +37,7 @@ async function postAuthAction(
     },
     body: JSON.stringify(body),
   });
-  const payload = (await response.json().catch(() => null)) as Record<
-    string,
-    unknown
-  > | null;
+  const payload = (await response.json().catch(() => null)) as Record<string, unknown> | null;
 
   if (!response.ok) {
     throw payload ?? new Error("Request failed.");
@@ -100,9 +97,7 @@ export function ConnectedAccountsCard({
   const [busyKey, setBusyKey] = useState<string | null>(null);
 
   const rows = useMemo(() => {
-    const credentialAccounts = accounts.filter(
-      (a) => a.providerId === "credential",
-    );
+    const credentialAccounts = accounts.filter((a) => a.providerId === "credential");
 
     const credentialRows = credentialAccounts.map((account) => ({
       kind: "credential" as const,
@@ -207,9 +202,7 @@ export function ConnectedAccountsCard({
                   <ProviderIcon providerId="credential" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="font-medium text-foreground">
-                    {t("credentialLabel")}
-                  </div>
+                  <div className="font-medium text-foreground">{t("credentialLabel")}</div>
                 </div>
               </div>
             );
@@ -219,9 +212,7 @@ export function ConnectedAccountsCard({
           const connectKey = `connect:${provider.id}`;
           const disconnectKey = account ? `disconnect:${account.id}` : null;
           const canDisconnect =
-            account &&
-            account.providerId !== "credential" &&
-            accounts.length > 1;
+            account && account.providerId !== "credential" && accounts.length > 1;
 
           if (account) {
             return (
@@ -230,9 +221,7 @@ export function ConnectedAccountsCard({
                   <ProviderIcon providerId={provider.id} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="font-medium text-foreground">
-                    {provider.label}
-                  </div>
+                  <div className="font-medium text-foreground">{provider.label}</div>
                 </div>
                 <div className="flex shrink-0 justify-end">
                   {canDisconnect ? (
@@ -243,9 +232,7 @@ export function ConnectedAccountsCard({
                       onClick={() => handleDisconnect(account)}
                       disabled={busyKey === disconnectKey}
                     >
-                      {busyKey === disconnectKey
-                        ? t("disconnecting")
-                        : t("disconnect")}
+                      {busyKey === disconnectKey ? t("disconnecting") : t("disconnect")}
                     </Button>
                   ) : null}
                 </div>
@@ -259,9 +246,7 @@ export function ConnectedAccountsCard({
                 <ProviderIcon providerId={provider.id} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-medium text-foreground">
-                  {provider.label}
-                </div>
+                <div className="font-medium text-foreground">{provider.label}</div>
               </div>
               <div className="flex shrink-0 justify-end">
                 <Button

@@ -72,15 +72,9 @@ export function SettingsDialog({
             size="icon-sm"
             className={triggerClassName}
             aria-label={
-              typeof resolvedTriggerLabel === "string"
-                ? resolvedTriggerLabel
-                : t("button")
+              typeof resolvedTriggerLabel === "string" ? resolvedTriggerLabel : t("button")
             }
-            title={
-              typeof resolvedTriggerLabel === "string"
-                ? resolvedTriggerLabel
-                : t("button")
-            }
+            title={typeof resolvedTriggerLabel === "string" ? resolvedTriggerLabel : t("button")}
           >
             <Settings2 className="size-3.5" />
           </Button>

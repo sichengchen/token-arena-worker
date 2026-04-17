@@ -5,9 +5,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/social/badges", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/social/badges")>(
-    "@/lib/social/badges",
-  );
+  const actual = await vi.importActual<typeof import("@/lib/social/badges")>("@/lib/social/badges");
 
   return {
     ...actual,
@@ -33,9 +31,7 @@ describe("badge route", () => {
 
     const { GET } = await import("@/app/api/badges/[username]/route");
     const response = await GET(
-      new Request(
-        "https://example.com/api/badges/alice?metric=tokens&style=plastic",
-      ),
+      new Request("https://example.com/api/badges/alice?metric=tokens&style=plastic"),
       { params: Promise.resolve({ username: "alice" }) } as never,
     );
 
@@ -49,10 +45,9 @@ describe("badge route", () => {
 
   it("returns 400 for invalid metric", async () => {
     const { GET } = await import("@/app/api/badges/[username]/route");
-    const response = await GET(
-      new Request("https://example.com/api/badges/alice?metric=invalid"),
-      { params: Promise.resolve({ username: "alice" }) } as never,
-    );
+    const response = await GET(new Request("https://example.com/api/badges/alice?metric=invalid"), {
+      params: Promise.resolve({ username: "alice" }),
+    } as never);
 
     expect(response.status).toBe(400);
   });
@@ -64,10 +59,9 @@ describe("badge route", () => {
     });
 
     const { GET } = await import("@/app/api/badges/[username]/route");
-    const response = await GET(
-      new Request("https://example.com/api/badges/alice?metric=cost"),
-      { params: Promise.resolve({ username: "alice" }) } as never,
-    );
+    const response = await GET(new Request("https://example.com/api/badges/alice?metric=cost"), {
+      params: Promise.resolve({ username: "alice" }),
+    } as never);
 
     await expect(response.text()).resolves.toContain("private");
   });
